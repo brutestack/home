@@ -22,7 +22,14 @@ const PROEM_X=0,PROEM_Y=0.15,PROEM_W=3.0,PROEM_H=1.7;
 // Зона проводки/труб на верхней стене: от 840мм до 1430мм правее проёма
 const PIPES_START=PROEM_W+0.84,PIPES_END=PROEM_W+1.43;
 // Проём в горизонтальной двойной перегородке: сразу от вертикальной перегородки
-const HDOOR_X=PIPES_END+GKL3_LAYER*2+GKL3_GAP; // начало проёма
+const HDOOR_X=PIPES_END+GKL3_LAYER*2+GKL3_GAP; // начало правого проёма
+// Левый проём: отступ 200мм от внутренней стены
+const HDOOR_L_OFFSET=0.2;
+// Ванна: 1700x800мм, вдоль левой стены ванной комнаты, отступ 50мм от стен
+const BATH_L=1.7,BATH_W=0.8,BATH_GAP=0.05;
+// Унитаз: 650x380мм (бачок 200мм), отступ 50мм от нижней стены, 250мм от правой перегородки
+const WC_L=0.65,WC_W=0.38,WC_TANK=0.2,WC_GAP_BOT=0.05,WC_GAP_RIGHT=0.25;
+const WC_RIGHT=IWALL_X+IWALL_T+COL_DIST+COL_W-GKL2_T; // правая стена ванной (левый край ГКЛ)
 // Окно на верхней стене: от 2540мм, ширина 1250мм
 const WIN_X=2.54,WIN_W=1.25;
 const PLAT_X=0.05,PLAT_W=0.75,MARCH_W=PROEM_H/2;
@@ -87,24 +94,32 @@ export default function FloorPlan(){
           <rect x={p+WIN_X*s} y={p-WALL/2} width={WIN_W*s} height={WALL} fill="#4fc3f7" stroke="#4fc3f7" strokeWidth={1}/>
           <line x1={p+WIN_X*s} y1={p} x2={p+(WIN_X+WIN_W)*s} y2={p} stroke="#1a1a2e" strokeWidth={2}/>
           <text x={p+(WIN_X+WIN_W/2)*s} y={p-12} textAnchor="middle" fill="#4fc3f7" fontSize={8}>окно {WIN_W*1000}</text>
-          {/* Угловой диван в правом нижнем углу (L-форма, короткая часть слева) */}
-          <polygon
-            points={`${p+SOFA_X*s},${p+(H-SOFA_GAP_BOT-SOFA_S)*s} ${p+(SOFA_X+SOFA_D)*s},${p+(H-SOFA_GAP_BOT-SOFA_S)*s} ${p+(SOFA_X+SOFA_D)*s},${p+(H-SOFA_GAP_BOT-SOFA_D)*s} ${p+(SOFA_X+SOFA_L)*s},${p+(H-SOFA_GAP_BOT-SOFA_D)*s} ${p+(SOFA_X+SOFA_L)*s},${p+(H-SOFA_GAP_BOT)*s} ${p+SOFA_X*s},${p+(H-SOFA_GAP_BOT)*s}`}
-            fill="#6a5acd33" stroke="#6a5acd" strokeWidth={1.5}/>
+          {/* Угловой диван в правом нижнем углу (L-форма со скруглёнными углами) */}
+          {(()=>{
+            const r=4,sx=p+SOFA_X*s,sy1=p+(H-SOFA_GAP_BOT-SOFA_S)*s,sx2=p+(SOFA_X+SOFA_D)*s,sy2=p+(H-SOFA_GAP_BOT-SOFA_D)*s,sx3=p+(SOFA_X+SOFA_L)*s,sy3=p+(H-SOFA_GAP_BOT)*s;
+            return <path d={`M${sx+r},${sy1} L${sx2-r},${sy1} A${r},${r} 0 0 1 ${sx2},${sy1+r} L${sx2},${sy2-r} A${r},${r} 0 0 0 ${sx2+r},${sy2} L${sx3-r},${sy2} A${r},${r} 0 0 1 ${sx3},${sy2+r} L${sx3},${sy3-r} A${r},${r} 0 0 1 ${sx3-r},${sy3} L${sx+r},${sy3} A${r},${r} 0 0 1 ${sx},${sy3-r} L${sx},${sy1+r} A${r},${r} 0 0 1 ${sx+r},${sy1} Z`} fill="#6a5acd33" stroke="#6a5acd" strokeWidth={1.5}/>;
+          })()}
           <text x={p+(SOFA_X+SOFA_L/2)*s} y={p+(H-SOFA_GAP_BOT-SOFA_D/2)*s} textAnchor="middle" dominantBaseline="middle" fill="#6a5acd" fontSize={9}>диван</text>
           {/* Внутренняя стена: от нижней стены вверх */}
           <rect x={p+IWALL_X*s} y={p+(H-IWALL_LEN)*s} width={IWALL_T*s} height={IWALL_LEN*s} fill="#e0e0e0"/>
-          {/* ГКЛ перегородка горизонтальная двойная: от торца внутренней стены до колонны, с проёмом */}
-          {/* Левая часть (до проёма) */}
-          <rect x={p+(IWALL_X+IWALL_T)*s} y={p+(H-IWALL_LEN)*s} width={(HDOOR_X-IWALL_X-IWALL_T)*s} height={GKL_LAYER*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
-          <rect x={p+(IWALL_X+IWALL_T)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP)*s} width={(HDOOR_X-IWALL_X-IWALL_T)*s} height={GKL_LAYER*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
-          <text x={p+(IWALL_X+IWALL_T+(HDOOR_X-IWALL_X-IWALL_T)/2)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP/2)*s+3} textAnchor="middle" fill="#666" fontSize={7}>ГКЛ</text>
-          {/* Правая часть (после проёма, если есть) */}
+          {/* ГКЛ перегородка горизонтальная двойная: от торца внутренней стены до колонны, с двумя проёмами */}
+          {/* Левая часть (до левого проёма) */}
+          <rect x={p+(IWALL_X+IWALL_T)*s} y={p+(H-IWALL_LEN)*s} width={HDOOR_L_OFFSET*s} height={GKL_LAYER*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
+          <rect x={p+(IWALL_X+IWALL_T)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP)*s} width={HDOOR_L_OFFSET*s} height={GKL_LAYER*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
+          {/* Средняя часть (между двумя проёмами) */}
+          <rect x={p+(IWALL_X+IWALL_T+HDOOR_L_OFFSET+DOOR_W)*s} y={p+(H-IWALL_LEN)*s} width={(HDOOR_X-IWALL_X-IWALL_T-HDOOR_L_OFFSET-DOOR_W)*s} height={GKL_LAYER*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
+          <rect x={p+(IWALL_X+IWALL_T+HDOOR_L_OFFSET+DOOR_W)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP)*s} width={(HDOOR_X-IWALL_X-IWALL_T-HDOOR_L_OFFSET-DOOR_W)*s} height={GKL_LAYER*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
+          <text x={p+(IWALL_X+IWALL_T+HDOOR_L_OFFSET+DOOR_W+(HDOOR_X-IWALL_X-IWALL_T-HDOOR_L_OFFSET-DOOR_W)/2)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP/2)*s+3} textAnchor="middle" fill="#666" fontSize={7}>ГКЛ</text>
+          {/* Правая часть (после правого проёма, если есть) */}
           {HDOOR_X+DOOR_W < IWALL_X+IWALL_T+COL_DIST && <>
             <rect x={p+(HDOOR_X+DOOR_W)*s} y={p+(H-IWALL_LEN)*s} width={(IWALL_X+IWALL_T+COL_DIST-HDOOR_X-DOOR_W)*s} height={GKL_LAYER*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
             <rect x={p+(HDOOR_X+DOOR_W)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP)*s} width={(IWALL_X+IWALL_T+COL_DIST-HDOOR_X-DOOR_W)*s} height={GKL_LAYER*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
           </>}
-          {/* Обозначение проёма в горизонтальной перегородке */}
+          {/* Обозначение левого проёма (с отступом 200мм от внутренней стены) */}
+          <line x1={p+(IWALL_X+IWALL_T+HDOOR_L_OFFSET)*s} y1={p+(H-IWALL_LEN)*s} x2={p+(IWALL_X+IWALL_T+HDOOR_L_OFFSET+DOOR_W)*s} y2={p+(H-IWALL_LEN+GKL_T)*s} stroke="#666" strokeWidth={1}/>
+          <line x1={p+(IWALL_X+IWALL_T+HDOOR_L_OFFSET)*s} y1={p+(H-IWALL_LEN+GKL_T)*s} x2={p+(IWALL_X+IWALL_T+HDOOR_L_OFFSET+DOOR_W)*s} y2={p+(H-IWALL_LEN)*s} stroke="#666" strokeWidth={1}/>
+          <text x={p+(IWALL_X+IWALL_T+HDOOR_L_OFFSET+DOOR_W/2)*s} y={p+(H-IWALL_LEN+GKL_T/2)*s+3} textAnchor="middle" fill="#666" fontSize={7}>{DOOR_W*1000}</text>
+          {/* Обозначение правого проёма (у вертикальной перегородки) */}
           <line x1={p+HDOOR_X*s} y1={p+(H-IWALL_LEN)*s} x2={p+(HDOOR_X+DOOR_W)*s} y2={p+(H-IWALL_LEN+GKL_T)*s} stroke="#666" strokeWidth={1}/>
           <line x1={p+HDOOR_X*s} y1={p+(H-IWALL_LEN+GKL_T)*s} x2={p+(HDOOR_X+DOOR_W)*s} y2={p+(H-IWALL_LEN)*s} stroke="#666" strokeWidth={1}/>
           <text x={p+(HDOOR_X+DOOR_W/2)*s} y={p+(H-IWALL_LEN+GKL_T/2)*s+3} textAnchor="middle" fill="#666" fontSize={7}>{DOOR_W*1000}</text>
@@ -123,27 +138,95 @@ export default function FloorPlan(){
           <line x1={p+PIPES_END*s} y1={p+(H-IWALL_LEN-DOOR_OFFSET)*s} x2={p+(PIPES_END+GKL3_LAYER*2+GKL3_GAP)*s} y2={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)*s} stroke="#666" strokeWidth={1}/>
           <text x={p+(PIPES_END+GKL3_LAYER+GKL3_GAP/2)*s} y={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W/2)*s} textAnchor="middle" fill="#666" fontSize={7}>{DOOR_W*1000}</text>
           <text x={p+(PIPES_END+GKL3_LAYER+GKL3_GAP/2)*s} y={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)/2*s} textAnchor="middle" fill="#666" fontSize={7} transform={`rotate(-90,${p+(PIPES_END+GKL3_LAYER+GKL3_GAP/2)*s},${p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)/2*s})`}>ГКЛ</text>
+          {/* Ванна вдоль левой стены ванной комнаты, отступ 50мм от стен */}
+          <rect x={p+(IWALL_X+IWALL_T+BATH_GAP)*s} y={p+(H-BATH_GAP-BATH_L)*s} width={BATH_W*s} height={BATH_L*s} fill="#5dade233" stroke="#5dade2" strokeWidth={1.5} rx={3}/>
+          <text x={p+(IWALL_X+IWALL_T+BATH_GAP+BATH_W/2)*s} y={p+(H-BATH_GAP-BATH_L/2)*s} textAnchor="middle" dominantBaseline="middle" fill="#5dade2" fontSize={8}>ванна</text>
+          {/* Унитаз в правом нижнем углу ванной (бачок к стене) */}
+          {(()=>{
+            const wcX=p+(WC_RIGHT-WC_GAP_RIGHT-WC_W)*s,wcBowlY=p+(H-WC_GAP_BOT-WC_L)*s,wcTankY=p+(H-WC_GAP_BOT-WC_TANK)*s;
+            const bowlH=(WC_L-WC_TANK)*s,tankH=WC_TANK*s,wcW=WC_W*s;
+            const comfort=0.25*s; // 250мм зона комфорта
+            return <>
+              {/* Зона комфорта унитаза (250мм слева, справа, спереди) */}
+              <rect x={wcX-comfort} y={wcBowlY-comfort} width={wcW+comfort*2} height={(WC_L)*s+comfort} fill="none" stroke="#5dade255" strokeWidth={1} strokeDasharray="4 2" rx={3}/>
+              {/* Общие размеры зоны комфорта (внутри) */}
+              {/* Ширина (сверху внутри) */}
+              <line x1={wcX-comfort} y1={wcBowlY-comfort+4} x2={wcX+wcW+comfort} y2={wcBowlY-comfort+4} stroke="#5dade266"/>
+              <line x1={wcX-comfort} y1={wcBowlY-comfort+2} x2={wcX-comfort} y2={wcBowlY-comfort+6} stroke="#5dade266"/>
+              <line x1={wcX+wcW+comfort} y1={wcBowlY-comfort+2} x2={wcX+wcW+comfort} y2={wcBowlY-comfort+6} stroke="#5dade266"/>
+              <text x={wcX+wcW/2} y={wcBowlY-comfort+14} textAnchor="middle" fill="#5dade2" fontSize={7}>{(WC_W*1000+500).toFixed(0)}</text>
+              {/* Длина унитаза (слева внутри) */}
+              <line x1={wcX-comfort+4} y1={wcBowlY} x2={wcX-comfort+4} y2={wcTankY+tankH} stroke="#5dade266"/>
+              <line x1={wcX-comfort+2} y1={wcBowlY} x2={wcX-comfort+6} y2={wcBowlY} stroke="#5dade266"/>
+              <line x1={wcX-comfort+2} y1={wcTankY+tankH} x2={wcX-comfort+6} y2={wcTankY+tankH} stroke="#5dade266"/>
+              <text x={wcX-comfort+12} y={wcBowlY+WC_L*s/2} fill="#5dade2" fontSize={7} textAnchor="middle" transform={`rotate(-90,${wcX-comfort+12},${wcBowlY+WC_L*s/2})`}>{(WC_L*1000).toFixed(0)}</text>
+              {/* Бачок (прямоугольный) */}
+              <rect x={wcX} y={wcTankY} width={wcW} height={tankH} fill="#5dade233" stroke="#5dade2" strokeWidth={1} rx={2}/>
+              {/* Чаша (овальная форма) */}
+              <rect x={wcX} y={wcBowlY} width={wcW} height={bowlH} fill="#5dade233" stroke="#5dade2" strokeWidth={1.5} rx={wcW/2}/>
+              <text x={wcX+wcW/2} y={wcBowlY+bowlH/2} textAnchor="middle" dominantBaseline="middle" fill="#5dade2" fontSize={7}>WC</text>
+            </>;
+          })()}
+          {/* Расстояние между ванной и зоной комфорта унитаза */}
+          {(()=>{
+            const bathRight=p+(IWALL_X+IWALL_T+BATH_GAP+BATH_W)*s;
+            const comfortLeft=p+(WC_RIGHT-WC_GAP_RIGHT-WC_W-0.25)*s;
+            const dimY=p+(H-WC_GAP_BOT-WC_TANK/2)*s;
+            const dist=((WC_RIGHT-WC_GAP_RIGHT-WC_W-0.25)-(IWALL_X+IWALL_T+BATH_GAP+BATH_W))*1000;
+            return <>
+              <line x1={bathRight} y1={dimY} x2={comfortLeft} y2={dimY} stroke="#5dade288"/>
+              <line x1={bathRight} y1={dimY-2} x2={bathRight} y2={dimY+2} stroke="#5dade288"/>
+              <line x1={comfortLeft} y1={dimY-2} x2={comfortLeft} y2={dimY+2} stroke="#5dade288"/>
+              <text x={(bathRight+comfortLeft)/2} y={dimY-4} textAnchor="middle" fill="#5dade2" fontSize={8}>{dist.toFixed(0)}</text>
+            </>;
+          })()}
+          {/* Расстояние между ванной и горизонтальной перегородкой */}
+          {(()=>{
+            const bathTop=p+(H-BATH_GAP-BATH_L)*s;
+            const gklBottom=p+(H-IWALL_LEN+GKL_T)*s;
+            const dimX=p+(IWALL_X+IWALL_T+BATH_GAP+BATH_W/2)*s;
+            const dist=(H-BATH_GAP-BATH_L-(H-IWALL_LEN+GKL_T))*1000;
+            return <>
+              <line x1={dimX} y1={gklBottom} x2={dimX} y2={bathTop} stroke="#5dade288"/>
+              <line x1={dimX-2} y1={gklBottom} x2={dimX+2} y2={gklBottom} stroke="#5dade288"/>
+              <line x1={dimX-2} y1={bathTop} x2={dimX+2} y2={bathTop} stroke="#5dade288"/>
+              <text x={dimX+4} y={(gklBottom+bathTop)/2+3} fill="#5dade2" fontSize={8}>{dist.toFixed(0)}</text>
+            </>;
+          })()}
           {/* Обозначение ванной комнаты */}
-          <text x={p+(IWALL_X+IWALL_T+(COL_DIST+COL_W-GKL2_T)/2)*s} y={p+(H-(IWALL_LEN-GKL_T)/2)*s} textAnchor="middle" dominantBaseline="middle" fill="#5dade2" fontSize={11} fontWeight="bold">Ванная</text>
+          <text x={p+(IWALL_X+IWALL_T+BATH_W+(COL_DIST+COL_W-GKL2_T-BATH_W)/2)*s} y={p+(H-(IWALL_LEN-GKL_T)/2)*s} textAnchor="middle" dominantBaseline="middle" fill="#5dade2" fontSize={11} fontWeight="bold">Ванная</text>
           {/* Колонна: на уровне торца стены, 2240мм от внутренней стены */}
           <rect x={p+(IWALL_X+IWALL_T+COL_DIST)*s} y={p+(H-IWALL_LEN)*s} width={COL_W*s} height={COL_H*s} fill="#e0e0e0" stroke="#888" strokeWidth={1}/>
-          {/* Размеры от верхнего правого угла колонны до стен */}
-                    {/* До правой стены */}
+          {/* Размеры от верхнего правого угла колонны до стен с засечками */}
+          {/* До правой стены */}
           <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y1={p+(H-IWALL_LEN)*s} x2={p+W*s} y2={p+(H-IWALL_LEN)*s} stroke="#88888888"/>
+          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y1={p+(H-IWALL_LEN)*s-2} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y2={p+(H-IWALL_LEN)*s+2} stroke="#88888888"/>
+          <line x1={p+W*s} y1={p+(H-IWALL_LEN)*s-2} x2={p+W*s} y2={p+(H-IWALL_LEN)*s+2} stroke="#88888888"/>
           <text x={p+((IWALL_X+IWALL_T+COL_DIST+COL_W)+W)/2*s} y={p+(H-IWALL_LEN)*s-4} textAnchor="middle" fill="#888" fontSize={8}>{((W-IWALL_X-IWALL_T-COL_DIST-COL_W)*1000).toFixed(0)}</text>
           {/* До верхней стены */}
           <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y1={p} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y2={p+(H-IWALL_LEN)*s} stroke="#88888888"/>
+          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s-2} y1={p} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s+2} y2={p} stroke="#88888888"/>
+          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s-2} y1={p+(H-IWALL_LEN)*s} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s+2} y2={p+(H-IWALL_LEN)*s} stroke="#88888888"/>
           <text x={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s+4} y={p+(H-IWALL_LEN)/2*s} fill="#888" fontSize={8}>{((H-IWALL_LEN)*1000).toFixed(0)}</text>
           {/* До нижней стены */}
           <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y1={p+(H-IWALL_LEN)*s} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y2={p+H*s} stroke="#88888888"/>
+          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s-2} y1={p+(H-IWALL_LEN)*s} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s+2} y2={p+(H-IWALL_LEN)*s} stroke="#88888888"/>
+          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s-2} y1={p+H*s} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s+2} y2={p+H*s} stroke="#88888888"/>
           <text x={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s+4} y={p+(H-IWALL_LEN+IWALL_LEN/2)*s} fill="#888" fontSize={8}>{(IWALL_LEN*1000).toFixed(0)}</text>
-          {/* Размеры внутренней стены */}
-          <line x1={p+IWALL_X*s+IWALL_T*s+10} y1={p+(H-IWALL_LEN)*s} x2={p+IWALL_X*s+IWALL_T*s+10} y2={p+H*s} stroke="#4fc3f788"/>
-          <text x={p+IWALL_X*s+IWALL_T*s+14} y={p+(H-IWALL_LEN/2)*s} fill="#4fc3f7" fontSize={9}>{(IWALL_LEN*1000).toFixed(0)}</text>
-          {/* Расстояние от торца стены до проёма */}
+          {/* Размеры внутренней стены (слева) с засечками */}
+          <line x1={p+IWALL_X*s-10} y1={p+(H-IWALL_LEN)*s} x2={p+IWALL_X*s-10} y2={p+H*s} stroke="#4fc3f788"/>
+          <line x1={p+IWALL_X*s-12} y1={p+(H-IWALL_LEN)*s} x2={p+IWALL_X*s-8} y2={p+(H-IWALL_LEN)*s} stroke="#4fc3f788"/>
+          <line x1={p+IWALL_X*s-12} y1={p+H*s} x2={p+IWALL_X*s-8} y2={p+H*s} stroke="#4fc3f788"/>
+          <text x={p+IWALL_X*s-14} y={p+(H-IWALL_LEN/2)*s} textAnchor="end" fill="#4fc3f7" fontSize={9}>{(IWALL_LEN*1000).toFixed(0)}</text>
+          {/* Расстояние от торца стены до проёма с засечками */}
           <line x1={p+IWALL_X*s-10} y1={pr.b} x2={p+IWALL_X*s-10} y2={p+(H-IWALL_LEN)*s} stroke="#4fc3f788"/>
+          <line x1={p+IWALL_X*s-12} y1={pr.b} x2={p+IWALL_X*s-8} y2={pr.b} stroke="#4fc3f788"/>
+          <line x1={p+IWALL_X*s-12} y1={p+(H-IWALL_LEN)*s} x2={p+IWALL_X*s-8} y2={p+(H-IWALL_LEN)*s} stroke="#4fc3f788"/>
           <text x={p+IWALL_X*s-14} y={(pr.b+p+(H-IWALL_LEN)*s)/2+3} textAnchor="end" fill="#4fc3f7" fontSize={9}>{((H-IWALL_LEN-PROEM_Y-PROEM_H)*1000).toFixed(0)}</text>
+          {/* Расстояние от левой стены до внутренней стены с засечками */}
           <line x1={p} y1={p+CH+16} x2={p+IWALL_X*s} y2={p+CH+16} stroke="#4fc3f788"/>
+          <line x1={p} y1={p+CH+14} x2={p} y2={p+CH+18} stroke="#4fc3f788"/>
+          <line x1={p+IWALL_X*s} y1={p+CH+14} x2={p+IWALL_X*s} y2={p+CH+18} stroke="#4fc3f788"/>
           <text x={p+IWALL_X*s/2} y={p+CH+30} textAnchor="middle" fill="#4fc3f7" fontSize={9}>{IWALL_X*1000}</text>
           <line x1={p} y1={p-28} x2={p+CW} y2={p-28} stroke="#4fc3f7"/>
           <text x={p+CW/2} y={p-33} textAnchor="middle" fill="#4fc3f7" fontSize={13} fontWeight="bold">{W*1000}</text>
