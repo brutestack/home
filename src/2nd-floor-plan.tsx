@@ -4,6 +4,15 @@ const S=70,WALL=4,W=9.4,H=5.4,CW=W*S,CH=H*S,PAD=60;
 const IWALL_X=3.0,IWALL_LEN=2.63,IWALL_T=0.25;
 // Колонна: 200x150мм, на расстоянии 2240мм от внутренней стены, на уровне торца внутренней стены
 const COL_DIST=2.24,COL_W=0.2,COL_H=0.15;
+// ГКЛ перегородка горизонтальная двойная: от торца внутренней стены до колонны, 50+50+50мм
+const GKL_LAYER=0.05,GKL_GAP=0.05; // слой 50мм, промежуток 50мм
+const GKL_T=GKL_LAYER*2+GKL_GAP; // общая толщина 150мм
+// ГКЛ перегородка вертикальная: от колонны до нижней стены, толщина 100мм
+const GKL2_T=0.1;
+// ГКЛ перегородка вертикальная двойная: от верхней стены до ванной, 50+50+50мм
+const GKL3_LAYER=0.05,GKL3_GAP=0.05; // слой 50мм, промежуток 50мм
+// Проём в перегородках: ширина 900мм, отступ 50мм
+const DOOR_W=0.9,DOOR_OFFSET=0.05;
 // Угловой диван: 3000x2050мм, глубина 1050мм
 const SOFA_L=3.0,SOFA_S=2.05,SOFA_D=1.05;
 // Позиция дивана: зазор от колонны 100мм, отступ от нижней стены 100мм
@@ -12,6 +21,8 @@ const SOFA_X=IWALL_X+IWALL_T+COL_DIST+COL_W+SOFA_GAP_COL; // левый край
 const PROEM_X=0,PROEM_Y=0.15,PROEM_W=3.0,PROEM_H=1.7;
 // Зона проводки/труб на верхней стене: от 840мм до 1430мм правее проёма
 const PIPES_START=PROEM_W+0.84,PIPES_END=PROEM_W+1.43;
+// Проём в горизонтальной двойной перегородке: сразу от вертикальной перегородки
+const HDOOR_X=PIPES_END+GKL3_LAYER*2+GKL3_GAP; // начало проёма
 // Окно на верхней стене: от 2540мм, ширина 1250мм
 const WIN_X=2.54,WIN_W=1.25;
 const PLAT_X=0.05,PLAT_W=0.75,MARCH_W=PROEM_H/2;
@@ -83,13 +94,41 @@ export default function FloorPlan(){
           <text x={p+(SOFA_X+SOFA_L/2)*s} y={p+(H-SOFA_GAP_BOT-SOFA_D/2)*s} textAnchor="middle" dominantBaseline="middle" fill="#6a5acd" fontSize={9}>диван</text>
           {/* Внутренняя стена: от нижней стены вверх */}
           <rect x={p+IWALL_X*s} y={p+(H-IWALL_LEN)*s} width={IWALL_T*s} height={IWALL_LEN*s} fill="#e0e0e0"/>
+          {/* ГКЛ перегородка горизонтальная двойная: от торца внутренней стены до колонны, с проёмом */}
+          {/* Левая часть (до проёма) */}
+          <rect x={p+(IWALL_X+IWALL_T)*s} y={p+(H-IWALL_LEN)*s} width={(HDOOR_X-IWALL_X-IWALL_T)*s} height={GKL_LAYER*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
+          <rect x={p+(IWALL_X+IWALL_T)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP)*s} width={(HDOOR_X-IWALL_X-IWALL_T)*s} height={GKL_LAYER*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
+          <text x={p+(IWALL_X+IWALL_T+(HDOOR_X-IWALL_X-IWALL_T)/2)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP/2)*s+3} textAnchor="middle" fill="#666" fontSize={7}>ГКЛ</text>
+          {/* Правая часть (после проёма, если есть) */}
+          {HDOOR_X+DOOR_W < IWALL_X+IWALL_T+COL_DIST && <>
+            <rect x={p+(HDOOR_X+DOOR_W)*s} y={p+(H-IWALL_LEN)*s} width={(IWALL_X+IWALL_T+COL_DIST-HDOOR_X-DOOR_W)*s} height={GKL_LAYER*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
+            <rect x={p+(HDOOR_X+DOOR_W)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP)*s} width={(IWALL_X+IWALL_T+COL_DIST-HDOOR_X-DOOR_W)*s} height={GKL_LAYER*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
+          </>}
+          {/* Обозначение проёма в горизонтальной перегородке */}
+          <line x1={p+HDOOR_X*s} y1={p+(H-IWALL_LEN)*s} x2={p+(HDOOR_X+DOOR_W)*s} y2={p+(H-IWALL_LEN+GKL_T)*s} stroke="#666" strokeWidth={1}/>
+          <line x1={p+HDOOR_X*s} y1={p+(H-IWALL_LEN+GKL_T)*s} x2={p+(HDOOR_X+DOOR_W)*s} y2={p+(H-IWALL_LEN)*s} stroke="#666" strokeWidth={1}/>
+          <text x={p+(HDOOR_X+DOOR_W/2)*s} y={p+(H-IWALL_LEN+GKL_T/2)*s+3} textAnchor="middle" fill="#666" fontSize={7}>{DOOR_W*1000}</text>
+          {/* ГКЛ перегородка вертикальная: от колонны до нижней стены, правый край совпадает с правым краем колонны */}
+          <rect x={p+(IWALL_X+IWALL_T+COL_DIST+COL_W-GKL2_T)*s} y={p+(H-IWALL_LEN+COL_H)*s} width={GKL2_T*s} height={(IWALL_LEN-COL_H)*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
+          <text x={p+(IWALL_X+IWALL_T+COL_DIST+COL_W-GKL2_T/2)*s} y={p+(H-(IWALL_LEN-COL_H)/2)*s} textAnchor="middle" fill="#666" fontSize={7} transform={`rotate(-90,${p+(IWALL_X+IWALL_T+COL_DIST+COL_W-GKL2_T/2)*s},${p+(H-(IWALL_LEN-COL_H)/2)*s})`}>ГКЛ</text>
+          {/* ГКЛ перегородка вертикальная двойная: от верхней стены до ванной, правее зоны труб, с проёмом */}
+          {/* Верхняя часть (до проёма) */}
+          <rect x={p+PIPES_END*s} y={p} width={GKL3_LAYER*s} height={(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
+          <rect x={p+(PIPES_END+GKL3_LAYER+GKL3_GAP)*s} y={p} width={GKL3_LAYER*s} height={(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
+          {/* Нижняя часть (под проёмом) */}
+          <rect x={p+PIPES_END*s} y={p+(H-IWALL_LEN-DOOR_OFFSET)*s} width={GKL3_LAYER*s} height={DOOR_OFFSET*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
+          <rect x={p+(PIPES_END+GKL3_LAYER+GKL3_GAP)*s} y={p+(H-IWALL_LEN-DOOR_OFFSET)*s} width={GKL3_LAYER*s} height={DOOR_OFFSET*s} fill="#a0a0a0" stroke="#888" strokeWidth={1} strokeDasharray="4 2"/>
+          {/* Обозначение проёма */}
+          <line x1={p+PIPES_END*s} y1={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)*s} x2={p+(PIPES_END+GKL3_LAYER*2+GKL3_GAP)*s} y2={p+(H-IWALL_LEN-DOOR_OFFSET)*s} stroke="#666" strokeWidth={1}/>
+          <line x1={p+PIPES_END*s} y1={p+(H-IWALL_LEN-DOOR_OFFSET)*s} x2={p+(PIPES_END+GKL3_LAYER*2+GKL3_GAP)*s} y2={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)*s} stroke="#666" strokeWidth={1}/>
+          <text x={p+(PIPES_END+GKL3_LAYER+GKL3_GAP/2)*s} y={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W/2)*s} textAnchor="middle" fill="#666" fontSize={7}>{DOOR_W*1000}</text>
+          <text x={p+(PIPES_END+GKL3_LAYER+GKL3_GAP/2)*s} y={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)/2*s} textAnchor="middle" fill="#666" fontSize={7} transform={`rotate(-90,${p+(PIPES_END+GKL3_LAYER+GKL3_GAP/2)*s},${p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)/2*s})`}>ГКЛ</text>
+          {/* Обозначение ванной комнаты */}
+          <text x={p+(IWALL_X+IWALL_T+(COL_DIST+COL_W-GKL2_T)/2)*s} y={p+(H-(IWALL_LEN-GKL_T)/2)*s} textAnchor="middle" dominantBaseline="middle" fill="#5dade2" fontSize={11} fontWeight="bold">Ванная</text>
           {/* Колонна: на уровне торца стены, 2240мм от внутренней стены */}
           <rect x={p+(IWALL_X+IWALL_T+COL_DIST)*s} y={p+(H-IWALL_LEN)*s} width={COL_W*s} height={COL_H*s} fill="#e0e0e0" stroke="#888" strokeWidth={1}/>
           {/* Размеры от верхнего правого угла колонны до стен */}
-          {/* До внутренней стены (влево от правого края) */}
-          <line x1={p+(IWALL_X+IWALL_T)*s} y1={p+(H-IWALL_LEN)*s} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y2={p+(H-IWALL_LEN)*s} stroke="#88888888"/>
-          <text x={p+(IWALL_X+IWALL_T+(COL_DIST+COL_W)/2)*s} y={p+(H-IWALL_LEN)*s-4} textAnchor="middle" fill="#888" fontSize={8}>{((COL_DIST+COL_W)*1000).toFixed(0)}</text>
-          {/* До правой стены */}
+                    {/* До правой стены */}
           <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y1={p+(H-IWALL_LEN)*s} x2={p+W*s} y2={p+(H-IWALL_LEN)*s} stroke="#88888888"/>
           <text x={p+((IWALL_X+IWALL_T+COL_DIST+COL_W)+W)/2*s} y={p+(H-IWALL_LEN)*s-4} textAnchor="middle" fill="#888" fontSize={8}>{((W-IWALL_X-IWALL_T-COL_DIST-COL_W)*1000).toFixed(0)}</text>
           {/* До верхней стены */}
@@ -127,6 +166,7 @@ export default function FloorPlan(){
           <span><span style={{color:"#6a5acd"}}>■</span> Диван 3000×2050</span>
           <span><span style={{color:"#e91e63"}}>■</span> Проводка/трубы</span>
           <span><span style={{color:"#4fc3f7"}}>■</span> Окно</span>
+          <span><span style={{color:"#a0a0a0"}}>▬ ▬</span> ГКЛ перегородка</span>
         </div>
       </div>
     </div>
