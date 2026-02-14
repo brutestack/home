@@ -431,10 +431,21 @@ export default function FloorPlan(){
           <line x1={p} y1={p+CH+14} x2={p} y2={p+CH+18} stroke="#4fc3f788"/>
           <line x1={p+IWALL_X*s} y1={p+CH+14} x2={p+IWALL_X*s} y2={p+CH+18} stroke="#4fc3f788"/>
           <text x={p+IWALL_X*s/2} y={p+CH+30} textAnchor="middle" fill="#4fc3f7" fontSize={9}>{IWALL_X*1000}</text>
+          {/* Ширина ванной комнаты (от внутренней стены до ГКЛ перегородки) */}
+          <line x1={p+(IWALL_X+IWALL_T)*s} y1={p+CH+16} x2={p+WC_RIGHT*s} y2={p+CH+16} stroke="#5dade288"/>
+          <line x1={p+(IWALL_X+IWALL_T)*s} y1={p+CH+14} x2={p+(IWALL_X+IWALL_T)*s} y2={p+CH+18} stroke="#5dade288"/>
+          <line x1={p+WC_RIGHT*s} y1={p+CH+14} x2={p+WC_RIGHT*s} y2={p+CH+18} stroke="#5dade288"/>
+          <text x={p+((IWALL_X+IWALL_T)+WC_RIGHT)/2*s} y={p+CH+30} textAnchor="middle" fill="#5dade2" fontSize={9}>{((WC_RIGHT-IWALL_X-IWALL_T)*1000).toFixed(0)}</text>
+          {/* Ширина спальни (от ГКЛ перегородки до правой стены) */}
+          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y1={p+CH+16} x2={p+W*s} y2={p+CH+16} stroke="#4fc3f788"/>
+          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y1={p+CH+14} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y2={p+CH+18} stroke="#4fc3f788"/>
+          <line x1={p+W*s} y1={p+CH+14} x2={p+W*s} y2={p+CH+18} stroke="#4fc3f788"/>
+          <text x={p+((IWALL_X+IWALL_T+COL_DIST+COL_W)+W)/2*s} y={p+CH+30} textAnchor="middle" fill="#4fc3f7" fontSize={9}>{((W-IWALL_X-IWALL_T-COL_DIST-COL_W)*1000).toFixed(0)}</text>
           <line x1={p} y1={p-28} x2={p+CW} y2={p-28} stroke="#4fc3f7"/>
           <text x={p+CW/2} y={p-33} textAnchor="middle" fill="#4fc3f7" fontSize={13} fontWeight="bold">{W*1000}</text>
-          <line x1={p-28} y1={p} x2={p-28} y2={p+CH} stroke="#4fc3f7"/>
-          <text x={p-33} y={p+CH/2} textAnchor="middle" fill="#4fc3f7" fontSize={13} fontWeight="bold" transform={`rotate(-90,${p-33},${p+CH/2})`}>{H*1000}</text>
+          {/* Длина правой стены */}
+          <line x1={p+CW+28} y1={p} x2={p+CW+28} y2={p+CH} stroke="#4fc3f7"/>
+          <text x={p+CW+33} y={p+CH/2} textAnchor="middle" fill="#4fc3f7" fontSize={13} fontWeight="bold" transform={`rotate(90,${p+CW+33},${p+CH/2})`}>{H*1000}</text>
           {mouse&&<>
             <line x1={mouse.x} y1={p} x2={mouse.x} y2={p+CH} stroke="#4fc3f744" strokeDasharray="4"/>
             <line x1={p} y1={mouse.y} x2={p+CW} y2={mouse.y} stroke="#4fc3f744" strokeDasharray="4"/>
