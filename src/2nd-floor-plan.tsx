@@ -18,9 +18,25 @@ const SOFA_L=3.0,SOFA_S=2.05,SOFA_D=1.05;
 // Позиция дивана: зазор от колонны 100мм, отступ от нижней стены 100мм
 const SOFA_GAP_COL=0.1,SOFA_GAP_BOT=0.1;
 const SOFA_X=IWALL_X+IWALL_T+COL_DIST+COL_W+SOFA_GAP_COL; // левый край дивана
+// Двухспальная кровать: 2000x1600мм, перпендикулярно верхней стене
+const BED_L=2.0,BED_W=1.6;
+const BED_GAP_TOP=0.1; // 100мм от верхней стены
+const BED_GAP_RIGHT=W-(SOFA_X+SOFA_L); // такое же расстояние от правой стены как у дивана
 const PROEM_X=0,PROEM_Y=0.15,PROEM_W=3.0,PROEM_H=1.7;
 // Зона проводки/труб на верхней стене: от 840мм до 1430мм правее проёма
 const PIPES_START=PROEM_W+0.84,PIPES_END=PROEM_W+1.43;
+// Шкаф вдоль двойной вертикальной перегородки: глубина 600мм
+const WARDROBE_D=0.6;
+const WARDROBE_X=PIPES_END+GKL3_LAYER*2+GKL3_GAP; // левый край (у перегородки)
+const WARDROBE_Y=0.02; // 20мм от верхней стены
+const WARDROBE_L=H-IWALL_LEN-DOOR_OFFSET-DOOR_W-WARDROBE_Y; // длина до проёма
+// Туалетный столик: 1000x450мм, у верхней стены между шкафом и кроватью
+const VANITY_W=1.0,VANITY_D=0.45,VANITY_GAP=0.15;
+const VANITY_X=WARDROBE_X+WARDROBE_D+(W-BED_GAP_RIGHT-BED_W-WARDROBE_X-WARDROBE_D-VANITY_W)/2; // по центру
+// Кресло перед туалетным столиком: ширина 820мм, глубина 960мм
+const CHAIR_W=0.82,CHAIR_D=0.96;
+const CHAIR_X=VANITY_X+(VANITY_W-CHAIR_W)/2; // по центру относительно столика
+const CHAIR_Y=VANITY_GAP+VANITY_D+0.25; // 250мм от столика
 // Проём в горизонтальной двойной перегородке: сразу от вертикальной перегородки
 const HDOOR_X=PIPES_END+GKL3_LAYER*2+GKL3_GAP; // начало правого проёма
 // Левый проём: отступ 200мм от внутренней стены
@@ -123,6 +139,119 @@ export default function FloorPlan(){
               <line x1={sx3-6} y1={sy3} x2={sx3-2} y2={sy3} stroke="#6a5acd66"/>
               <text x={sx3-12} y={(sy2+sy3)/2} fill="#6a5acd" fontSize={7} textAnchor="middle" transform={`rotate(-90,${sx3-12},${(sy2+sy3)/2})`}>{(SOFA_D*1000).toFixed(0)}</text>
               <text x={(sx2+sx3)/2} y={(sy2+sy3)/2} textAnchor="middle" dominantBaseline="middle" fill="#6a5acd" fontSize={9}>диван</text>
+            </>;
+          })()}
+          {/* Двухспальная кровать перпендикулярно верхней стене */}
+          {(()=>{
+            const bx=p+(W-BED_GAP_RIGHT-BED_W)*s, by=p+BED_GAP_TOP*s;
+            const bw=BED_W*s, bh=BED_L*s;
+            return <>
+              <rect x={bx} y={by} width={bw} height={bh} fill="#6a5acd22" stroke="#6a5acd" strokeWidth={1.5} rx={3}/>
+              {/* Подушки (два прямоугольника сверху) */}
+              <rect x={bx+4} y={by+4} width={bw/2-6} height={bh*0.15} fill="#6a5acd33" stroke="#6a5acd88" strokeWidth={0.5} rx={2}/>
+              <rect x={bx+bw/2+2} y={by+4} width={bw/2-6} height={bh*0.15} fill="#6a5acd33" stroke="#6a5acd88" strokeWidth={0.5} rx={2}/>
+              {/* Размер ширины (сверху внутри) */}
+              <line x1={bx} y1={by+bh*0.22} x2={bx+bw} y2={by+bh*0.22} stroke="#6a5acd66"/>
+              <line x1={bx} y1={by+bh*0.22-2} x2={bx} y2={by+bh*0.22+2} stroke="#6a5acd66"/>
+              <line x1={bx+bw} y1={by+bh*0.22-2} x2={bx+bw} y2={by+bh*0.22+2} stroke="#6a5acd66"/>
+              <text x={bx+bw/2} y={by+bh*0.22+10} textAnchor="middle" fill="#6a5acd" fontSize={7}>{(BED_W*1000).toFixed(0)}</text>
+              {/* Размер длины (справа внутри) */}
+              <line x1={bx+bw-4} y1={by} x2={bx+bw-4} y2={by+bh} stroke="#6a5acd66"/>
+              <line x1={bx+bw-6} y1={by} x2={bx+bw-2} y2={by} stroke="#6a5acd66"/>
+              <line x1={bx+bw-6} y1={by+bh} x2={bx+bw-2} y2={by+bh} stroke="#6a5acd66"/>
+              <text x={bx+bw-12} y={by+bh/2} fill="#6a5acd" fontSize={7} textAnchor="middle" transform={`rotate(-90,${bx+bw-12},${by+bh/2})`}>{(BED_L*1000).toFixed(0)}</text>
+              <text x={bx+bw/2} y={by+bh*0.6} textAnchor="middle" dominantBaseline="middle" fill="#6a5acd" fontSize={9}>кровать</text>
+              {/* Расстояние до правой стены */}
+              <line x1={bx+bw} y1={by+bh/2} x2={p+W*s} y2={by+bh/2} stroke="#4fc3f788"/>
+              <line x1={bx+bw} y1={by+bh/2-2} x2={bx+bw} y2={by+bh/2+2} stroke="#4fc3f788"/>
+              <line x1={p+W*s} y1={by+bh/2-2} x2={p+W*s} y2={by+bh/2+2} stroke="#4fc3f788"/>
+              <text x={(bx+bw+p+W*s)/2} y={by+bh/2-4} textAnchor="middle" fill="#4fc3f7" fontSize={7}>{(BED_GAP_RIGHT*1000).toFixed(0)}</text>
+            </>;
+          })()}
+          {/* Шкаф вдоль двойной вертикальной перегородки */}
+          {(()=>{
+            const wx=p+WARDROBE_X*s, wy=p+WARDROBE_Y*s;
+            const ww=WARDROBE_D*s, wh=WARDROBE_L*s;
+            return <>
+              <rect x={wx} y={wy} width={ww} height={wh} fill="#8b451322" stroke="#8b4513" strokeWidth={1.5} rx={2}/>
+                            {/* Размер глубины (сверху внутри) */}
+              <line x1={wx} y1={wy+8} x2={wx+ww} y2={wy+8} stroke="#8b451366"/>
+              <line x1={wx} y1={wy+6} x2={wx} y2={wy+10} stroke="#8b451366"/>
+              <line x1={wx+ww} y1={wy+6} x2={wx+ww} y2={wy+10} stroke="#8b451366"/>
+              <text x={wx+ww/2} y={wy+18} textAnchor="middle" fill="#8b4513" fontSize={7}>{(WARDROBE_D*1000).toFixed(0)}</text>
+              {/* Размер длины (слева внутри) */}
+              <line x1={wx+4} y1={wy} x2={wx+4} y2={wy+wh} stroke="#8b451366"/>
+              <line x1={wx+2} y1={wy} x2={wx+6} y2={wy} stroke="#8b451366"/>
+              <line x1={wx+2} y1={wy+wh} x2={wx+6} y2={wy+wh} stroke="#8b451366"/>
+              <text x={wx+12} y={wy+wh/2} fill="#8b4513" fontSize={7} textAnchor="middle" transform={`rotate(-90,${wx+12},${wy+wh/2})`}>{(WARDROBE_L*1000).toFixed(0)}</text>
+              <text x={wx+ww/2} y={wy+wh/2} textAnchor="middle" dominantBaseline="middle" fill="#8b4513" fontSize={8} transform={`rotate(-90,${wx+ww/2},${wy+wh/2})`}>шкаф</text>
+            </>;
+          })()}
+          {/* Туалетный столик у верхней стены между шкафом и кроватью */}
+          {(()=>{
+            const vx=p+VANITY_X*s, vy=p+VANITY_GAP*s;
+            const vw=VANITY_W*s, vh=VANITY_D*s;
+            return <>
+              <rect x={vx} y={vy} width={vw} height={vh} fill="#daa52022" stroke="#daa520" strokeWidth={1.5} rx={2}/>
+              {/* Зеркало (дуга сверху) */}
+              <ellipse cx={vx+vw/2} cy={vy+2} rx={vw*0.35} ry={8} fill="none" stroke="#daa52088" strokeWidth={1}/>
+              {/* Размер ширины (внутри) */}
+              <line x1={vx} y1={vy+vh-6} x2={vx+vw} y2={vy+vh-6} stroke="#daa52066"/>
+              <line x1={vx} y1={vy+vh-8} x2={vx} y2={vy+vh-4} stroke="#daa52066"/>
+              <line x1={vx+vw} y1={vy+vh-8} x2={vx+vw} y2={vy+vh-4} stroke="#daa52066"/>
+              <text x={vx+vw/2} y={vy+vh-10} textAnchor="middle" fill="#daa520" fontSize={7}>{(VANITY_W*1000).toFixed(0)}</text>
+              {/* Размер глубины (справа внутри) */}
+              <line x1={vx+vw-4} y1={vy} x2={vx+vw-4} y2={vy+vh} stroke="#daa52066"/>
+              <line x1={vx+vw-6} y1={vy} x2={vx+vw-2} y2={vy} stroke="#daa52066"/>
+              <line x1={vx+vw-6} y1={vy+vh} x2={vx+vw-2} y2={vy+vh} stroke="#daa52066"/>
+              <text x={vx+vw-10} y={vy+vh/2+3} fill="#daa520" fontSize={7}>{(VANITY_D*1000).toFixed(0)}</text>
+              {/* Расстояние до шкафа (слева) */}
+              {(()=>{
+                const shelfRight=p+(WARDROBE_X+WARDROBE_D)*s;
+                const dist=(VANITY_X-(WARDROBE_X+WARDROBE_D))*1000;
+                const dimY=vy+vh/2;
+                return <>
+                  <line x1={shelfRight} y1={dimY} x2={vx} y2={dimY} stroke="#4fc3f788"/>
+                  <line x1={shelfRight} y1={dimY-2} x2={shelfRight} y2={dimY+2} stroke="#4fc3f788"/>
+                  <line x1={vx} y1={dimY-2} x2={vx} y2={dimY+2} stroke="#4fc3f788"/>
+                  <text x={(shelfRight+vx)/2} y={dimY-4} textAnchor="middle" fill="#4fc3f7" fontSize={7}>{dist.toFixed(0)}</text>
+                </>;
+              })()}
+              {/* Расстояние до кровати (справа) */}
+              {(()=>{
+                const bedLeft=p+(W-BED_GAP_RIGHT-BED_W)*s;
+                const dist=((W-BED_GAP_RIGHT-BED_W)-(VANITY_X+VANITY_W))*1000;
+                const dimY=vy+vh/2;
+                return <>
+                  <line x1={vx+vw} y1={dimY} x2={bedLeft} y2={dimY} stroke="#4fc3f788"/>
+                  <line x1={vx+vw} y1={dimY-2} x2={vx+vw} y2={dimY+2} stroke="#4fc3f788"/>
+                  <line x1={bedLeft} y1={dimY-2} x2={bedLeft} y2={dimY+2} stroke="#4fc3f788"/>
+                  <text x={(vx+vw+bedLeft)/2} y={dimY-4} textAnchor="middle" fill="#4fc3f7" fontSize={7}>{dist.toFixed(0)}</text>
+                </>;
+              })()}
+            </>;
+          })()}
+          {/* Кресло перед туалетным столиком */}
+          {(()=>{
+            const cx=p+CHAIR_X*s, cy=p+CHAIR_Y*s;
+            const cw=CHAIR_W*s, ch=CHAIR_D*s;
+            return <>
+              <rect x={cx} y={cy} width={cw} height={ch} fill="#daa52022" stroke="#daa520" strokeWidth={1.5} rx={4}/>
+              {/* Спинка (снизу, развёрнуто на 180°) */}
+              <rect x={cx+4} y={cy+ch-ch*0.15-2} width={cw-8} height={ch*0.15} fill="#daa52033" stroke="#daa52088" strokeWidth={0.5} rx={2}/>
+              {/* Подлокотники */}
+              <rect x={cx+2} y={cy+ch*0.15} width={cw*0.12} height={ch*0.7} fill="#daa52033" stroke="#daa52088" strokeWidth={0.5} rx={2}/>
+              <rect x={cx+cw-2-cw*0.12} y={cy+ch*0.15} width={cw*0.12} height={ch*0.7} fill="#daa52033" stroke="#daa52088" strokeWidth={0.5} rx={2}/>
+              {/* Размеры внутри */}
+              <line x1={cx} y1={cy+6} x2={cx+cw} y2={cy+6} stroke="#daa52066"/>
+              <line x1={cx} y1={cy+4} x2={cx} y2={cy+8} stroke="#daa52066"/>
+              <line x1={cx+cw} y1={cy+4} x2={cx+cw} y2={cy+8} stroke="#daa52066"/>
+              <text x={cx+cw/2} y={cy+18} textAnchor="middle" fill="#daa520" fontSize={7}>{(CHAIR_W*1000).toFixed(0)}</text>
+              <line x1={cx+cw-6} y1={cy} x2={cx+cw-6} y2={cy+ch} stroke="#daa52066"/>
+              <line x1={cx+cw-8} y1={cy} x2={cx+cw-4} y2={cy} stroke="#daa52066"/>
+              <line x1={cx+cw-8} y1={cy+ch} x2={cx+cw-4} y2={cy+ch} stroke="#daa52066"/>
+              <text x={cx+cw-14} y={cy+ch/2} fill="#daa520" fontSize={7} textAnchor="middle" transform={`rotate(-90,${cx+cw-14},${cy+ch/2})`}>{(CHAIR_D*1000).toFixed(0)}</text>
+              <text x={cx+cw/2} y={cy+ch-ch*0.15-6} textAnchor="middle" fill="#daa520" fontSize={8}>кресло</text>
             </>;
           })()}
           {/* Внутренняя стена: от нижней стены вверх */}
@@ -272,24 +401,21 @@ export default function FloorPlan(){
           })()}
           {/* Обозначение ванной комнаты */}
           <text x={p+((IWALL_X+IWALL_T)+WC_RIGHT)/2*s} y={p+(H-IWALL_LEN+GKL_T+0.3)*s} textAnchor="middle" dominantBaseline="middle" fill="#5dade2" fontSize={11} fontWeight="bold">Ванная</text>
+          {/* Обозначение спальни (комната с диваном) */}
+          <text x={p+((PIPES_END+GKL3_LAYER*2+GKL3_GAP)+W)/2*s} y={p+2.8*s} textAnchor="middle" dominantBaseline="middle" fill="#6a5acd" fontSize={14} fontWeight="bold">Спальня</text>
+          {/* Длина верхней стены спальни (от двойной перегородки до правой стены) */}
+          {(()=>{
+            const x1=p+(PIPES_END+GKL3_LAYER*2+GKL3_GAP)*s, x2=p+W*s, y=p-10;
+            const len=(W-(PIPES_END+GKL3_LAYER*2+GKL3_GAP))*1000;
+            return <>
+              <line x1={x1} y1={y} x2={x2} y2={y} stroke="#4fc3f788"/>
+              <line x1={x1} y1={y-2} x2={x1} y2={y+2} stroke="#4fc3f788"/>
+              <line x1={x2} y1={y-2} x2={x2} y2={y+2} stroke="#4fc3f788"/>
+              <text x={(x1+x2)/2} y={y-4} textAnchor="middle" fill="#4fc3f7" fontSize={9}>{len.toFixed(0)}</text>
+            </>;
+          })()}
           {/* Колонна: на уровне торца стены, 2240мм от внутренней стены */}
           <rect x={p+(IWALL_X+IWALL_T+COL_DIST)*s} y={p+(H-IWALL_LEN)*s} width={COL_W*s} height={COL_H*s} fill="#e0e0e0" stroke="#888" strokeWidth={1}/>
-          {/* Размеры от верхнего правого угла колонны до стен с засечками */}
-          {/* До правой стены */}
-          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y1={p+(H-IWALL_LEN)*s} x2={p+W*s} y2={p+(H-IWALL_LEN)*s} stroke="#88888888"/>
-          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y1={p+(H-IWALL_LEN)*s-2} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y2={p+(H-IWALL_LEN)*s+2} stroke="#88888888"/>
-          <line x1={p+W*s} y1={p+(H-IWALL_LEN)*s-2} x2={p+W*s} y2={p+(H-IWALL_LEN)*s+2} stroke="#88888888"/>
-          <text x={p+((IWALL_X+IWALL_T+COL_DIST+COL_W)+W)/2*s} y={p+(H-IWALL_LEN)*s-4} textAnchor="middle" fill="#888" fontSize={8}>{((W-IWALL_X-IWALL_T-COL_DIST-COL_W)*1000).toFixed(0)}</text>
-          {/* До верхней стены */}
-          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y1={p} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y2={p+(H-IWALL_LEN)*s} stroke="#88888888"/>
-          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s-2} y1={p} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s+2} y2={p} stroke="#88888888"/>
-          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s-2} y1={p+(H-IWALL_LEN)*s} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s+2} y2={p+(H-IWALL_LEN)*s} stroke="#88888888"/>
-          <text x={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s+4} y={p+(H-IWALL_LEN)/2*s} fill="#888" fontSize={8}>{((H-IWALL_LEN)*1000).toFixed(0)}</text>
-          {/* До нижней стены */}
-          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y1={p+(H-IWALL_LEN)*s} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y2={p+H*s} stroke="#88888888"/>
-          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s-2} y1={p+(H-IWALL_LEN)*s} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s+2} y2={p+(H-IWALL_LEN)*s} stroke="#88888888"/>
-          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s-2} y1={p+H*s} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s+2} y2={p+H*s} stroke="#88888888"/>
-          <text x={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s+4} y={p+(H-IWALL_LEN+IWALL_LEN/2)*s} fill="#888" fontSize={8}>{(IWALL_LEN*1000).toFixed(0)}</text>
           {/* Размеры внутренней стены (слева) с засечками */}
           <line x1={p+IWALL_X*s-10} y1={p+(H-IWALL_LEN)*s} x2={p+IWALL_X*s-10} y2={p+H*s} stroke="#4fc3f788"/>
           <line x1={p+IWALL_X*s-12} y1={p+(H-IWALL_LEN)*s} x2={p+IWALL_X*s-8} y2={p+(H-IWALL_LEN)*s} stroke="#4fc3f788"/>
