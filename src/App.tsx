@@ -2,14 +2,16 @@ import { useState } from 'react'
 import FloorPlan from './2nd-floor-plan'
 import StairDetail from './stair-detail'
 import Stair3D from './stair-3d'
+import PartitionFrame from './partition-frame'
 
-type View = 'floor' | 'detail' | '3d'
+type View = 'floor' | 'detail' | '3d' | 'partition'
 
 export default function App() {
   const [view, setView] = useState<View>('floor')
 
   const tabs: { id: View; label: string }[] = [
     { id: 'floor', label: 'План 2 этажа' },
+    { id: 'partition', label: 'Каркас перегородки' },
     { id: 'detail', label: 'Детали лестницы' },
     { id: '3d', label: '3D модель' },
   ]
@@ -46,6 +48,7 @@ export default function App() {
       </nav>
 
       {view === 'floor' && <FloorPlan />}
+      {view === 'partition' && <PartitionFrame />}
       {view === 'detail' && <StairDetail />}
       {view === '3d' && <Stair3D />}
     </div>

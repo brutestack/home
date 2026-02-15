@@ -157,6 +157,10 @@ export default function FloorPlan(){
           <DoorwayCross x1={p+PIPES_END*s} y1={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)*s} x2={p+(PIPES_END+GKL3_LAYER*2+GKL3_GAP)*s} y2={p+(H-IWALL_LEN-DOOR_OFFSET)*s} color={C_COLUMN_BORDER}/>
           <text x={p+(PIPES_END+GKL3_LAYER+GKL3_GAP/2)*s} y={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W/2)*s} textAnchor="middle" fill={C_GKL_TEXT} fontSize={7}>{DOOR_W*1000}</text>
           <text x={p+(PIPES_END+GKL3_LAYER+GKL3_GAP/2)*s} y={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)/2*s} textAnchor="middle" fill={C_GKL_TEXT} fontSize={7} transform={`rotate(-90,${p+(PIPES_END+GKL3_LAYER+GKL3_GAP/2)*s},${p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)/2*s})`}>ГКЛ</text>
+          {/* Размерная линия: длина двойной перегородки до проёма */}
+          <VDim x={p+PIPES_END*s-8} y1={p} y2={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)*s}
+            color={C_GKL} textColor={C_GKL} fontSize={8} labelX={p+PIPES_END*s-12}
+            label={((H-IWALL_LEN-DOOR_OFFSET-DOOR_W)*1000).toFixed(0)} rotate/>
           {/* Горизонтальная одинарная перегородка над проёмом (отгораживает шкаф) */}
           <GklPanel x={p+(PIPES_END+GKL3_LAYER*2+GKL3_GAP)*s} y={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W-GKL4_T)*s} width={GKL4_W*s} height={GKL4_T*s}/>
           {/* Ванна вдоль правой стены ванной комнаты */}
