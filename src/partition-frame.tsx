@@ -467,11 +467,11 @@ export default function PartitionFrame() {
 
   // === Разрез двойной перегородки ===
   const SectionView = () => {
-    const w = 240;
-    const svgH = 280;
-    const s = 0.6;
-    const h = 150; // Высота схемы
-    const topY = 50; // Начало схемы от верха
+    const w = 408;
+    const svgH = 476;
+    const s = 1.02;
+    const h = 255; // Высота схемы
+    const topY = 85; // Начало схемы от верха
 
     // Позиции слоёв
     const layer1X = 0;
@@ -547,14 +547,13 @@ export default function PartitionFrame() {
 
   // === Вид спереди горизонтальной части (со стороны двери в ванную) ===
   const HorizFrontView = () => {
-    const s = 0.2;
-    const w = 440;
-    const topY = 55; // верхний отступ для схемы
-    const schemaH = CEILING_H * s; // 560px
-    const svgH = topY + schemaH + 45; // 660px
+    const s = 0.266;
+    const w = 585;
+    const topY = 73; // верхний отступ для схемы
+    const schemaH = CEILING_H * s; // 745px
+    const svgH = topY + schemaH + 60; // 878px
 
     // Горизонтальное центрирование (только чертёж, без размерных линий)
-    // Ширина чертёжа: PARTITION_T + GKL_LAYER + HORIZ_W = 900мм × 0.2 = 180px
     const drawingW = (PARTITION_T + GKL_LAYER + HORIZ_W) * s;
     const p = (w - drawingW) / 2;
 
@@ -680,11 +679,11 @@ export default function PartitionFrame() {
 
   // === Разрез горизонтальной части (одинарная 50 мм с ЛДСП с двух сторон) ===
   const HorizSectionView = () => {
-    const w = 240;
-    const svgH = 280;
-    const s = 0.8;
-    const h = 150; // Высота схемы
-    const topY = 50; // Начало схемы от верха
+    const w = 408;
+    const svgH = 476;
+    const s = 1.36;
+    const h = 255; // Высота схемы
+    const topY = 85; // Начало схемы от верха
 
     // Центрирование по горизонтали
     const schemaW = (PS_W + PANEL_T * 2) * s;
