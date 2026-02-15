@@ -1,5 +1,10 @@
 import { useState } from "react";
-const S=70,WALL=4,W=9.4,H=5.4,CW=W*S,CH=H*S,PAD=60;
+const S=70,W=9.4,H=5.4,CW=W*S,CH=H*S;
+// Толщина внешних стен 250мм, добавляется снаружи
+const OWALL_T=0.25,OWALL_PX=OWALL_T*S;
+// Толщина рамы окна 70мм
+const WIN_FRAME=0.07,WIN_FRAME_PX=WIN_FRAME*S;
+const PAD=60+OWALL_PX; // увеличиваем отступ на толщину стены
 // Внутренняя стена: 3м от левой стены, длина 2630мм, толщина 250мм
 const IWALL_X=3.0,IWALL_LEN=2.63,IWALL_T=0.25;
 // Колонна: 200x150мм, на расстоянии 2240мм от внутренней стены, на уровне торца внутренней стены
@@ -51,6 +56,16 @@ const WC_RIGHT=IWALL_X+IWALL_T+COL_DIST+COL_W-GKL2_T; // правая стена
 const SINK_SIZE=0.55,SINK_GAP=0.05;
 // Окно на верхней стене: от 2540мм, ширина 1250мм
 const WIN_X=2.54,WIN_W=1.25;
+// Окно на правой стене (балконная дверь): от 620мм от нижнего угла, ширина 2270мм
+const WIN3_START=0.62,WIN3_W=2.27;
+// Открывающаяся створка: петли на 40мм от нижнего края, длина 750мм
+const DOOR3_HINGE=0.04,DOOR3_LEN=0.75;
+// Окно на правой стене (верхнее): от 620мм от верхнего угла, ширина 1250мм
+const WIN4_START=0.62,WIN4_W=1.25;
+// Окно на левой стене: от 620мм от нижнего угла, ширина 1250мм
+const WIN5_START=0.62,WIN5_W=1.25;
+// Форточка на левой стене: от 1640мм от верхнего угла, ширина 910мм
+const WIN6_START=1.64,WIN6_W=0.91;
 // Окно на нижней стене ванной: 630мм от левой стены ванной, ширина 1250мм
 const WIN2_X=IWALL_X+IWALL_T+0.63,WIN2_W=1.25;
 const PLAT_X=0.05,PLAT_W=0.75,MARCH_W=PROEM_H/2;
@@ -74,8 +89,8 @@ export default function FloorPlan(){
       <h2 style={{textAlign:"center",color:"#fff",margin:"0 0 4px"}}>План 2-го этажа</h2>
       <p style={{textAlign:"center",color:"#888",margin:"0 0 16px",fontSize:14}}>{W*1000}×{H*1000} мм | Высота: 2800 мм | Площадь: {(W*H).toFixed(1)} м² | <span style={{color:"#4fc3f7"}}>все размеры в мм</span></p>
       <div style={{display:"flex",justifyContent:"center"}}>
-        <svg viewBox={`0 0 ${CW+p*2} ${CH+p*2}`}
-          onMouseMove={e=>{const r=e.currentTarget.getBoundingClientRect();const scale=(CW+p*2)/r.width;const x=(e.clientX-r.left)*scale,y=(e.clientY-r.top)*scale;if(x>=p&&x<=p+CW&&y>=p&&y<=p+CH)setMouse({x,y});else setMouse(null);}}
+        <svg viewBox={`0 0 ${CW+p*2+OWALL_PX} ${CH+p*2+OWALL_PX}`}
+          onMouseMove={e=>{const r=e.currentTarget.getBoundingClientRect();const scale=(CW+p*2+OWALL_PX)/r.width;const x=(e.clientX-r.left)*scale,y=(e.clientY-r.top)*scale;if(x>=p&&x<=p+CW&&y>=p&&y<=p+CH)setMouse({x,y});else setMouse(null);}}
           onMouseLeave={()=>setMouse(null)}
           style={{width:1000,height:"auto",background:"#16213e",borderRadius:8}}>
           {Array.from({length:Math.floor(W)+1},(_,i)=><line key={`gv${i}`} x1={p+i*s} y1={p} x2={p+i*s} y2={p+CH} stroke="#ffffff08"/>)}
@@ -107,14 +122,37 @@ export default function FloorPlan(){
           <text x={pr.r+20} y={pr.y+pr.h/2+4} fill="#ff9800" fontSize={10}>{PROEM_H*1000}</text>
           <line x1={p-12} y1={p} x2={p-12} y2={p+PROEM_Y*s} stroke="#ff980066"/>
           <text x={p-16} y={p+PROEM_Y*s/2+3} textAnchor="end" fill="#ff980099" fontSize={9}>{PROEM_Y*1000}</text>
-          <rect x={p} y={p} width={CW} height={CH} fill="none" stroke="#e0e0e0" strokeWidth={WALL}/>
-          {/* Зона проводки/труб на верхней стене */}
-          <rect x={p+PIPES_START*s} y={p-WALL/2} width={(PIPES_END-PIPES_START)*s} height={12} fill="#e91e63" stroke="#e91e63" strokeWidth={1}/>
-          <text x={p+(PIPES_START+PIPES_END)/2*s} y={p-WALL/2-4} textAnchor="middle" fill="#e91e63" fontSize={7}>проводка/трубы</text>
-          {/* Окно на верхней стене */}
-          <rect x={p+WIN_X*s} y={p-WALL/2} width={WIN_W*s} height={WALL} fill="#4fc3f7" stroke="#4fc3f7" strokeWidth={1}/>
+          {/* Внешние стены толщиной 250мм (снаружи от внутреннего пространства) */}
+          {/* Верхняя стена — с разрывом для окна */}
+          <rect x={p-OWALL_PX} y={p-OWALL_PX} width={WIN_X*s+OWALL_PX} height={OWALL_PX} fill="#e0e0e0"/>
+          <rect x={p+(WIN_X+WIN_W)*s} y={p-OWALL_PX} width={CW-(WIN_X+WIN_W)*s+OWALL_PX} height={OWALL_PX} fill="#e0e0e0"/>
+          {/* Нижняя стена — с разрывом для окна ванной */}
+          <rect x={p-OWALL_PX} y={p+CH} width={WIN2_X*s+OWALL_PX} height={OWALL_PX} fill="#e0e0e0"/>
+          <rect x={p+(WIN2_X+WIN2_W)*s} y={p+CH} width={CW-(WIN2_X+WIN2_W)*s+OWALL_PX} height={OWALL_PX} fill="#e0e0e0"/>
+          {/* Левая стена — с разрывами для форточки и окна */}
+          {/* Часть выше форточки */}
+          <rect x={p-OWALL_PX} y={p-OWALL_PX} width={OWALL_PX} height={WIN6_START*s+OWALL_PX} fill="#e0e0e0"/>
+          {/* Часть между форточкой и окном */}
+          <rect x={p-OWALL_PX} y={p+(WIN6_START+WIN6_W)*s} width={OWALL_PX} height={(H-WIN5_START-WIN5_W-WIN6_START-WIN6_W)*s} fill="#e0e0e0"/>
+          {/* Часть ниже окна */}
+          <rect x={p-OWALL_PX} y={p+(H-WIN5_START)*s} width={OWALL_PX} height={WIN5_START*s+OWALL_PX} fill="#e0e0e0"/>
+          {/* Правая стена — с разрывами для верхнего окна и балконной двери */}
+          {/* Часть выше верхнего окна */}
+          <rect x={p+CW} y={p-OWALL_PX} width={OWALL_PX} height={WIN4_START*s+OWALL_PX} fill="#e0e0e0"/>
+          {/* Часть между верхним окном и балконной дверью */}
+          <rect x={p+CW} y={p+(WIN4_START+WIN4_W)*s} width={OWALL_PX} height={(H-WIN3_START-WIN3_W-WIN4_START-WIN4_W)*s} fill="#e0e0e0"/>
+          {/* Часть ниже балконной двери */}
+          <rect x={p+CW} y={p+(H-WIN3_START)*s} width={OWALL_PX} height={WIN3_START*s+OWALL_PX} fill="#e0e0e0"/>
+          {/* Внутренняя граница стен */}
+          <rect x={p} y={p} width={CW} height={CH} fill="none" stroke="#c0c0c0" strokeWidth={1}/>
+          {/* Зона проводки/труб на верхней стене (внутри помещения, 100мм вниз) */}
+          <rect x={p+PIPES_START*s} y={p} width={(PIPES_END-PIPES_START)*s} height={0.1*s} fill="#e91e6333" stroke="#e91e63" strokeWidth={1}/>
+          <text x={p+(PIPES_START+PIPES_END)/2*s} y={p+0.1*s+10} textAnchor="middle" fill="#e91e63" fontSize={7}>проводка/</text>
+          <text x={p+(PIPES_START+PIPES_END)/2*s} y={p+0.1*s+18} textAnchor="middle" fill="#e91e63" fontSize={7}>трубы</text>
+          {/* Окно на верхней стене (рама 70мм у внешнего края) */}
+          <rect x={p+WIN_X*s} y={p-OWALL_PX} width={WIN_W*s} height={WIN_FRAME_PX} fill="#4fc3f7" stroke="#4fc3f7" strokeWidth={1}/>
           <line x1={p+WIN_X*s} y1={p} x2={p+(WIN_X+WIN_W)*s} y2={p} stroke="#1a1a2e" strokeWidth={2}/>
-          <text x={p+(WIN_X+WIN_W/2)*s} y={p-12} textAnchor="middle" fill="#4fc3f7" fontSize={8}>окно {WIN_W*1000}</text>
+          <text x={p+(WIN_X+WIN_W/2)*s} y={p-OWALL_PX-4} textAnchor="middle" fill="#4fc3f7" fontSize={8}>окно {WIN_W*1000}</text>
           {/* Угловой диван в правом нижнем углу (L-форма со скруглёнными углами) */}
           {(()=>{
             const r=4,sx=p+SOFA_X*s,sy1=p+(H-SOFA_GAP_BOT-SOFA_S)*s,sx2=p+(SOFA_X+SOFA_D)*s,sy2=p+(H-SOFA_GAP_BOT-SOFA_D)*s,sx3=p+(SOFA_X+SOFA_L)*s,sy3=p+(H-SOFA_GAP_BOT)*s;
@@ -401,17 +439,17 @@ export default function FloorPlan(){
               <text x={dimX+4} y={(gklBottom+bathTop)/2+3} fill="#5dade2" fontSize={8}>{dist.toFixed(0)}</text>
             </>;
           })()}
-          {/* Окно на нижней стене ванной комнаты */}
-          <rect x={p+WIN2_X*s} y={p+CH-WALL/2} width={WIN2_W*s} height={WALL} fill="#4fc3f7" stroke="#4fc3f7" strokeWidth={1}/>
+          {/* Окно на нижней стене ванной комнаты (рама 70мм у внешнего края) */}
+          <rect x={p+WIN2_X*s} y={p+CH+OWALL_PX-WIN_FRAME_PX} width={WIN2_W*s} height={WIN_FRAME_PX} fill="#4fc3f7" stroke="#4fc3f7" strokeWidth={1}/>
           <line x1={p+WIN2_X*s} y1={p+CH} x2={p+(WIN2_X+WIN2_W)*s} y2={p+CH} stroke="#1a1a2e" strokeWidth={2}/>
-          <text x={p+(WIN2_X+WIN2_W/2)*s} y={p+CH+12} textAnchor="middle" fill="#4fc3f7" fontSize={8}>окно {WIN2_W*1000}</text>
+          <text x={p+(WIN2_X+WIN2_W/2)*s} y={p+CH+OWALL_PX+10} textAnchor="middle" fill="#4fc3f7" fontSize={8}>окно {WIN2_W*1000}</text>
           {/* Обозначение ванной комнаты */}
           <text x={p+((IWALL_X+IWALL_T)+WC_RIGHT)/2*s} y={p+(H-IWALL_LEN+GKL_T+0.3)*s} textAnchor="middle" dominantBaseline="middle" fill="#5dade2" fontSize={11} fontWeight="bold">Ванная</text>
           {/* Обозначение спальни (комната с диваном) */}
           <text x={p+((PIPES_END+GKL3_LAYER*2+GKL3_GAP)+W)/2*s} y={p+2.8*s} textAnchor="middle" dominantBaseline="middle" fill="#6a5acd" fontSize={14} fontWeight="bold">Спальня</text>
           {/* Длина верхней стены спальни (от двойной перегородки до правой стены) */}
           {(()=>{
-            const x1=p+(PIPES_END+GKL3_LAYER*2+GKL3_GAP)*s, x2=p+W*s, y=p-10;
+            const x1=p+(PIPES_END+GKL3_LAYER*2+GKL3_GAP)*s, x2=p+W*s, y=p-OWALL_PX-10;
             const len=(W-(PIPES_END+GKL3_LAYER*2+GKL3_GAP))*1000;
             return <>
               <line x1={x1} y1={y} x2={x2} y2={y} stroke="#4fc3f788"/>
@@ -433,25 +471,178 @@ export default function FloorPlan(){
           <line x1={p+IWALL_X*s-12} y1={p+(H-IWALL_LEN)*s} x2={p+IWALL_X*s-8} y2={p+(H-IWALL_LEN)*s} stroke="#4fc3f788"/>
           <text x={p+IWALL_X*s-14} y={(pr.b+p+(H-IWALL_LEN)*s)/2+3} textAnchor="end" fill="#4fc3f7" fontSize={9}>{((H-IWALL_LEN-PROEM_Y-PROEM_H)*1000).toFixed(0)}</text>
           {/* Расстояние от левой стены до внутренней стены с засечками */}
-          <line x1={p} y1={p+CH+16} x2={p+IWALL_X*s} y2={p+CH+16} stroke="#4fc3f788"/>
-          <line x1={p} y1={p+CH+14} x2={p} y2={p+CH+18} stroke="#4fc3f788"/>
-          <line x1={p+IWALL_X*s} y1={p+CH+14} x2={p+IWALL_X*s} y2={p+CH+18} stroke="#4fc3f788"/>
-          <text x={p+IWALL_X*s/2} y={p+CH+30} textAnchor="middle" fill="#4fc3f7" fontSize={9}>{IWALL_X*1000}</text>
+          <line x1={p} y1={p+CH+OWALL_PX+24} x2={p+IWALL_X*s} y2={p+CH+OWALL_PX+24} stroke="#4fc3f788"/>
+          <line x1={p} y1={p+CH+OWALL_PX+22} x2={p} y2={p+CH+OWALL_PX+26} stroke="#4fc3f788"/>
+          <line x1={p+IWALL_X*s} y1={p+CH+OWALL_PX+22} x2={p+IWALL_X*s} y2={p+CH+OWALL_PX+26} stroke="#4fc3f788"/>
+          <text x={p+IWALL_X*s/2} y={p+CH+OWALL_PX+38} textAnchor="middle" fill="#4fc3f7" fontSize={9}>{IWALL_X*1000}</text>
           {/* Ширина ванной комнаты (от внутренней стены до ГКЛ перегородки) */}
-          <line x1={p+(IWALL_X+IWALL_T)*s} y1={p+CH+16} x2={p+WC_RIGHT*s} y2={p+CH+16} stroke="#5dade288"/>
-          <line x1={p+(IWALL_X+IWALL_T)*s} y1={p+CH+14} x2={p+(IWALL_X+IWALL_T)*s} y2={p+CH+18} stroke="#5dade288"/>
-          <line x1={p+WC_RIGHT*s} y1={p+CH+14} x2={p+WC_RIGHT*s} y2={p+CH+18} stroke="#5dade288"/>
-          <text x={p+((IWALL_X+IWALL_T)+WC_RIGHT)/2*s} y={p+CH+30} textAnchor="middle" fill="#5dade2" fontSize={9}>{((WC_RIGHT-IWALL_X-IWALL_T)*1000).toFixed(0)}</text>
+          <line x1={p+(IWALL_X+IWALL_T)*s} y1={p+CH+OWALL_PX+24} x2={p+WC_RIGHT*s} y2={p+CH+OWALL_PX+24} stroke="#5dade288"/>
+          <line x1={p+(IWALL_X+IWALL_T)*s} y1={p+CH+OWALL_PX+22} x2={p+(IWALL_X+IWALL_T)*s} y2={p+CH+OWALL_PX+26} stroke="#5dade288"/>
+          <line x1={p+WC_RIGHT*s} y1={p+CH+OWALL_PX+22} x2={p+WC_RIGHT*s} y2={p+CH+OWALL_PX+26} stroke="#5dade288"/>
+          <text x={p+((IWALL_X+IWALL_T)+WC_RIGHT)/2*s} y={p+CH+OWALL_PX+38} textAnchor="middle" fill="#5dade2" fontSize={9}>{((WC_RIGHT-IWALL_X-IWALL_T)*1000).toFixed(0)}</text>
           {/* Ширина спальни (от ГКЛ перегородки до правой стены) */}
-          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y1={p+CH+16} x2={p+W*s} y2={p+CH+16} stroke="#4fc3f788"/>
-          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y1={p+CH+14} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y2={p+CH+18} stroke="#4fc3f788"/>
-          <line x1={p+W*s} y1={p+CH+14} x2={p+W*s} y2={p+CH+18} stroke="#4fc3f788"/>
-          <text x={p+((IWALL_X+IWALL_T+COL_DIST+COL_W)+W)/2*s} y={p+CH+30} textAnchor="middle" fill="#4fc3f7" fontSize={9}>{((W-IWALL_X-IWALL_T-COL_DIST-COL_W)*1000).toFixed(0)}</text>
-          <line x1={p} y1={p-28} x2={p+CW} y2={p-28} stroke="#4fc3f7"/>
-          <text x={p+CW/2} y={p-33} textAnchor="middle" fill="#4fc3f7" fontSize={13} fontWeight="bold">{W*1000}</text>
+          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y1={p+CH+OWALL_PX+24} x2={p+W*s} y2={p+CH+OWALL_PX+24} stroke="#4fc3f788"/>
+          <line x1={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y1={p+CH+OWALL_PX+22} x2={p+(IWALL_X+IWALL_T+COL_DIST+COL_W)*s} y2={p+CH+OWALL_PX+26} stroke="#4fc3f788"/>
+          <line x1={p+W*s} y1={p+CH+OWALL_PX+22} x2={p+W*s} y2={p+CH+OWALL_PX+26} stroke="#4fc3f788"/>
+          <text x={p+((IWALL_X+IWALL_T+COL_DIST+COL_W)+W)/2*s} y={p+CH+OWALL_PX+38} textAnchor="middle" fill="#4fc3f7" fontSize={9}>{((W-IWALL_X-IWALL_T-COL_DIST-COL_W)*1000).toFixed(0)}</text>
+          <line x1={p} y1={p-OWALL_PX-28} x2={p+CW} y2={p-OWALL_PX-28} stroke="#4fc3f7"/>
+          <text x={p+CW/2} y={p-OWALL_PX-33} textAnchor="middle" fill="#4fc3f7" fontSize={13} fontWeight="bold">{W*1000}</text>
           {/* Длина правой стены */}
-          <line x1={p+CW+28} y1={p} x2={p+CW+28} y2={p+CH} stroke="#4fc3f7"/>
-          <text x={p+CW+33} y={p+CH/2} textAnchor="middle" fill="#4fc3f7" fontSize={13} fontWeight="bold" transform={`rotate(90,${p+CW+33},${p+CH/2})`}>{H*1000}</text>
+          <line x1={p+CW+OWALL_PX+28} y1={p} x2={p+CW+OWALL_PX+28} y2={p+CH} stroke="#4fc3f7"/>
+          <text x={p+CW+OWALL_PX+33} y={p+CH/2} textAnchor="middle" fill="#4fc3f7" fontSize={13} fontWeight="bold" transform={`rotate(90,${p+CW+OWALL_PX+33},${p+CH/2})`}>{H*1000}</text>
+          {/* Окно на правой стене (балконная дверь, рама 70мм у внешнего края) */}
+          {(()=>{
+            const winY1=p+(H-WIN3_START)*s; // нижний край окна
+            const winY2=p+(H-WIN3_START-WIN3_W)*s; // верхний край окна
+            const winX=p+CW; // внутренняя граница стены
+            const frameX=winX+OWALL_PX-WIN_FRAME_PX; // внутренняя граница рамы (у внешнего края стены)
+            // Позиция петель (40мм от нижнего края окна), на внутренней границе рамы
+            const hingeY=winY1-DOOR3_HINGE*s;
+            // Длина створки
+            const doorLen=DOOR3_LEN*s;
+            // Угол открытия двери (приоткрытая ~30°)
+            const openAngle=30*Math.PI/180;
+            // Координаты конца открытой двери (от внутренней границы рамы)
+            const doorEndX=frameX-Math.sin(openAngle)*doorLen;
+            const doorEndY=hingeY-Math.cos(openAngle)*doorLen;
+            return <>
+              {/* Рама окна (70мм у внешнего края стены) */}
+              <rect x={frameX} y={winY2} width={WIN_FRAME_PX} height={WIN3_W*s} fill="#4fc3f7" stroke="#4fc3f7" strokeWidth={1}/>
+              <line x1={winX} y1={winY2} x2={winX} y2={winY1} stroke="#1a1a2e" strokeWidth={2}/>
+              {/* Размер окна */}
+              <text x={p+CW+OWALL_PX+8} y={(winY1+winY2)/2} textAnchor="middle" fill="#4fc3f7" fontSize={8} transform={`rotate(90,${p+CW+OWALL_PX+8},${(winY1+winY2)/2})`}>окно {WIN3_W*1000}</text>
+              {/* Дуга зоны открытия двери (от закрытого до 90°, от внутренней границы рамы) */}
+              <path d={`M${frameX},${hingeY-doorLen} A${doorLen},${doorLen} 0 0 0 ${frameX-doorLen},${hingeY}`} fill="none" stroke="#4fc3f755" strokeWidth={1} strokeDasharray="4 2"/>
+              {/* Створка двери (приоткрытая, толщина 70мм) */}
+              <line x1={frameX} y1={hingeY} x2={doorEndX} y2={doorEndY} stroke="#4fc3f7" strokeWidth={WIN_FRAME_PX}/>
+              {/* Петли (кружок) на внутренней границе рамы */}
+              <circle cx={frameX} cy={hingeY} r={WIN_FRAME_PX/2} fill="#4fc3f7"/>
+              {/* Размер створки */}
+              <text x={doorEndX-12} y={(hingeY+doorEndY)/2} textAnchor="end" fill="#4fc3f7" fontSize={7}>{DOOR3_LEN*1000}</text>
+            </>;
+          })()}
+          {/* Верхнее окно на правой стене (рама 70мм у внешнего края) */}
+          {(()=>{
+            const winY1=p+WIN4_START*s; // верхний край окна
+            const winY2=p+(WIN4_START+WIN4_W)*s; // нижний край окна
+            const winX=p+CW; // внутренняя граница стены
+            const frameX=winX+OWALL_PX-WIN_FRAME_PX; // внутренняя граница рамы
+            return <>
+              {/* Рама окна (70мм у внешнего края стены) */}
+              <rect x={frameX} y={winY1} width={WIN_FRAME_PX} height={WIN4_W*s} fill="#4fc3f7" stroke="#4fc3f7" strokeWidth={1}/>
+              <line x1={winX} y1={winY1} x2={winX} y2={winY2} stroke="#1a1a2e" strokeWidth={2}/>
+              {/* Размер окна */}
+              <text x={p+CW+OWALL_PX+8} y={(winY1+winY2)/2} textAnchor="middle" fill="#4fc3f7" fontSize={8} transform={`rotate(90,${p+CW+OWALL_PX+8},${(winY1+winY2)/2})`}>окно {WIN4_W*1000}</text>
+            </>;
+          })()}
+          {/* Окно на левой стене (рама 70мм у внешнего края) */}
+          {(()=>{
+            const winY1=p+(H-WIN5_START)*s; // нижний край окна
+            const winY2=p+(H-WIN5_START-WIN5_W)*s; // верхний край окна
+            const winX=p; // внутренняя граница стены
+            const frameX=winX-OWALL_PX; // внешняя граница рамы
+            return <>
+              {/* Рама окна (70мм у внешнего края стены) */}
+              <rect x={frameX} y={winY2} width={WIN_FRAME_PX} height={WIN5_W*s} fill="#4fc3f7" stroke="#4fc3f7" strokeWidth={1}/>
+              <line x1={winX} y1={winY2} x2={winX} y2={winY1} stroke="#1a1a2e" strokeWidth={2}/>
+              {/* Размер окна */}
+              <text x={p-OWALL_PX-8} y={(winY1+winY2)/2} textAnchor="middle" fill="#4fc3f7" fontSize={8} transform={`rotate(-90,${p-OWALL_PX-8},${(winY1+winY2)/2})`}>окно {WIN5_W*1000}</text>
+            </>;
+          })()}
+          {/* Форточка на левой стене (рама 70мм у внешнего края) */}
+          {(()=>{
+            const winY1=p+WIN6_START*s; // верхний край форточки
+            const winY2=p+(WIN6_START+WIN6_W)*s; // нижний край форточки
+            const winX=p; // внутренняя граница стены
+            const frameX=winX-OWALL_PX; // внешняя граница рамы
+            return <>
+              {/* Рама форточки (70мм у внешнего края стены) */}
+              <rect x={frameX} y={winY1} width={WIN_FRAME_PX} height={WIN6_W*s} fill="#4fc3f7" stroke="#4fc3f7" strokeWidth={1}/>
+              <line x1={winX} y1={winY1} x2={winX} y2={winY2} stroke="#1a1a2e" strokeWidth={2}/>
+              {/* Размер форточки */}
+              <text x={p-OWALL_PX-8} y={(winY1+winY2)/2} textAnchor="middle" fill="#4fc3f7" fontSize={8} transform={`rotate(-90,${p-OWALL_PX-8},${(winY1+winY2)/2})`}>форт. {WIN6_W*1000}</text>
+            </>;
+          })()}
+          {/* Размерные линии окон снаружи помещения */}
+          {(()=>{
+            const dimOffset=8; // отступ размерной линии от стены
+            // Верхняя стена: расстояния до окна (выровнено с размером спальни)
+            const topY=p-OWALL_PX-10;
+            const topWinLeft=p+WIN_X*s;
+            const topWinRight=p+(WIN_X+WIN_W)*s;
+            // Нижняя стена: расстояния до окна ванной
+            const botY=p+CH+OWALL_PX+dimOffset;
+            const botWinLeft=p+WIN2_X*s;
+            const botWinRight=p+(WIN2_X+WIN2_W)*s;
+            // Левая стена: расстояния до форточки и окна
+            const leftX=p-OWALL_PX-dimOffset;
+            const leftFortTop=p+WIN6_START*s;
+            const leftFortBot=p+(WIN6_START+WIN6_W)*s;
+            const leftWinTop=p+(H-WIN5_START-WIN5_W)*s;
+            const leftWinBot=p+(H-WIN5_START)*s;
+            // Правая стена: расстояния до окон
+            const rightX=p+CW+OWALL_PX+dimOffset;
+            const rightWin4Top=p+WIN4_START*s;
+            const rightWin4Bot=p+(WIN4_START+WIN4_W)*s;
+            const rightWin3Top=p+(H-WIN3_START-WIN3_W)*s;
+            const rightWin3Bot=p+(H-WIN3_START)*s;
+            return <>
+              {/* === Верхняя стена === */}
+              {/* От левого угла до окна */}
+              <line x1={p} y1={topY} x2={topWinLeft} y2={topY} stroke="#4fc3f788"/>
+              <line x1={p} y1={topY-2} x2={p} y2={topY+2} stroke="#4fc3f788"/>
+              <line x1={topWinLeft} y1={topY-2} x2={topWinLeft} y2={topY+2} stroke="#4fc3f788"/>
+              <text x={(p+topWinLeft)/2} y={topY-3} textAnchor="middle" fill="#4fc3f7" fontSize={7}>{WIN_X*1000}</text>
+              {/* От окна до ГКЛ перегородки (PIPES_END) */}
+              <line x1={topWinRight} y1={topY} x2={p+PIPES_END*s} y2={topY} stroke="#4fc3f788"/>
+              <line x1={topWinRight} y1={topY-2} x2={topWinRight} y2={topY+2} stroke="#4fc3f788"/>
+              <line x1={p+PIPES_END*s} y1={topY-2} x2={p+PIPES_END*s} y2={topY+2} stroke="#4fc3f788"/>
+              <text x={(topWinRight+p+PIPES_END*s)/2} y={topY-3} textAnchor="middle" fill="#4fc3f7" fontSize={7}>{((PIPES_END-WIN_X-WIN_W)*1000).toFixed(0)}</text>
+              {/* === Нижняя стена (окно ванной) === */}
+              {/* От внутренней стены (левая граница ванной) до окна */}
+              <line x1={p+(IWALL_X+IWALL_T)*s} y1={botY} x2={botWinLeft} y2={botY} stroke="#4fc3f788"/>
+              <line x1={p+(IWALL_X+IWALL_T)*s} y1={botY-2} x2={p+(IWALL_X+IWALL_T)*s} y2={botY+2} stroke="#4fc3f788"/>
+              <line x1={botWinLeft} y1={botY-2} x2={botWinLeft} y2={botY+2} stroke="#4fc3f788"/>
+              <text x={(p+(IWALL_X+IWALL_T)*s+botWinLeft)/2} y={botY+10} textAnchor="middle" fill="#4fc3f7" fontSize={7}>{((WIN2_X-IWALL_X-IWALL_T)*1000).toFixed(0)}</text>
+              {/* От окна до ГКЛ перегородки (правая граница ванной) */}
+              <line x1={botWinRight} y1={botY} x2={p+WC_RIGHT*s} y2={botY} stroke="#4fc3f788"/>
+              <line x1={botWinRight} y1={botY-2} x2={botWinRight} y2={botY+2} stroke="#4fc3f788"/>
+              <line x1={p+WC_RIGHT*s} y1={botY-2} x2={p+WC_RIGHT*s} y2={botY+2} stroke="#4fc3f788"/>
+              <text x={(botWinRight+p+WC_RIGHT*s)/2} y={botY+10} textAnchor="middle" fill="#4fc3f7" fontSize={7}>{((WC_RIGHT-WIN2_X-WIN2_W)*1000).toFixed(0)}</text>
+              {/* === Левая стена === */}
+              {/* От верхнего угла до форточки */}
+              <line x1={leftX} y1={p} x2={leftX} y2={leftFortTop} stroke="#4fc3f788"/>
+              <line x1={leftX-2} y1={p} x2={leftX+2} y2={p} stroke="#4fc3f788"/>
+              <line x1={leftX-2} y1={leftFortTop} x2={leftX+2} y2={leftFortTop} stroke="#4fc3f788"/>
+              <text x={leftX-3} y={(p+leftFortTop)/2} textAnchor="end" fill="#4fc3f7" fontSize={7} transform={`rotate(-90,${leftX-3},${(p+leftFortTop)/2})`}>{WIN6_START*1000}</text>
+              {/* От форточки до окна */}
+              <line x1={leftX} y1={leftFortBot} x2={leftX} y2={leftWinTop} stroke="#4fc3f788"/>
+              <line x1={leftX-2} y1={leftFortBot} x2={leftX+2} y2={leftFortBot} stroke="#4fc3f788"/>
+              <line x1={leftX-2} y1={leftWinTop} x2={leftX+2} y2={leftWinTop} stroke="#4fc3f788"/>
+              <text x={leftX-3} y={(leftFortBot+leftWinTop)/2} textAnchor="end" fill="#4fc3f7" fontSize={7} transform={`rotate(-90,${leftX-3},${(leftFortBot+leftWinTop)/2})`}>{((H-WIN5_START-WIN5_W-WIN6_START-WIN6_W)*1000).toFixed(0)}</text>
+              {/* От окна до нижнего угла */}
+              <line x1={leftX} y1={leftWinBot} x2={leftX} y2={p+CH} stroke="#4fc3f788"/>
+              <line x1={leftX-2} y1={leftWinBot} x2={leftX+2} y2={leftWinBot} stroke="#4fc3f788"/>
+              <line x1={leftX-2} y1={p+CH} x2={leftX+2} y2={p+CH} stroke="#4fc3f788"/>
+              <text x={leftX-3} y={(leftWinBot+p+CH)/2} textAnchor="end" fill="#4fc3f7" fontSize={7} transform={`rotate(-90,${leftX-3},${(leftWinBot+p+CH)/2})`}>{WIN5_START*1000}</text>
+              {/* === Правая стена === */}
+              {/* От верхнего угла до верхнего окна */}
+              <line x1={rightX} y1={p} x2={rightX} y2={rightWin4Top} stroke="#4fc3f788"/>
+              <line x1={rightX-2} y1={p} x2={rightX+2} y2={p} stroke="#4fc3f788"/>
+              <line x1={rightX-2} y1={rightWin4Top} x2={rightX+2} y2={rightWin4Top} stroke="#4fc3f788"/>
+              <text x={rightX+3} y={(p+rightWin4Top)/2} textAnchor="start" fill="#4fc3f7" fontSize={7} transform={`rotate(90,${rightX+3},${(p+rightWin4Top)/2})`}>{WIN4_START*1000}</text>
+              {/* От верхнего окна до балконной двери */}
+              <line x1={rightX} y1={rightWin4Bot} x2={rightX} y2={rightWin3Top} stroke="#4fc3f788"/>
+              <line x1={rightX-2} y1={rightWin4Bot} x2={rightX+2} y2={rightWin4Bot} stroke="#4fc3f788"/>
+              <line x1={rightX-2} y1={rightWin3Top} x2={rightX+2} y2={rightWin3Top} stroke="#4fc3f788"/>
+              <text x={rightX+3} y={(rightWin4Bot+rightWin3Top)/2} textAnchor="start" fill="#4fc3f7" fontSize={7} transform={`rotate(90,${rightX+3},${(rightWin4Bot+rightWin3Top)/2})`}>{((H-WIN3_START-WIN3_W-WIN4_START-WIN4_W)*1000).toFixed(0)}</text>
+              {/* От балконной двери до нижнего угла */}
+              <line x1={rightX} y1={rightWin3Bot} x2={rightX} y2={p+CH} stroke="#4fc3f788"/>
+              <line x1={rightX-2} y1={rightWin3Bot} x2={rightX+2} y2={rightWin3Bot} stroke="#4fc3f788"/>
+              <line x1={rightX-2} y1={p+CH} x2={rightX+2} y2={p+CH} stroke="#4fc3f788"/>
+              <text x={rightX+3} y={(rightWin3Bot+p+CH)/2} textAnchor="start" fill="#4fc3f7" fontSize={7} transform={`rotate(90,${rightX+3},${(rightWin3Bot+p+CH)/2})`}>{WIN3_START*1000}</text>
+            </>;
+          })()}
           {mouse&&<>
             <line x1={mouse.x} y1={p} x2={mouse.x} y2={p+CH} stroke="#4fc3f744" strokeDasharray="4"/>
             <line x1={p} y1={mouse.y} x2={p+CW} y2={mouse.y} stroke="#4fc3f744" strokeDasharray="4"/>
