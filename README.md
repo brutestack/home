@@ -1,5 +1,7 @@
 # Проект планировки дома — 2-й этаж и лестница
 
+[![GitHub](https://img.shields.io/badge/GitHub-brutestack%2Fhome-blue)](https://github.com/brutestack/home)
+
 ## Описание
 
 Интерактивная визуализация планировки второго этажа частного дома и проекта лестницы с первого на второй этаж. Проект включает:
@@ -217,7 +219,7 @@ const RISE_H = 187.5     // Высота подступёнка (мм)
 ## Структура проекта
 
 ```
-/home/mx16/Work/Home/
+home/
 ├── src/
 │   ├── App.tsx              # Главный компонент с навигацией (вкладки)
 │   ├── main.tsx             # Точка входа React
@@ -275,7 +277,11 @@ const RISE_H = 187.5     // Высота подступёнка (мм)
 ## Запуск проекта
 
 ```bash
-cd /home/mx16/Work/Home
+# Клонирование репозитория
+git clone https://github.com/brutestack/home.git
+cd home
+
+# Установка зависимостей и запуск
 npm install
 npm run dev
 ```
