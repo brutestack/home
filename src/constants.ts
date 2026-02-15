@@ -42,8 +42,8 @@ export const GKL2_T = 0.1;
 export const GKL3_LAYER = 0.05;
 export const GKL3_GAP = 0.05;
 
-// Горизонтальная одинарная (над проёмом в спальню): 600×50мм
-export const GKL4_W = 0.6;
+// Горизонтальная одинарная (над проёмом в спальню): 700×50мм
+export const GKL4_W = 0.7;
 export const GKL4_T = 0.05;
 
 // Проём в перегородках: ширина 900мм, отступ 50мм
@@ -100,8 +100,8 @@ export const BED_W = 1.6;
 export const BED_GAP_TOP = 0.1;
 export const BED_GAP_RIGHT = W - (SOFA_X + SOFA_L);
 
-// Шкаф: глубина 600мм
-export const WARDROBE_D = 0.6;
+// Шкаф: глубина 700мм
+export const WARDROBE_D = 0.7;
 export const WARDROBE_X = PIPES_END + GKL3_LAYER * 2 + GKL3_GAP;
 export const WARDROBE_Y = 0.02;
 export const WARDROBE_L = H - IWALL_LEN - DOOR_OFFSET - DOOR_W - GKL4_T - WARDROBE_Y;
