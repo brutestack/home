@@ -43,14 +43,16 @@ const HDOOR_X=PIPES_END+GKL3_LAYER*2+GKL3_GAP; // начало правого п
 const HDOOR_L_OFFSET=0.2;
 // Ванна: 1400x700мм, вдоль левой стены ванной комнаты, отступ 50мм от стен
 const BATH_L=1.4,BATH_W=0.7,BATH_GAP=0.05;
-// Унитаз: 650x380мм (бачок 200мм), у правой стены ванной (повёрнут на 90°)
-// Бачок 50мм от правой перегородки, нижняя сторона зоны комфорта 50мм от нижней стены
-const WC_L=0.65,WC_W=0.38,WC_TANK=0.2,WC_GAP_RIGHT=0.05,WC_GAP_BOT=0.30;
+// Унитаз: 650x380мм (бачок 200мм), у левой стены ванной (повёрнут на 90°)
+// Бачок 50мм от левой стены, выше угловой раковины
+const WC_L=0.65,WC_W=0.38,WC_TANK=0.2,WC_GAP_LEFT=0.05;
 const WC_RIGHT=IWALL_X+IWALL_T+COL_DIST+COL_W-GKL2_T; // правая стена ванной (левый край ГКЛ)
-// Шкаф с раковиной: 600x450мм, вдоль правой перегородки, выше зоны комфорта унитаза
-const SINK_W=0.6,SINK_D=0.45,SINK_GAP=0.05;
+// Угловая тумба с раковиной: 550x550мм, в нижнем правом углу ванной
+const SINK_SIZE=0.55,SINK_GAP=0.05;
 // Окно на верхней стене: от 2540мм, ширина 1250мм
 const WIN_X=2.54,WIN_W=1.25;
+// Окно на нижней стене ванной: 630мм от левой стены ванной, ширина 1250мм
+const WIN2_X=IWALL_X+IWALL_T+0.63,WIN2_W=1.25;
 const PLAT_X=0.05,PLAT_W=0.75,MARCH_W=PROEM_H/2;
 const M1_STEPS=5,M2_STEPS=8,TREAD=0.25,DOBOR_TREAD=0.20;
 const M1_LEN=M1_STEPS*TREAD,M2_LEN=M2_STEPS*TREAD,M2_FULL=M2_LEN+DOBOR_TREAD;
@@ -292,9 +294,9 @@ export default function FloorPlan(){
           <line x1={p+PIPES_END*s} y1={p+(H-IWALL_LEN-DOOR_OFFSET)*s} x2={p+(PIPES_END+GKL3_LAYER*2+GKL3_GAP)*s} y2={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)*s} stroke="#666" strokeWidth={1}/>
           <text x={p+(PIPES_END+GKL3_LAYER+GKL3_GAP/2)*s} y={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W/2)*s} textAnchor="middle" fill="#666" fontSize={7}>{DOOR_W*1000}</text>
           <text x={p+(PIPES_END+GKL3_LAYER+GKL3_GAP/2)*s} y={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)/2*s} textAnchor="middle" fill="#666" fontSize={7} transform={`rotate(-90,${p+(PIPES_END+GKL3_LAYER+GKL3_GAP/2)*s},${p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)/2*s})`}>ГКЛ</text>
-          {/* Ванна вдоль левой стены ванной комнаты, отступ 50мм от стен */}
+          {/* Ванна вдоль правой стены ванной комнаты (зеркально), отступ 50мм от стен */}
           {(()=>{
-            const bathX=p+(IWALL_X+IWALL_T+BATH_GAP)*s,bathY=p+(H-BATH_GAP-BATH_L)*s;
+            const bathX=p+(WC_RIGHT-BATH_GAP-BATH_W)*s,bathY=p+(H-BATH_GAP-BATH_L)*s;
             const bathW=BATH_W*s,bathH=BATH_L*s;
             return <>
               <rect x={bathX} y={bathY} width={bathW} height={bathH} fill="#5dade233" stroke="#5dade2" strokeWidth={1.5} rx={3}/>
@@ -303,94 +305,94 @@ export default function FloorPlan(){
               <line x1={bathX} y1={bathY+2} x2={bathX} y2={bathY+6} stroke="#5dade266"/>
               <line x1={bathX+bathW} y1={bathY+2} x2={bathX+bathW} y2={bathY+6} stroke="#5dade266"/>
               <text x={bathX+bathW/2} y={bathY+14} textAnchor="middle" fill="#5dade2" fontSize={7}>{(BATH_W*1000).toFixed(0)}</text>
-              {/* Длина (слева внутри) */}
-              <line x1={bathX+4} y1={bathY} x2={bathX+4} y2={bathY+bathH} stroke="#5dade266"/>
-              <line x1={bathX+2} y1={bathY} x2={bathX+6} y2={bathY} stroke="#5dade266"/>
-              <line x1={bathX+2} y1={bathY+bathH} x2={bathX+6} y2={bathY+bathH} stroke="#5dade266"/>
-              <text x={bathX+12} y={bathY+bathH/2} fill="#5dade2" fontSize={7} textAnchor="middle" transform={`rotate(-90,${bathX+12},${bathY+bathH/2})`}>{(BATH_L*1000).toFixed(0)}</text>
+              {/* Длина (справа внутри) */}
+              <line x1={bathX+bathW-4} y1={bathY} x2={bathX+bathW-4} y2={bathY+bathH} stroke="#5dade266"/>
+              <line x1={bathX+bathW-6} y1={bathY} x2={bathX+bathW-2} y2={bathY} stroke="#5dade266"/>
+              <line x1={bathX+bathW-6} y1={bathY+bathH} x2={bathX+bathW-2} y2={bathY+bathH} stroke="#5dade266"/>
+              <text x={bathX+bathW-12} y={bathY+bathH/2} fill="#5dade2" fontSize={7} textAnchor="middle" transform={`rotate(-90,${bathX+bathW-12},${bathY+bathH/2})`}>{(BATH_L*1000).toFixed(0)}</text>
               <text x={bathX+bathW/2} y={bathY+bathH/2} textAnchor="middle" dominantBaseline="middle" fill="#5dade2" fontSize={8} transform={`rotate(-90,${bathX+bathW/2},${bathY+bathH/2})`}>ванна</text>
             </>;
           })()}
-          {/* Унитаз у правой стены ванной (бачок к правой перегородке, повёрнут на 90°) */}
+          {/* Угловая тумба с раковиной в нижнем левом углу ванной */}
           {(()=>{
-            // После поворота на 90° против часовой: бачок справа, чаша слева
-            const wcY=p+(H-WC_GAP_BOT-WC_W)*s; // верх унитаза
-            const wcBowlX=p+(WC_RIGHT-WC_GAP_RIGHT-WC_L)*s; // левый край чаши
-            const wcTankX=p+(WC_RIGHT-WC_GAP_RIGHT-WC_TANK)*s; // левый край бачка
+            const sinkX=p+(IWALL_X+IWALL_T+SINK_GAP)*s; // левый нижний угол
+            const sinkY=p+(H-SINK_GAP-SINK_SIZE)*s;
+            const sz=SINK_SIZE*s;
+            return <>
+              {/* Угловая форма тумбы (срезанный угол справа) */}
+              <path d={`M${sinkX},${sinkY} L${sinkX+sz*0.6},${sinkY} L${sinkX+sz},${sinkY+sz*0.4} L${sinkX+sz},${sinkY+sz} L${sinkX},${sinkY+sz} Z`} fill="#5dade233" stroke="#5dade2" strokeWidth={1.5}/>
+              {/* Раковина (круг на диагонали) */}
+              <circle cx={sinkX+sz*0.35} cy={sinkY+sz*0.65} r={sz*0.25} fill="#5dade211" stroke="#5dade2" strokeWidth={1}/>
+              {/* Размер (снизу) */}
+              <line x1={sinkX} y1={sinkY+sz-4} x2={sinkX+sz} y2={sinkY+sz-4} stroke="#5dade266"/>
+              <line x1={sinkX} y1={sinkY+sz-6} x2={sinkX} y2={sinkY+sz-2} stroke="#5dade266"/>
+              <line x1={sinkX+sz} y1={sinkY+sz-6} x2={sinkX+sz} y2={sinkY+sz-2} stroke="#5dade266"/>
+              <text x={sinkX+sz/2} y={sinkY+sz-8} textAnchor="middle" fill="#5dade2" fontSize={7}>{(SINK_SIZE*1000).toFixed(0)}</text>
+            </>;
+          })()}
+          {/* Унитаз у левой стены ванной (бачок к левой стене, выше раковины) */}
+          {(()=>{
+            // Бачок слева, чаша справа
+            const gklBottom=H-IWALL_LEN+GKL_T; // низ горизонтальной перегородки
+            const sinkTop=H-SINK_GAP-SINK_SIZE; // верх раковины
+            // Позиция Y: нижний край зоны комфорта вплотную к раковине
+            const wcTopM=sinkTop-WC_W-0.25; // верх унитаза
+            const wcY=p+wcTopM*s;
+            const wcTankX=p+(IWALL_X+IWALL_T+WC_GAP_LEFT)*s; // левый край бачка (у левой стены)
+            const wcBowlX=wcTankX+WC_TANK*s; // левый край чаши (правее бачка)
+            const wcRightX=wcTankX+WC_L*s; // правый край унитаза
             const bowlW=(WC_L-WC_TANK)*s,tankW=WC_TANK*s,wcH=WC_W*s;
             const comfort=0.25*s; // 250мм зона комфорта
             return <>
-              {/* Зона комфорта унитаза (250мм сверху, снизу, спереди/слева) */}
-              <rect x={wcBowlX-comfort} y={wcY-comfort} width={(WC_L)*s+comfort} height={wcH+comfort*2} fill="none" stroke="#5dade255" strokeWidth={1} strokeDasharray="4 2" rx={3}/>
+              {/* Зона комфорта унитаза (250мм сверху, снизу, спереди/справа) */}
+              <rect x={wcTankX} y={wcY-comfort} width={WC_L*s+comfort} height={wcH+comfort*2} fill="none" stroke="#5dade255" strokeWidth={1} strokeDasharray="4 2" rx={3}/>
               {/* Общие размеры зоны комфорта (внутри) */}
               {/* Высота (слева внутри) */}
-              <line x1={wcBowlX-comfort+4} y1={wcY-comfort} x2={wcBowlX-comfort+4} y2={wcY+wcH+comfort} stroke="#5dade266"/>
-              <line x1={wcBowlX-comfort+2} y1={wcY-comfort} x2={wcBowlX-comfort+6} y2={wcY-comfort} stroke="#5dade266"/>
-              <line x1={wcBowlX-comfort+2} y1={wcY+wcH+comfort} x2={wcBowlX-comfort+6} y2={wcY+wcH+comfort} stroke="#5dade266"/>
-              <text x={wcBowlX-comfort+12} y={wcY+wcH/2} fill="#5dade2" fontSize={7} textAnchor="middle" transform={`rotate(-90,${wcBowlX-comfort+12},${wcY+wcH/2})`}>{(WC_W*1000+500).toFixed(0)}</text>
-              {/* Длина унитаза (снизу внутри) */}
-              <line x1={wcBowlX} y1={wcY+wcH+comfort-4} x2={wcTankX+tankW} y2={wcY+wcH+comfort-4} stroke="#5dade266"/>
-              <line x1={wcBowlX} y1={wcY+wcH+comfort-6} x2={wcBowlX} y2={wcY+wcH+comfort-2} stroke="#5dade266"/>
-              <line x1={wcTankX+tankW} y1={wcY+wcH+comfort-6} x2={wcTankX+tankW} y2={wcY+wcH+comfort-2} stroke="#5dade266"/>
-              <text x={wcBowlX+WC_L*s/2} y={wcY+wcH+comfort-8} textAnchor="middle" fill="#5dade2" fontSize={7}>{(WC_L*1000).toFixed(0)}</text>
+              <line x1={wcTankX+4} y1={wcY-comfort} x2={wcTankX+4} y2={wcY+wcH+comfort} stroke="#5dade266"/>
+              <line x1={wcTankX+2} y1={wcY-comfort} x2={wcTankX+6} y2={wcY-comfort} stroke="#5dade266"/>
+              <line x1={wcTankX+2} y1={wcY+wcH+comfort} x2={wcTankX+6} y2={wcY+wcH+comfort} stroke="#5dade266"/>
+              <text x={wcTankX+12} y={wcY+wcH/2} fill="#5dade2" fontSize={7} textAnchor="middle" transform={`rotate(-90,${wcTankX+12},${wcY+wcH/2})`}>{(WC_W*1000+500).toFixed(0)}</text>
+              {/* Длина унитаза (сверху внутри) */}
+              <line x1={wcTankX} y1={wcY-comfort+4} x2={wcBowlX+bowlW} y2={wcY-comfort+4} stroke="#5dade266"/>
+              <line x1={wcTankX} y1={wcY-comfort+2} x2={wcTankX} y2={wcY-comfort+6} stroke="#5dade266"/>
+              <line x1={wcBowlX+bowlW} y1={wcY-comfort+2} x2={wcBowlX+bowlW} y2={wcY-comfort+6} stroke="#5dade266"/>
+              <text x={wcTankX+WC_L*s/2} y={wcY-comfort+14} textAnchor="middle" fill="#5dade2" fontSize={7}>{(WC_L*1000).toFixed(0)}</text>
               {/* Бачок (прямоугольный) */}
               <rect x={wcTankX} y={wcY} width={tankW} height={wcH} fill="#5dade233" stroke="#5dade2" strokeWidth={1} rx={2}/>
               {/* Чаша (овальная форма) */}
               <rect x={wcBowlX} y={wcY} width={bowlW} height={wcH} fill="#5dade233" stroke="#5dade2" strokeWidth={1.5} ry={wcH/2}/>
               <text x={wcBowlX+bowlW/2} y={wcY+wcH/2} textAnchor="middle" dominantBaseline="middle" fill="#5dade2" fontSize={7}>WC</text>
-            </>;
-          })()}
-          {/* Шкаф с раковиной вдоль правой перегородки, выше зоны комфорта унитаза */}
-          {(()=>{
-            const comfortTop=H-WC_GAP_BOT-WC_W-0.25; // верх зоны комфорта унитаза
-            const sinkX=p+(WC_RIGHT-SINK_GAP-SINK_D)*s;
-            const sinkY=p+(comfortTop-SINK_GAP-SINK_W)*s;
-            const sinkW=SINK_D*s,sinkH=SINK_W*s;
-            return <>
-              <rect x={sinkX} y={sinkY} width={sinkW} height={sinkH} fill="#5dade233" stroke="#5dade2" strokeWidth={1.5} rx={3}/>
-              {/* Раковина (овал внутри) */}
-              <ellipse cx={sinkX+sinkW/2} cy={sinkY+sinkH/2} rx={sinkW/2-4} ry={sinkH/4} fill="#5dade211" stroke="#5dade2" strokeWidth={1}/>
-              {/* Размеры внутри */}
-              <line x1={sinkX+4} y1={sinkY} x2={sinkX+4} y2={sinkY+sinkH} stroke="#5dade266"/>
-              <line x1={sinkX+2} y1={sinkY} x2={sinkX+6} y2={sinkY} stroke="#5dade266"/>
-              <line x1={sinkX+2} y1={sinkY+sinkH} x2={sinkX+6} y2={sinkY+sinkH} stroke="#5dade266"/>
-              <text x={sinkX+12} y={sinkY+sinkH/2} fill="#5dade2" fontSize={7} textAnchor="middle" transform={`rotate(-90,${sinkX+12},${sinkY+sinkH/2})`}>{(SINK_W*1000).toFixed(0)}</text>
-              <line x1={sinkX} y1={sinkY+4} x2={sinkX+sinkW} y2={sinkY+4} stroke="#5dade266"/>
-              <line x1={sinkX} y1={sinkY+2} x2={sinkX} y2={sinkY+6} stroke="#5dade266"/>
-              <line x1={sinkX+sinkW} y1={sinkY+2} x2={sinkX+sinkW} y2={sinkY+6} stroke="#5dade266"/>
-              <text x={sinkX+sinkW/2} y={sinkY+14} textAnchor="middle" fill="#5dade2" fontSize={7}>{(SINK_D*1000).toFixed(0)}</text>
-              {/* Расстояние от раковины до верхней перегородки */}
+              {/* Расстояние от зоны комфорта унитаза до верхней перегородки */}
               {(()=>{
-                const gklBottom=p+(H-IWALL_LEN+GKL_T)*s;
-                const dimX=sinkX+sinkW/2;
-                const dist=(comfortTop-SINK_GAP-SINK_W-(H-IWALL_LEN+GKL_T))*1000;
+                const gklBottomPx=p+gklBottom*s;
+                const dimX=wcTankX+WC_L*s/2;
+                const dist=(wcTopM-0.25-gklBottom)*1000;
                 return <>
-                  <line x1={dimX} y1={gklBottom} x2={dimX} y2={sinkY} stroke="#5dade288"/>
-                  <line x1={dimX-2} y1={gklBottom} x2={dimX+2} y2={gklBottom} stroke="#5dade288"/>
-                  <line x1={dimX-2} y1={sinkY} x2={dimX+2} y2={sinkY} stroke="#5dade288"/>
-                  <text x={dimX+4} y={(gklBottom+sinkY)/2+3} fill="#5dade2" fontSize={8}>{dist.toFixed(0)}</text>
+                  <line x1={dimX} y1={gklBottomPx} x2={dimX} y2={wcY-comfort} stroke="#5dade288"/>
+                  <line x1={dimX-2} y1={gklBottomPx} x2={dimX+2} y2={gklBottomPx} stroke="#5dade288"/>
+                  <line x1={dimX-2} y1={wcY-comfort} x2={dimX+2} y2={wcY-comfort} stroke="#5dade288"/>
+                  <text x={dimX+4} y={(gklBottomPx+(wcY-comfort))/2+3} fill="#5dade2" fontSize={8}>{dist.toFixed(0)}</text>
+                </>;
+              })()}
+              {/* Расстояние от правого края унитаза до ванны */}
+              {(()=>{
+                const bathLeft=p+(WC_RIGHT-BATH_GAP-BATH_W)*s;
+                const dimY=wcY+wcH/2;
+                const dist=((WC_RIGHT-BATH_GAP-BATH_W)-(IWALL_X+IWALL_T+WC_GAP_LEFT+WC_L))*1000;
+                return <>
+                  <line x1={wcRightX} y1={dimY} x2={bathLeft} y2={dimY} stroke="#5dade288"/>
+                  <line x1={wcRightX} y1={dimY-2} x2={wcRightX} y2={dimY+2} stroke="#5dade288"/>
+                  <line x1={bathLeft} y1={dimY-2} x2={bathLeft} y2={dimY+2} stroke="#5dade288"/>
+                  <text x={(wcRightX+bathLeft)/2} y={dimY-4} textAnchor="middle" fill="#5dade2" fontSize={8}>{dist.toFixed(0)}</text>
                 </>;
               })()}
             </>;
           })()}
-          {/* Расстояние между ванной и унитазом */}
-          {(()=>{
-            const bathRight=p+(IWALL_X+IWALL_T+BATH_GAP+BATH_W)*s;
-            const wcLeft=p+(WC_RIGHT-WC_GAP_RIGHT-WC_L)*s;
-            const dimY=p+(H-WC_GAP_BOT+0.25)*s-4; // на уровне размера длины унитаза
-            const dist=((WC_RIGHT-WC_GAP_RIGHT-WC_L)-(IWALL_X+IWALL_T+BATH_GAP+BATH_W))*1000;
-            return <>
-              <line x1={bathRight} y1={dimY} x2={wcLeft} y2={dimY} stroke="#5dade288"/>
-              <line x1={bathRight} y1={dimY-2} x2={bathRight} y2={dimY+2} stroke="#5dade288"/>
-              <line x1={wcLeft} y1={dimY-2} x2={wcLeft} y2={dimY+2} stroke="#5dade288"/>
-              <text x={(bathRight+wcLeft)/2} y={dimY-4} textAnchor="middle" fill="#5dade2" fontSize={8}>{dist.toFixed(0)}</text>
-            </>;
-          })()}
-          {/* Расстояние между ванной и горизонтальной перегородкой */}
+                    {/* Расстояние между ванной и горизонтальной перегородкой (зеркально) */}
           {(()=>{
             const bathTop=p+(H-BATH_GAP-BATH_L)*s;
             const gklBottom=p+(H-IWALL_LEN+GKL_T)*s;
-            const dimX=p+(IWALL_X+IWALL_T+BATH_GAP+BATH_W/2)*s;
+            const dimX=p+(WC_RIGHT-BATH_GAP-BATH_W/2)*s;
             const dist=(H-BATH_GAP-BATH_L-(H-IWALL_LEN+GKL_T))*1000;
             return <>
               <line x1={dimX} y1={gklBottom} x2={dimX} y2={bathTop} stroke="#5dade288"/>
@@ -399,6 +401,10 @@ export default function FloorPlan(){
               <text x={dimX+4} y={(gklBottom+bathTop)/2+3} fill="#5dade2" fontSize={8}>{dist.toFixed(0)}</text>
             </>;
           })()}
+          {/* Окно на нижней стене ванной комнаты */}
+          <rect x={p+WIN2_X*s} y={p+CH-WALL/2} width={WIN2_W*s} height={WALL} fill="#4fc3f7" stroke="#4fc3f7" strokeWidth={1}/>
+          <line x1={p+WIN2_X*s} y1={p+CH} x2={p+(WIN2_X+WIN2_W)*s} y2={p+CH} stroke="#1a1a2e" strokeWidth={2}/>
+          <text x={p+(WIN2_X+WIN2_W/2)*s} y={p+CH+12} textAnchor="middle" fill="#4fc3f7" fontSize={8}>окно {WIN2_W*1000}</text>
           {/* Обозначение ванной комнаты */}
           <text x={p+((IWALL_X+IWALL_T)+WC_RIGHT)/2*s} y={p+(H-IWALL_LEN+GKL_T+0.3)*s} textAnchor="middle" dominantBaseline="middle" fill="#5dade2" fontSize={11} fontWeight="bold">Ванная</text>
           {/* Обозначение спальни (комната с диваном) */}
