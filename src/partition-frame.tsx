@@ -64,7 +64,7 @@ export default function PartitionFrame() {
 
   // === Вид спереди (со стороны лестницы) ===
   const FrontView = () => {
-    const p = 80; // padding
+    const p = 70; // padding
     const s = S_FRONT;
 
     // Расчёт позиций стоек (шаг под панели 900мм)
@@ -258,7 +258,7 @@ export default function PartitionFrame() {
   // === Вид сзади (со стороны спальни) — внутренний слой ===
   // Зеркальное отображение: слева ванная, справа верхняя стена
   const BackView = () => {
-    const p = 80;
+    const p = 70;
     const s = S_FRONT;
 
     // Позиции в зеркальной системе координат (0 = ванная, 2770 = верхняя стена)
@@ -468,10 +468,10 @@ export default function PartitionFrame() {
   // === Разрез двойной перегородки ===
   const SectionView = () => {
     const w = 408;
-    const svgH = 476;
-    const s = 1.02;
-    const h = 255; // Высота схемы
-    const topY = 85; // Начало схемы от верха
+    const svgH = 420;
+    const s = 1.3;
+    const h = 300; // Высота схемы
+    const topY = 55; // Начало схемы от верха
 
     // Позиции слоёв
     const layer1X = 0;
@@ -680,10 +680,10 @@ export default function PartitionFrame() {
   // === Разрез горизонтальной части (одинарная 50 мм с ЛДСП с двух сторон) ===
   const HorizSectionView = () => {
     const w = 408;
-    const svgH = 476;
-    const s = 1.36;
-    const h = 255; // Высота схемы
-    const topY = 85; // Начало схемы от верха
+    const svgH = 420;
+    const s = 1.7;
+    const h = 300; // Высота схемы
+    const topY = 55; // Начало схемы от верха
 
     // Центрирование по горизонтали
     const schemaW = (PS_W + PANEL_T * 2) * s;
