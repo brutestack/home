@@ -61,8 +61,6 @@ export default function PartitionFrame() {
   const FRONT_H = 900;
   const TOP_W = 500;
   const TOP_H = 350;
-  const SECTION_W = 400;
-  const SECTION_H = 400;
 
   // === Вид спереди (со стороны лестницы) ===
   const FrontView = () => {
@@ -469,9 +467,11 @@ export default function PartitionFrame() {
 
   // === Разрез двойной перегородки ===
   const SectionView = () => {
-    const p = 50;
-    const s = 0.6; // Уменьшенный масштаб для двойной структуры
-    const h = 200; // Высота схемы (условная)
+    const w = 240;
+    const svgH = 280;
+    const s = 0.6;
+    const h = 150; // Высота схемы
+    const topY = 50; // Начало схемы от верха
 
     // Позиции слоёв
     const layer1X = 0;
@@ -479,71 +479,66 @@ export default function PartitionFrame() {
     const layer2X = PS_W + GKL_GAP;
     const totalW = PS_W * 2 + GKL_GAP; // 150 мм
 
-    return (
-      <svg viewBox={`0 0 ${SECTION_W} ${SECTION_H}`}
-        style={{ width: SECTION_W, background: C_BG_SVG, borderRadius: 8 }}>
+    // Центрирование по горизонтали
+    const schemaW = (totalW + PANEL_T * 2) * s;
+    const p = (w - schemaW) / 2 + PANEL_T * s;
 
-        <text x={SECTION_W/2} y={20} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={14} fontWeight="bold">
+    return (
+      <svg viewBox={`0 0 ${w} ${svgH}`}
+        style={{ width: w, background: C_BG_SVG, borderRadius: 8 }}>
+
+        <text x={w/2} y={18} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={13} fontWeight="bold">
           Разрез двойной перегородки
         </text>
-        <text x={SECTION_W/2} y={36} textAnchor="middle" fill={C_TEXT_DIM} fontSize={10}>
-          ЛДСП только снаружи, внутри без обшивки
+        <text x={w/2} y={34} textAnchor="middle" fill={C_TEXT_DIM} fontSize={10}>
+          ЛДСП только снаружи
         </text>
 
         {/* Слой 1 (сторона лестницы) */}
-        <rect x={p + layer1X * s} y={p + 10} width={PS_W * s} height={h}
+        <rect x={p + layer1X * s} y={topY} width={PS_W * s} height={h}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-        <text x={p + PS_W/2 * s} y={p + 10 + h/2} textAnchor="middle" fill={C_FRAME} fontSize={8}>ПС</text>
+        <text x={p + PS_W/2 * s} y={topY + h/2} textAnchor="middle" fill={C_FRAME} fontSize={8}>ПС</text>
 
         {/* Зазор между слоями */}
-        <rect x={p + gapX * s} y={p + 10} width={GKL_GAP * s} height={h}
+        <rect x={p + gapX * s} y={topY} width={GKL_GAP * s} height={h}
           fill="none" stroke={C_TEXT_DIM} strokeWidth={1} strokeDasharray="4 2"/>
-        <text x={p + (gapX + GKL_GAP/2) * s} y={p + 10 + h/2} textAnchor="middle" fill={C_TEXT_DIM} fontSize={7}>зазор</text>
+        <text x={p + (gapX + GKL_GAP/2) * s} y={topY + h/2} textAnchor="middle" fill={C_TEXT_DIM} fontSize={7}>зазор</text>
 
         {/* Слой 2 (сторона спальни) */}
-        <rect x={p + layer2X * s} y={p + 10} width={PS_W * s} height={h}
+        <rect x={p + layer2X * s} y={topY} width={PS_W * s} height={h}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-        <text x={p + (layer2X + PS_W/2) * s} y={p + 10 + h/2} textAnchor="middle" fill={C_FRAME} fontSize={8}>ПС</text>
+        <text x={p + (layer2X + PS_W/2) * s} y={topY + h/2} textAnchor="middle" fill={C_FRAME} fontSize={8}>ПС</text>
 
         {/* ЛДСП только снаружи — слева (сторона лестницы) */}
-        <rect x={p - PANEL_T * s} y={p + 10} width={PANEL_T * s} height={h}
+        <rect x={p - PANEL_T * s} y={topY} width={PANEL_T * s} height={h}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
 
         {/* ЛДСП только снаружи — справа (сторона спальни) */}
-        <rect x={p + (layer2X + PS_W) * s} y={p + 10} width={PANEL_T * s} height={h}
+        <rect x={p + (layer2X + PS_W) * s} y={topY} width={PANEL_T * s} height={h}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
 
         {/* Подписи сторон */}
-        <text x={p - PANEL_T * s - 5} y={p + 10 + h/2} textAnchor="end" fill={C_TEXT_DIM} fontSize={8}>Лестница</text>
-        <text x={p + (layer2X + PS_W) * s + PANEL_T * s + 5} y={p + 10 + h/2} textAnchor="start" fill={C_WARDROBE} fontSize={8}>Спальня</text>
+        <text x={p - PANEL_T * s - 5} y={topY + h/2} textAnchor="end" fill={C_TEXT_DIM} fontSize={8}>Лестница</text>
+        <text x={p + (layer2X + PS_W) * s + PANEL_T * s + 5} y={topY + h/2} textAnchor="start" fill={C_WARDROBE} fontSize={8}>Спальня</text>
 
         {/* Размерные линии */}
-        {/* Толщина ЛДСП слева */}
-        <HDim x1={p - PANEL_T * s} x2={p} y={p + 10 + h + 15}
+        <HDim x1={p - PANEL_T * s} x2={p} y={topY + h + 15}
           label={PANEL_T} fontSize={8}/>
-
-        {/* Слой 1 */}
-        <HDim x1={p} x2={p + PS_W * s} y={p + 10 + h + 15}
+        <HDim x1={p} x2={p + PS_W * s} y={topY + h + 15}
           color={C_FRAME} textColor={C_FRAME} label={PS_W} fontSize={8}/>
-
-        {/* Зазор */}
-        <HDim x1={p + gapX * s} x2={p + layer2X * s} y={p + 10 + h + 15}
+        <HDim x1={p + gapX * s} x2={p + layer2X * s} y={topY + h + 15}
           label={GKL_GAP} fontSize={8}/>
-
-        {/* Слой 2 */}
-        <HDim x1={p + layer2X * s} x2={p + (layer2X + PS_W) * s} y={p + 10 + h + 15}
+        <HDim x1={p + layer2X * s} x2={p + (layer2X + PS_W) * s} y={topY + h + 15}
           color={C_FRAME} textColor={C_FRAME} label={PS_W} fontSize={8}/>
-
-        {/* Толщина ЛДСП справа */}
-        <HDim x1={p + (layer2X + PS_W) * s} x2={p + (layer2X + PS_W) * s + PANEL_T * s} y={p + 10 + h + 15}
+        <HDim x1={p + (layer2X + PS_W) * s} x2={p + (layer2X + PS_W) * s + PANEL_T * s} y={topY + h + 15}
           label={PANEL_T} fontSize={8}/>
 
         {/* Общая толщина */}
-        <HDim x1={p - PANEL_T * s} x2={p + (layer2X + PS_W) * s + PANEL_T * s} y={p + 10 + h + 35}
+        <HDim x1={p - PANEL_T * s} x2={p + (layer2X + PS_W) * s + PANEL_T * s} y={topY + h + 35}
           label={PARTITION_T + PANEL_T * 2} fontSize={9}/>
 
-        {/* Подпись внутри — без обшивки */}
-        <text x={p + (PS_W + GKL_GAP/2) * s} y={p + 10 + h + 55} textAnchor="middle" fill={C_TEXT_DIM} fontSize={9}>
+        {/* Подпись */}
+        <text x={w/2} y={topY + h + 55} textAnchor="middle" fill={C_TEXT_DIM} fontSize={9}>
           Внутри без ЛДСП
         </text>
       </svg>
@@ -552,10 +547,16 @@ export default function PartitionFrame() {
 
   // === Вид спереди горизонтальной части (со стороны двери в ванную) ===
   const HorizFrontView = () => {
-    const p = 80;
-    const s = 0.25;
-    const w = 550;
-    const h = 850;
+    const s = 0.2;
+    const w = 440;
+    const topY = 55; // верхний отступ для схемы
+    const schemaH = CEILING_H * s; // 560px
+    const svgH = topY + schemaH + 45; // 660px
+
+    // Горизонтальное центрирование (только чертёж, без размерных линий)
+    // Ширина чертёжа: PARTITION_T + GKL_LAYER + HORIZ_W = 900мм × 0.2 = 180px
+    const drawingW = (PARTITION_T + GKL_LAYER + HORIZ_W) * s;
+    const p = (w - drawingW) / 2;
 
     // Внешний слой + зазор слева от внутреннего слоя
     const outerPartW = GKL_LAYER + GKL_GAP; // 100 мм
@@ -563,115 +564,115 @@ export default function PartitionFrame() {
     const innerLayerX = p + outerPartW * s;
 
     return (
-      <svg viewBox={`0 0 ${w} ${h}`}
+      <svg viewBox={`0 0 ${w} ${svgH}`}
         style={{ width: w, background: C_BG_SVG, borderRadius: 8 }}>
 
-        <text x={w/2} y={20} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={13} fontWeight="bold">
+        <text x={w/2} y={18} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={13} fontWeight="bold">
           Горизонтальная часть — вид со стороны двери в ванную
         </text>
-        <text x={w/2} y={36} textAnchor="middle" fill={C_TEXT_DIM} fontSize={10}>
+        <text x={w/2} y={34} textAnchor="middle" fill={C_TEXT_DIM} fontSize={10}>
           Внутренний слой двойной перегородки продолжается как горизонтальная часть
         </text>
 
         {/* === Внешний слой двойной перегородки (сторона лестницы) === */}
-        <rect x={p} y={p} width={GKL_LAYER * s} height={CEILING_H * s}
+        <rect x={p} y={topY} width={GKL_LAYER * s} height={CEILING_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
         {/* ЛДСП на внешнем слое — вплотную к потолку */}
-        <rect x={p - PANEL_T * s} y={p} width={PANEL_T * s} height={PANEL_H * s}
+        <rect x={p - PANEL_T * s} y={topY} width={PANEL_T * s} height={PANEL_H * s}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={1.5}/>
 
         {/* Зазор между слоями — над проёмом */}
-        <rect x={p + GKL_LAYER * s} y={p} width={GKL_GAP * s} height={(CEILING_H - DOOR_H) * s}
+        <rect x={p + GKL_LAYER * s} y={topY} width={GKL_GAP * s} height={(CEILING_H - DOOR_H) * s}
           fill="none" stroke={C_TEXT_DIM} strokeWidth={1} strokeDasharray="2 2"/>
         {/* Проём в двойной перегородке — зазор открыт */}
-        <rect x={p + GKL_LAYER * s} y={p + (CEILING_H - DOOR_H) * s} width={GKL_GAP * s} height={DOOR_H * s}
+        <rect x={p + GKL_LAYER * s} y={topY + (CEILING_H - DOOR_H) * s} width={GKL_GAP * s} height={DOOR_H * s}
           fill={C_DOOR + "22"} stroke={C_DOOR} strokeWidth={1.5} strokeDasharray="4 2"/>
 
         {/* Подписи слева */}
-        <text x={p - PANEL_T * s - 28} y={p + CEILING_H/3 * s} textAnchor="end" fill={C_TEXT_DIM} fontSize={7}>
+        <text x={p - PANEL_T * s - 28} y={topY + CEILING_H/3 * s} textAnchor="end" fill={C_TEXT_DIM} fontSize={7}>
           ← Лестница
         </text>
 
         {/* Проём подпись */}
-        <text x={p + (GKL_LAYER + GKL_GAP/2) * s} y={p + (CEILING_H - DOOR_H/2) * s}
+        <text x={p + (GKL_LAYER + GKL_GAP/2) * s} y={topY + (CEILING_H - DOOR_H/2) * s}
           textAnchor="middle" fill={C_DOOR} fontSize={7}
-          transform={`rotate(-90,${p + (GKL_LAYER + GKL_GAP/2) * s},${p + (CEILING_H - DOOR_H/2) * s})`}>
+          transform={`rotate(-90,${p + (GKL_LAYER + GKL_GAP/2) * s},${topY + (CEILING_H - DOOR_H/2) * s})`}>
           ПРОЁМ {DOOR_H}
         </text>
 
         {/* === Внутренний слой = горизонтальная часть (единая конструкция) === */}
         {/* Контур помещения */}
-        <rect x={innerLayerX} y={p} width={(GKL_LAYER + HORIZ_W) * s} height={CEILING_H * s}
+        <rect x={innerLayerX} y={topY} width={(GKL_LAYER + HORIZ_W) * s} height={CEILING_H * s}
           fill="none" stroke={C_TEXT_DIM} strokeWidth={1} strokeDasharray="4 2"/>
 
         {/* Пол и потолок */}
-        <line x1={innerLayerX} y1={p + CEILING_H * s} x2={innerLayerX + (GKL_LAYER + HORIZ_W) * s} y2={p + CEILING_H * s}
+        <line x1={innerLayerX} y1={topY + CEILING_H * s} x2={innerLayerX + (GKL_LAYER + HORIZ_W) * s} y2={topY + CEILING_H * s}
           stroke={C_TEXT} strokeWidth={2}/>
-        <line x1={innerLayerX} y1={p} x2={innerLayerX + (GKL_LAYER + HORIZ_W) * s} y2={p}
+        <line x1={innerLayerX} y1={topY} x2={innerLayerX + (GKL_LAYER + HORIZ_W) * s} y2={topY}
           stroke={C_TEXT} strokeWidth={2}/>
 
         {/* Направляющие ПН (на всю длину: внутренний слой + горизонтальная часть) */}
-        <rect x={innerLayerX} y={p} width={(GKL_LAYER + HORIZ_W) * s} height={PN_H * s}
+        <rect x={innerLayerX} y={topY} width={(GKL_LAYER + HORIZ_W) * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-        <rect x={innerLayerX} y={p + (CEILING_H - PN_H) * s} width={(GKL_LAYER + HORIZ_W) * s} height={PN_H * s}
+        <rect x={innerLayerX} y={topY + (CEILING_H - PN_H) * s} width={(GKL_LAYER + HORIZ_W) * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
 
         {/* Стойка внутреннего слоя (у проёма) */}
-        <rect x={innerLayerX} y={p + PN_H * s} width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+        <rect x={innerLayerX} y={topY + PN_H * s} width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1.5}/>
 
         {/* Стойка горизонтальной части (у начала ЛДСП) */}
-        <rect x={innerLayerX + GKL_LAYER * s} y={p + PN_H * s} width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+        <rect x={innerLayerX + GKL_LAYER * s} y={topY + PN_H * s} width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
 
         {/* Стойка в конце горизонтальной части (у шкафа) */}
-        <rect x={innerLayerX + (GKL_LAYER + HORIZ_W - PS_W) * s} y={p + PN_H * s} width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+        <rect x={innerLayerX + (GKL_LAYER + HORIZ_W - PS_W) * s} y={topY + PN_H * s} width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
 
         {/* ЛДСП панель (сторона шкафа) — вплотную к потолку */}
-        <rect x={innerLayerX + GKL_LAYER * s} y={p} width={HORIZ_W * s} height={PANEL_H * s}
+        <rect x={innerLayerX + GKL_LAYER * s} y={topY} width={HORIZ_W * s} height={PANEL_H * s}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
-        <text x={innerLayerX + (GKL_LAYER + HORIZ_W/2) * s} y={p + PANEL_H/2 * s}
+        <text x={innerLayerX + (GKL_LAYER + HORIZ_W/2) * s} y={topY + PANEL_H/2 * s}
           textAnchor="middle" fill={C_PANEL} fontSize={9}>ЛДСП {HORIZ_W}×{PANEL_H}</text>
 
         {/* Доборка снизу (у пола) */}
-        <rect x={innerLayerX + GKL_LAYER * s} y={p + PANEL_H * s} width={HORIZ_W * s} height={DOBOR_H * s}
+        <rect x={innerLayerX + GKL_LAYER * s} y={topY + PANEL_H * s} width={HORIZ_W * s} height={DOBOR_H * s}
           fill="none" stroke={C_DOBOR} strokeWidth={1} strokeDasharray="3 2"/>
 
 
         {/* Разделительная линия между зонами (пунктир) */}
-        <line x1={innerLayerX + GKL_LAYER * s} y1={p} x2={innerLayerX + GKL_LAYER * s} y2={p + CEILING_H * s}
+        <line x1={innerLayerX + GKL_LAYER * s} y1={topY} x2={innerLayerX + GKL_LAYER * s} y2={topY + CEILING_H * s}
           stroke={C_TEXT_DIM} strokeWidth={1} strokeDasharray="6 3"/>
-        <text x={innerLayerX + GKL_LAYER * s} y={p - 5} textAnchor="middle" fill={C_TEXT_DIM} fontSize={7}>
+        <text x={innerLayerX + GKL_LAYER * s} y={topY - 5} textAnchor="middle" fill={C_TEXT_DIM} fontSize={7}>
           ← внутр. слой | гориз. часть →
         </text>
 
         {/* === Размерные линии === */}
         {/* Внешний слой */}
-        <HDim x1={p} x2={p + GKL_LAYER * s} y={p + CEILING_H * s + 20}
+        <HDim x1={p} x2={p + GKL_LAYER * s} y={topY + CEILING_H * s + 20}
           color={C_FRAME} textColor={C_FRAME} label={GKL_LAYER} fontSize={8}/>
         {/* Зазор (проём) */}
-        <HDim x1={p + GKL_LAYER * s} x2={innerLayerX} y={p + CEILING_H * s + 20}
+        <HDim x1={p + GKL_LAYER * s} x2={innerLayerX} y={topY + CEILING_H * s + 20}
           color={C_DOOR} textColor={C_DOOR} label={GKL_GAP} fontSize={8}/>
         {/* Внутренний слой */}
-        <HDim x1={innerLayerX} x2={innerLayerX + GKL_LAYER * s} y={p + CEILING_H * s + 20}
+        <HDim x1={innerLayerX} x2={innerLayerX + GKL_LAYER * s} y={topY + CEILING_H * s + 20}
           color={C_FRAME} textColor={C_FRAME} label={GKL_LAYER} fontSize={8}/>
         {/* Горизонтальная часть */}
-        <HDim x1={innerLayerX + GKL_LAYER * s} x2={innerLayerX + (GKL_LAYER + HORIZ_W) * s} y={p + CEILING_H * s + 20}
+        <HDim x1={innerLayerX + GKL_LAYER * s} x2={innerLayerX + (GKL_LAYER + HORIZ_W) * s} y={topY + CEILING_H * s + 20}
           label={HORIZ_W} fontSize={9}/>
 
         {/* Общая толщина двойной перегородки */}
-        <HDim x1={p} x2={innerLayerX + GKL_LAYER * s} y={p + CEILING_H * s + 40}
+        <HDim x1={p} x2={innerLayerX + GKL_LAYER * s} y={topY + CEILING_H * s + 40}
           label={PARTITION_T} fontSize={9}/>
 
         {/* Высота */}
-        <VDim x={innerLayerX + (GKL_LAYER + HORIZ_W) * s + 15} y1={p} y2={p + CEILING_H * s}
+        <VDim x={innerLayerX + (GKL_LAYER + HORIZ_W) * s + 15} y1={topY} y2={topY + CEILING_H * s}
           label={CEILING_H} fontSize={9} labelX={innerLayerX + (GKL_LAYER + HORIZ_W) * s + 25}/>
         {/* Доборка снизу */}
-        <VDim x={innerLayerX + (GKL_LAYER + HORIZ_W) * s + 35} y1={p + PANEL_H * s} y2={p + CEILING_H * s}
+        <VDim x={innerLayerX + (GKL_LAYER + HORIZ_W) * s + 35} y1={topY + PANEL_H * s} y2={topY + CEILING_H * s}
           color={C_DOBOR} textColor={C_DOBOR} label={DOBOR_H} fontSize={8} labelX={innerLayerX + (GKL_LAYER + HORIZ_W) * s + 45}/>
         {/* Высота проёма */}
-        <VDim x={p - PANEL_T * s - 15} y1={p + (CEILING_H - DOOR_H) * s} y2={p + CEILING_H * s}
+        <VDim x={p - PANEL_T * s - 15} y1={topY + (CEILING_H - DOOR_H) * s} y2={topY + CEILING_H * s}
           color={C_DOOR} textColor={C_DOOR} label={DOOR_H} fontSize={8}/>
       </svg>
     );
@@ -679,50 +680,54 @@ export default function PartitionFrame() {
 
   // === Разрез горизонтальной части (одинарная 50 мм с ЛДСП с двух сторон) ===
   const HorizSectionView = () => {
-    const p = 60;
+    const w = 240;
+    const svgH = 280;
     const s = 0.8;
-    const w = 300;
-    const h = 300;
-    const hh = 180; // высота схемы
+    const h = 150; // Высота схемы
+    const topY = 50; // Начало схемы от верха
+
+    // Центрирование по горизонтали
+    const schemaW = (PS_W + PANEL_T * 2) * s;
+    const p = (w - schemaW) / 2 + PANEL_T * s;
 
     return (
-      <svg viewBox={`0 0 ${w} ${h}`}
+      <svg viewBox={`0 0 ${w} ${svgH}`}
         style={{ width: w, background: C_BG_SVG, borderRadius: 8 }}>
 
-        <text x={w/2} y={20} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={13} fontWeight="bold">
+        <text x={w/2} y={18} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={13} fontWeight="bold">
           Разрез горизонтальной части
         </text>
-        <text x={w/2} y={36} textAnchor="middle" fill={C_TEXT_DIM} fontSize={10}>
+        <text x={w/2} y={34} textAnchor="middle" fill={C_TEXT_DIM} fontSize={10}>
           Одинарная 50 мм, ЛДСП с двух сторон
         </text>
 
         {/* ЛДСП слева (сторона проёма) */}
-        <rect x={p - PANEL_T * s} y={p + 10} width={PANEL_T * s} height={hh}
+        <rect x={p - PANEL_T * s} y={topY} width={PANEL_T * s} height={h}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
 
         {/* Каркас ПС */}
-        <rect x={p} y={p + 10} width={PS_W * s} height={hh}
+        <rect x={p} y={topY} width={PS_W * s} height={h}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-        <text x={p + PS_W/2 * s} y={p + 10 + hh/2} textAnchor="middle" fill={C_FRAME} fontSize={9}>ПС</text>
+        <text x={p + PS_W/2 * s} y={topY + h/2} textAnchor="middle" fill={C_FRAME} fontSize={9}>ПС</text>
 
         {/* ЛДСП справа (сторона шкафа) */}
-        <rect x={p + PS_W * s} y={p + 10} width={PANEL_T * s} height={hh}
+        <rect x={p + PS_W * s} y={topY} width={PANEL_T * s} height={h}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
 
         {/* Подписи сторон */}
-        <text x={p - PANEL_T * s - 5} y={p + 10 + hh/2} textAnchor="end" fill={C_DOOR} fontSize={8}>Проём</text>
-        <text x={p + PS_W * s + PANEL_T * s + 5} y={p + 10 + hh/2} textAnchor="start" fill={C_WARDROBE} fontSize={8}>Шкаф</text>
+        <text x={p - PANEL_T * s - 5} y={topY + h/2} textAnchor="end" fill={C_DOOR} fontSize={8}>Проём</text>
+        <text x={p + PS_W * s + PANEL_T * s + 5} y={topY + h/2} textAnchor="start" fill={C_WARDROBE} fontSize={8}>Шкаф</text>
 
         {/* Размерные линии */}
-        <HDim x1={p - PANEL_T * s} x2={p} y={p + 10 + hh + 15}
+        <HDim x1={p - PANEL_T * s} x2={p} y={topY + h + 15}
           label={PANEL_T} fontSize={8}/>
-        <HDim x1={p} x2={p + PS_W * s} y={p + 10 + hh + 15}
+        <HDim x1={p} x2={p + PS_W * s} y={topY + h + 15}
           color={C_FRAME} textColor={C_FRAME} label={PS_W} fontSize={8}/>
-        <HDim x1={p + PS_W * s} x2={p + PS_W * s + PANEL_T * s} y={p + 10 + hh + 15}
+        <HDim x1={p + PS_W * s} x2={p + PS_W * s + PANEL_T * s} y={topY + h + 15}
           label={PANEL_T} fontSize={8}/>
 
         {/* Общая толщина */}
-        <HDim x1={p - PANEL_T * s} x2={p + PS_W * s + PANEL_T * s} y={p + 10 + hh + 35}
+        <HDim x1={p - PANEL_T * s} x2={p + PS_W * s + PANEL_T * s} y={topY + h + 35}
           label={HORIZ_T + PANEL_T * 2} fontSize={9}/>
       </svg>
     );
