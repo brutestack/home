@@ -17,7 +17,7 @@ import {
   S, W, H, CW, CH, PAD, OWALL_PX, WIN_FRAME_PX,
   IWALL_X, IWALL_LEN, IWALL_T,
   COL_DIST, COL_W, COL_H, COL2_W, COL2_H,
-  GKL_LAYER, GKL_GAP, GKL_T, GKL2_T, GKL3_LAYER, GKL3_GAP,
+  GKL_LAYER, GKL_GAP, GKL_T, GKL2_T, GKL3_LAYER, GKL3_GAP, GKL4_W, GKL4_T,
   DOOR_W, DOOR_OFFSET,
   WIN_X, WIN_W, WIN2_X, WIN2_W, WIN3_START, WIN3_W, WIN4_START, WIN4_W,
   WIN5_START, WIN5_W, WIN6_START, WIN6_W, DOOR3_HINGE, DOOR3_LEN,
@@ -157,6 +157,8 @@ export default function FloorPlan(){
           <DoorwayCross x1={p+PIPES_END*s} y1={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)*s} x2={p+(PIPES_END+GKL3_LAYER*2+GKL3_GAP)*s} y2={p+(H-IWALL_LEN-DOOR_OFFSET)*s} color={C_COLUMN_BORDER}/>
           <text x={p+(PIPES_END+GKL3_LAYER+GKL3_GAP/2)*s} y={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W/2)*s} textAnchor="middle" fill={C_GKL_TEXT} fontSize={7}>{DOOR_W*1000}</text>
           <text x={p+(PIPES_END+GKL3_LAYER+GKL3_GAP/2)*s} y={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)/2*s} textAnchor="middle" fill={C_GKL_TEXT} fontSize={7} transform={`rotate(-90,${p+(PIPES_END+GKL3_LAYER+GKL3_GAP/2)*s},${p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)/2*s})`}>ГКЛ</text>
+          {/* Горизонтальная одинарная перегородка над проёмом (отгораживает шкаф) */}
+          <GklPanel x={p+(PIPES_END+GKL3_LAYER*2+GKL3_GAP)*s} y={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W-GKL4_T)*s} width={GKL4_W*s} height={GKL4_T*s}/>
           {/* Ванна вдоль правой стены ванной комнаты */}
           <Bathtub p={p} s={s} x={WC_RIGHT-BATH_GAP-BATH_W} y={H-BATH_GAP-BATH_L} width={BATH_W} length={BATH_L}/>
           {/* Угловая тумба с раковиной в нижнем левом углу ванной */}
