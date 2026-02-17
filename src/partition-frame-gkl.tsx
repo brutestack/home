@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { HDim, VDim } from "./svg-primitives";
+import { HDim, VDim, StudLabel } from "./svg-primitives";
 import {
   C_BG, C_BG_SVG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT, C_TOOLTIP_BG,
   C_DIM, C_GKL, C_WARDROBE
@@ -88,6 +88,17 @@ const getStudPositions = () => {
 
 const STUD_POSITIONS = getStudPositions();
 
+// Стойки слоя со стороны спальни (зеркальные позиции)
+const getStudPositionsBedroom = () =>
+  STUD_POSITIONS.map(pos => VERT_LEN - pos - PS_W).reverse();
+
+const STUD_POSITIONS_STAIRS = STUD_POSITIONS; // Слой лестницы
+const STUD_POSITIONS_BEDROOM = getStudPositionsBedroom(); // Слой спальни
+
+// Номера стоек: лестница 1-N, спальня (N+1)-M
+const getStudNumberStairs = (pos: number) => STUD_POSITIONS_STAIRS.indexOf(pos) + 1;
+const getStudNumberBedroom = (pos: number) => STUD_POSITIONS_BEDROOM.indexOf(pos) + 1 + STUD_POSITIONS_STAIRS.length;
+
 export default function PartitionFrameGkl() {
   const [mouse, setMouse] = useState<{x: number, y: number, view: string} | null>(null);
 
@@ -121,7 +132,7 @@ export default function PartitionFrameGkl() {
         style={{ width: FRONT_W, background: C_BG_SVG, borderRadius: 8 }}>
 
         <text x={FRONT_W/2} y={24} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={14} fontWeight="bold">
-          Вид спереди — каркас под ГКЛ (шаг стоек {STUD_STEP} мм)
+          Л4.Сх1 — Внешний слой, со стороны лестницы (шаг стоек {STUD_STEP} мм)
         </text>
 
         {/* Общая ширина конструкции (сверху) */}
@@ -148,8 +159,9 @@ export default function PartitionFrameGkl() {
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
 
         {/* Стоечные профили ПС */}
-        {STUD_POSITIONS.map((pos, i) => {
+        {STUD_POSITIONS_STAIRS.map((pos, i) => {
           const isEdgeStud = pos === DOOR_START - PS_W || pos === DOOR_END;
+          const studNum = getStudNumberStairs(pos);
           return (
             <g key={`stud${i}`}>
               <rect x={p + pos * s} y={p + PN_H * s}
@@ -160,6 +172,7 @@ export default function PartitionFrameGkl() {
               {/* Подпись позиции */}
               <text x={p + (pos + PS_W/2) * s} y={p + 60}
                 textAnchor="middle" fill={C_TEXT_DIM} fontSize={7}>{pos}</text>
+              <StudLabel x={p + (pos + PS_W/2) * s} y={p + CEILING_H/2 * s} num={studNum} color={C_FRAME}/>
             </g>
           );
         })}
@@ -303,15 +316,12 @@ export default function PartitionFrameGkl() {
     const doorStartMirror = DOOR_OFFSET; // 50
     const doorEndMirror = DOOR_OFFSET + DOOR_W; // 950
 
-    // Зеркальные позиции стоек
-    const studsMirror = STUD_POSITIONS.map(pos => VERT_LEN - pos - PS_W).reverse();
-
     return (
       <svg viewBox={`0 0 ${FRONT_W} ${FRONT_H}`}
         style={{ width: FRONT_W, background: C_BG_SVG, borderRadius: 8 }}>
 
         <text x={FRONT_W/2} y={24} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={14} fontWeight="bold">
-          Вид сзади (со стороны спальни)
+          Л4.Сх2 — Внутренний слой, со стороны спальни (швы вразбежку)
         </text>
 
         {/* Общая ширина конструкции (сверху) */}
@@ -338,14 +348,18 @@ export default function PartitionFrameGkl() {
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
 
         {/* Стоечные профили */}
-        {studsMirror.map((pos, i) => {
+        {STUD_POSITIONS_BEDROOM.map((pos, i) => {
           const isEdgeStud = i === 0 || pos === doorEndMirror;
+          const studNum = getStudNumberBedroom(pos);
           return (
-            <rect key={`stud${i}`} x={p + pos * s} y={p + PN_H * s}
-              width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-              fill={isEdgeStud ? C_BEAM_FILL : C_FRAME_FILL}
-              stroke={isEdgeStud ? C_BEAM : C_FRAME}
-              strokeWidth={isEdgeStud ? 1.5 : 1}/>
+            <g key={`stud${i}`}>
+              <rect x={p + pos * s} y={p + PN_H * s}
+                width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+                fill={isEdgeStud ? C_BEAM_FILL : C_FRAME_FILL}
+                stroke={isEdgeStud ? C_BEAM : C_FRAME}
+                strokeWidth={isEdgeStud ? 1.5 : 1}/>
+              <StudLabel x={p + (pos + PS_W/2) * s} y={p + CEILING_H/2 * s} num={studNum} color={C_FRAME}/>
+            </g>
           );
         })}
 
@@ -490,7 +504,7 @@ export default function PartitionFrameGkl() {
         style={{ width: w, background: C_BG_SVG, borderRadius: 8 }}>
 
         <text x={w/2} y={18} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={13} fontWeight="bold">
-          Разрез двойной перегородки
+          Л4.Сх3 — Разрез двойной перегородки
         </text>
         <text x={w/2} y={34} textAnchor="middle" fill={C_TEXT_DIM} fontSize={10}>
           ГКЛ {GKL_T} мм в 1 слой | ПН 75 между слоями
@@ -604,24 +618,16 @@ export default function PartitionFrameGkl() {
   return (
     <div style={{ background: C_BG, minHeight: "100vh", padding: 20, fontFamily: "sans-serif", color: C_TEXT }}>
       <h2 style={{ textAlign: "center", color: C_COLUMN_TEXT, margin: "0 0 4px" }}>
-        Каркас перегородки спальни — вариант ГКЛ
+        Лист 4 — Каркас перегородки спальни (ГКЛ)
       </h2>
       <p style={{ textAlign: "center", color: C_TEXT_DIM, margin: "0 0 16px", fontSize: 14 }}>
         Двойная перегородка {PARTITION_T} мм | ГКЛ {GKL_SHEET_W}×{GKL_SHEET_H}×{GKL_T} мм | Шаг стоек {STUD_STEP} мм
       </p>
 
-      {/* Вид спереди */}
-      <h3 style={{ textAlign: "center", color: C_COLUMN_TEXT, margin: "20px 0 12px", fontSize: 16 }}>
-        Внешний слой (со стороны лестницы)
-      </h3>
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
         <FrontView />
       </div>
 
-      {/* Вид сзади */}
-      <h3 style={{ textAlign: "center", color: C_COLUMN_TEXT, margin: "20px 0 12px", fontSize: 16 }}>
-        Внутренний слой (со стороны спальни) — швы вразбежку
-      </h3>
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
         <BackView />
       </div>

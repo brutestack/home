@@ -45,7 +45,7 @@ export default function FloorPlan(){
   const doborX=p+(MX+M2_LEN)*s,doborW=DOBOR_TREAD*s;
   return(
     <div style={{background:C_BG,minHeight:"100vh",padding:20,fontFamily:"sans-serif",color:C_TEXT}}>
-      <h2 style={{textAlign:"center",color:C_COLUMN_TEXT,margin:"0 0 4px"}}>План 2-го этажа</h2>
+      <h2 style={{textAlign:"center",color:C_COLUMN_TEXT,margin:"0 0 4px"}}>Лист 1 — План 2-го этажа</h2>
       <p style={{textAlign:"center",color:C_TEXT_DIM,margin:"0 0 16px",fontSize:14}}>{W*1000}×{H*1000} мм | Высота: 2800 мм | Площадь: {(W*H).toFixed(1)} м² | <span style={{color:C_DIM}}>все размеры в мм</span></p>
       <div style={{display:"flex",justifyContent:"center"}}>
         <svg viewBox={`0 0 ${CW+p*2+OWALL_PX} ${CH+p*2+OWALL_PX}`}

@@ -3,21 +3,23 @@ const PROEM_W=3.0,PROEM_H=1.7,PLAT_X=0.05,PLAT_W=0.75,MARCH_W=PROEM_H/2;
 const M1_STEPS=5,M2_STEPS=8,TREAD=0.25,DOBOR_TREAD=0.20;
 const M1_LEN=M1_STEPS*TREAD,M2_LEN=M2_STEPS*TREAD,M2_FULL=M2_LEN+DOBOR_TREAD;
 const MX=PLAT_X+PLAT_W,TOTAL_RISES=16,RISE_H=187.5,RISE_M=RISE_H/1000;
-const R=(x,y,w,h,sc,pd)=>({x:pd+x*sc,y:pd+y*sc,w:w*sc,h:h*sc,r:pd+(x+w)*sc,b:pd+(y+h)*sc});
+const R=(x,y,w,h,sc,pdX,pdY=pdX)=>({x:pdX+x*sc,y:pdY+y*sc,w:w*sc,h:h*sc,r:pdX+(x+w)*sc,b:pdY+(y+h)*sc});
 
 function TopView(){
   const [mouse,setMouse]=useState(null);
-  const DS=100,DP=50;
-  const pr=R(0,0,PROEM_W,PROEM_H,DS,DP);
-  const pl1=R(PLAT_X,0,PLAT_W,MARCH_W,DS,DP);
-  const pl2=R(PLAT_X,MARCH_W,PLAT_W,MARCH_W,DS,DP);
-  const m1=R(MX,0,M1_LEN,MARCH_W,DS,DP);
-  const m2=R(MX,MARCH_W,M2_FULL,MARCH_W,DS,DP);
-  const svgW=Math.max(pr.r,m2.r)+DP+60,svgH=pr.h+DP*2+70;
+  const DS=100;
+  const padL=50,padT=85,padR=95,padB=65;
+  const pr=R(0,0,PROEM_W,PROEM_H,DS,padL,padT);
+  const pl1=R(PLAT_X,0,PLAT_W,MARCH_W,DS,padL,padT);
+  const pl2=R(PLAT_X,MARCH_W,PLAT_W,MARCH_W,DS,padL,padT);
+  const m1=R(MX,0,M1_LEN,MARCH_W,DS,padL,padT);
+  const m2=R(MX,MARCH_W,M2_FULL,MARCH_W,DS,padL,padT);
+  const svgW=pr.r+padR,svgH=pr.b+padB;
   return(
     <svg viewBox={`0 0 ${svgW} ${svgH}`} style={{width:1000,height:"auto",background:"#16213e",borderRadius:8}}
       onMouseMove={e=>{const r=e.currentTarget.getBoundingClientRect();const scale=svgW/r.width;const x=(e.clientX-r.left)*scale,y=(e.clientY-r.top)*scale;if(x>=pr.x&&x<=pr.r&&y>=pr.y&&y<=pr.b)setMouse({x,y});else setMouse(null);}}
       onMouseLeave={()=>setMouse(null)}>
+      <text x={svgW/2} y={20} textAnchor="middle" fill="#e0e0e0" fontSize={14} fontWeight="bold">Л2.Сх1 — Лестница: Вид сверху (план)</text>
       <rect x={pr.x} y={pr.y} width={pr.w} height={pr.h} fill="#0d1520" stroke="#ff9800" strokeWidth={2} strokeDasharray="6 3"/>
       <rect x={pl1.x} y={pl1.y} width={pl1.w} height={pl1.h} fill="#1a1200" stroke="#ff980055"/>
       <rect x={pl2.x} y={pl2.y} width={pl2.w} height={pl2.h} fill="#2a1e00" stroke="#ff980077"/>
@@ -28,11 +30,11 @@ function TopView(){
         <rect x={m1.x+(M1_STEPS-1-i)*sw} y={m1.y} width={sw-1} height={m1.h} fill={`rgba(255,152,0,${.06+i*.03})`} stroke="#ff980044" strokeWidth={.5}/>
         <text x={m1.x+(M1_STEPS-1-i)*sw+sw/2} y={m1.y+m1.h/2+4} textAnchor="middle" fill="#ff9800" fontSize={9}>{i+1}</text>
       </g>;})}
-      {Array.from({length:M2_STEPS},(_,i)=>{const sw=M2_LEN*DS/M2_STEPS;const bx=DP+MX*DS;return <g key={`d2${i}`}>
+      {Array.from({length:M2_STEPS},(_,i)=>{const sw=M2_LEN*DS/M2_STEPS;const bx=padL+MX*DS;return <g key={`d2${i}`}>
         <rect x={bx+i*sw} y={m2.y} width={sw-1} height={m2.h} fill={`rgba(255,152,0,${.06+i*.025})`} stroke="#ff980044" strokeWidth={.5}/>
         <text x={bx+i*sw+sw/2} y={m2.y+m2.h/2+4} textAnchor="middle" fill="#ff9800" fontSize={9}>{M1_STEPS+2+1+i}</text>
       </g>;})}
-      {(()=>{const dx=DP+(MX+M2_LEN)*DS;const dw=DOBOR_TREAD*DS;return <g>
+      {(()=>{const dx=padL+(MX+M2_LEN)*DS;const dw=DOBOR_TREAD*DS;return <g>
         <rect x={dx} y={m2.y} width={dw-1} height={m2.h} fill="rgba(76,175,80,0.15)" stroke="#4caf50" strokeWidth={1.5}/>
         <text x={dx+dw/2} y={m2.y+m2.h/2+4} textAnchor="middle" fill="#4caf50" fontSize={8} fontWeight="bold">{M1_STEPS+2+M2_STEPS+1}</text>
         <text x={dx+dw/2} y={m2.y-6} textAnchor="middle" fill="#4caf50" fontSize={7}>доб.200</text>
@@ -46,7 +48,7 @@ function TopView(){
         <line x1={pr.x} y1={pr.b+6} x2={lx} y2={pr.b+6} stroke="#e74c3c88"/>
         <text x={(pr.x+lx)/2} y={pr.b+18} textAnchor="middle" fill="#e74c3c" fontSize={8}>50</text>
       </>;})()}
-      {(()=>{const shx=pr.r-0.2*DS;const s1r=DP+MX*DS+M1_LEN*DS;const dimY=m1.y-32;return <>
+      {(()=>{const shx=pr.r-0.2*DS;const s1r=padL+MX*DS+M1_LEN*DS;const dimY=m1.y-32;return <>
         <line x1={s1r} y1={dimY} x2={shx} y2={dimY} stroke="#e74c3c"/>
         <text x={(s1r+shx)/2} y={dimY-4} textAnchor="middle" fill="#e74c3c" fontSize={8}>{Math.round((PROEM_W-0.2-MX-M1_LEN)*1000)}</text>
       </>;})()}
@@ -55,7 +57,7 @@ function TopView(){
         <line x1={lx} y1={pr.y-6} x2={pr.r} y2={pr.y-6} stroke="#e74c3c88"/>
         <text x={(lx+pr.r)/2} y={pr.y-10} textAnchor="middle" fill="#e74c3c" fontSize={8}>200</text>
       </>;})()}
-      {(()=>{const dx=DP+(MX+M2_LEN+DOBOR_TREAD)*DS;return <>
+      {(()=>{const dx=padL+(MX+M2_LEN+DOBOR_TREAD)*DS;return <>
         <line x1={dx} y1={pr.y-14} x2={dx} y2={pr.b+60} stroke="#4caf5066" strokeWidth={1} strokeDasharray="3 2"/>
         <text x={dx+4} y={pr.y-4} fill="#4caf50" fontSize={7}>= край проёма</text>
       </>;})()}
@@ -121,6 +123,7 @@ function SideView(){
     <svg viewBox={`0 0 ${SW} ${SH}`} style={{width:1000,height:"auto",background:"#16213e",borderRadius:8}}
       onMouseMove={e=>{const r=e.currentTarget.getBoundingClientRect();const scale=SW/r.width;const x=(e.clientX-r.left)*scale,y=(e.clientY-r.top)*scale;if(x>=x0&&x<=x0+PROEM_W*scX&&y>=tY&&y<=bY)setMouse({x,y});else setMouse(null);}}
       onMouseLeave={()=>setMouse(null)}>
+      <text x={SW/2} y={20} textAnchor="middle" fill="#e0e0e0" fontSize={14} fontWeight="bold">Л2.Сх2 — Лестница: Вид сбоку</text>
       <line x1={20} y1={bY} x2={SW-20} y2={bY} stroke="#e0e0e0" strokeWidth={2}/>
       <text x={16} y={bY+4} textAnchor="end" fill="#888" fontSize={9}>1эт</text>
       <line x1={20} y1={tY} x2={SW-20} y2={tY} stroke="#e0e0e0" strokeWidth={2} strokeDasharray="6 3"/>
@@ -277,6 +280,7 @@ function SectionView(){
     <svg viewBox={`0 0 ${SW} ${SH}`} style={{width:1000,height:"auto",background:"#16213e",borderRadius:8}}
       onMouseMove={e=>{const r=e.currentTarget.getBoundingClientRect();const scale=SW/r.width;const x=(e.clientX-r.left)*scale,y=(e.clientY-r.top)*scale;if(x>=20&&x<=560&&y>=TY&&y<=BY)setMouse({x,y});else setMouse(null);}}
       onMouseLeave={()=>setMouse(null)}>
+      <text x={SW/2} y={20} textAnchor="middle" fill="#e0e0e0" fontSize={14} fontWeight="bold">Л2.Сх3 — Лестница: Разрез (развёртка)</text>
       <line x1={20} y1={BY} x2={560} y2={BY} stroke="#e0e0e0" strokeWidth={2}/>
       <text x={16} y={BY+4} textAnchor="end" fill="#888" fontSize={9}>1эт</text>
       <line x1={20} y1={TY} x2={560} y2={TY} stroke="#e0e0e0" strokeWidth={2} strokeDasharray="6 3"/>
@@ -327,13 +331,10 @@ function SectionView(){
 export default function StairDetail(){
   return(
     <div style={{background:"#1a1a2e",minHeight:"100vh",padding:20,fontFamily:"sans-serif",color:"#e0e0e0"}}>
-      <h2 style={{textAlign:"center",color:"#fff",margin:"0 0 16px"}}>Детали лестницы</h2>
-      <p style={{color:"#888",fontSize:12,textAlign:"center",margin:"0 0 8px"}}>Вид сверху (план)</p>
-      <div style={{display:"flex",justifyContent:"center"}}><TopView/></div>
-      <p style={{color:"#888",fontSize:12,textAlign:"center",margin:"20px 0 8px"}}>Вид сбоку</p>
-      <div style={{display:"flex",justifyContent:"center"}}><SideView/></div>
-      <p style={{color:"#888",fontSize:12,textAlign:"center",margin:"20px 0 8px"}}>Разрез (развёртка)</p>
-      <div style={{display:"flex",justifyContent:"center"}}><SectionView/></div>
+      <h2 style={{textAlign:"center",color:"#fff",margin:"0 0 16px"}}>Лист 2 — Детали лестницы</h2>
+      <div style={{display:"flex",justifyContent:"center",marginBottom:12}}><TopView/></div>
+      <div style={{display:"flex",justifyContent:"center",marginBottom:12}}><SideView/></div>
+      <div style={{display:"flex",justifyContent:"center",marginBottom:12}}><SectionView/></div>
       <div style={{maxWidth:520,margin:"20px auto",background:"#1e2d4a",borderRadius:8,padding:16}}>
         <h3 style={{color:"#ff9800",margin:"0 0 12px",fontSize:14,textAlign:"center"}}>Спецификация лестницы</h3>
         <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>

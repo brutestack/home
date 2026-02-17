@@ -12,11 +12,11 @@ export default function App() {
   const [view, setView] = useState<View>('floor')
 
   const tabs: { id: View; label: string }[] = [
-    { id: 'floor', label: 'План 2 этажа' },
-    { id: 'partition', label: 'Спальня (ЛДСП)' },
-    { id: 'partition-gkl', label: 'Спальня (ГКЛ)' },
-    { id: 'bathroom-partition', label: 'Ванная (ГКЛ)' },
-    { id: 'detail', label: 'Детали лестницы' },
+    { id: 'floor', label: 'Л1 — План 2 этажа' },
+    { id: 'detail', label: 'Л2 — Лестница' },
+    { id: 'partition', label: 'Л3 — Спальня (ЛДСП)' },
+    { id: 'partition-gkl', label: 'Л4 — Спальня (ГКЛ)' },
+    { id: 'bathroom-partition', label: 'Л5 — Ванная' },
     { id: '3d', label: '3D модель' },
   ]
 

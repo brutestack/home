@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { HDim, VDim } from "./svg-primitives";
+import { HDim, VDim, StudLabel } from "./svg-primitives";
 import {
   C_BG, C_BG_SVG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT, C_TOOLTIP_BG,
   C_DIM, C_DIM_TRANS, C_GKL, C_GKL_BORDER, C_WARDROBE, C_WARDROBE_FILL
@@ -51,6 +51,35 @@ const C_PANEL = "#DEB887";     // ЛДСП панель (бежевый)
 const C_PANEL_FILL = "#DEB88733";
 const C_DOBOR = "#D2691E";     // Доборная планка
 const C_DOOR = "#228B22";      // Дверной проём (зелёный)
+
+// Расчёт позиций стоек для FrontView (со стороны лестницы)
+const getStudPositionsFront = () => {
+  const GAP_LEFT = VERT_LEN - DOOR_OFFSET - DOOR_W - PANEL_W * 2; // 20 мм
+  const stud1 = GAP_LEFT; // 20
+  const stud2 = GAP_LEFT + PANEL_W; // 920
+  const doorStart = GAP_LEFT + PANEL_W * 2; // 1820
+  const doorEnd = VERT_LEN - DOOR_OFFSET; // 2720
+  return [0, stud1, stud2, doorStart - PS_W, doorEnd]; // [0, 20, 920, 1770, 2720]
+};
+
+// Расчёт позиций стоек для BackView (со стороны спальни)
+const getStudPositionsBack = () => {
+  const doorStartMirror = DOOR_OFFSET; // 50
+  const doorEndMirror = DOOR_OFFSET + DOOR_W; // 950
+  const horizProfileW = PS_W; // 50мм
+  const horizPartitionEnd = doorEndMirror + horizProfileW; // 1000
+  const panelAreaStart = horizPartitionEnd; // 1000
+  const panel1End = panelAreaStart + PANEL_W; // 1900
+  // Стойки: у ванной (0), после перегородки (1000), между панелями (1875), у внешней стены (2720)
+  return [0, panelAreaStart, panel1End - PS_W / 2, VERT_LEN - PS_W];
+};
+
+const STUD_POSITIONS_FRONT = getStudPositionsFront();
+const STUD_POSITIONS_BACK = getStudPositionsBack();
+
+// Номера стоек: лестница 1-N, спальня (N+1)-M
+const getStudNumberFront = (index: number) => index + 1;
+const getStudNumberBack = (index: number) => index + 1 + STUD_POSITIONS_FRONT.length;
 
 export default function PartitionFrame() {
   const [mouse, setMouse] = useState<{x: number, y: number, view: string} | null>(null);
@@ -105,7 +134,7 @@ export default function PartitionFrame() {
         style={{ width: FRONT_W, background: C_BG_SVG, borderRadius: 8 }}>
 
         <text x={FRONT_W/2} y={24} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={14} fontWeight="bold">
-          Вид спереди (со стороны лестницы)
+          Л3.Сх1 — Внешний слой, со стороны лестницы
         </text>
 
         {/* Контур помещения */}
@@ -130,30 +159,42 @@ export default function PartitionFrame() {
 
         {/* Стоечные профили ПС */}
         {/* Стойка у стены (0) — левый край на линии стены */}
-        <rect x={p} y={p + PN_H * s}
-          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-        {/* Стойки под панели (центрированы) */}
-        {[stud1, stud2].map((pos, i) => (
-          <rect key={`stud${i}`} x={p + pos * s - PS_W/2 * s} y={p + PN_H * s}
+        <g>
+          <rect x={p} y={p + PN_H * s}
             width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
             fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+          <StudLabel x={p + PS_W/2 * s} y={p + CEILING_H/2 * s} num={getStudNumberFront(0)} color={C_FRAME}/>
+        </g>
+        {/* Стойки под панели (центрированы) */}
+        {[stud1, stud2].map((pos, i) => (
+          <g key={`stud${i}`}>
+            <rect x={p + pos * s - PS_W/2 * s} y={p + PN_H * s}
+              width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+              fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+            <StudLabel x={p + pos * s} y={p + CEILING_H/2 * s} num={getStudNumberFront(i + 1)} color={C_FRAME}/>
+          </g>
         ))}
         {/* Стойка у начала проёма — правый край на doorStart (не выступает в проём) */}
-        <rect x={p + (doorStart - PS_W) * s} y={p + PN_H * s}
-          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <g>
+          <rect x={p + (doorStart - PS_W) * s} y={p + PN_H * s}
+            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+            fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+          <StudLabel x={p + (doorStart - PS_W/2) * s} y={p + CEILING_H/2 * s} num={getStudNumberFront(3)} color={C_FRAME}/>
+        </g>
         {/* Стойка у конца проёма — левый край на doorEnd (не выступает в проём) */}
-        <rect x={p + doorEnd * s} y={p + PN_H * s}
-          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-        {/* Брус внутри стойки справа от двери */}
-        <rect x={p + doorEnd * s} y={p + PN_H * s}
-          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-          fill={C_BEAM_FILL} stroke={C_BEAM} strokeWidth={1.5}/>
-        <text x={p + (doorEnd + PS_W/2) * s} y={p + CEILING_H/2 * s}
-          textAnchor="middle" fill={C_BEAM} fontSize={7}
-          transform={`rotate(-90,${p + (doorEnd + PS_W/2) * s},${p + CEILING_H/2 * s})`}>брус {BEAM_W}×{BEAM_H}</text>
+        <g>
+          <rect x={p + doorEnd * s} y={p + PN_H * s}
+            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+            fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+          {/* Брус внутри стойки справа от двери */}
+          <rect x={p + doorEnd * s} y={p + PN_H * s}
+            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+            fill={C_BEAM_FILL} stroke={C_BEAM} strokeWidth={1.5}/>
+          <text x={p + (doorEnd + PS_W/2) * s} y={p + CEILING_H/2 * s - 50}
+            textAnchor="middle" fill={C_BEAM} fontSize={7}
+            transform={`rotate(-90,${p + (doorEnd + PS_W/2) * s},${p + CEILING_H/2 * s - 50})`}>брус {BEAM_W}×{BEAM_H}</text>
+          <StudLabel x={p + (doorEnd + PS_W/2) * s} y={p + CEILING_H/2 * s + 60} num={getStudNumberFront(4)} color={C_BEAM}/>
+        </g>
 
         {/* Перемычка над дверью — деревянный брус 50×70, от стены до конца проёма */}
         <rect x={p} y={p + (CEILING_H - DOOR_H - BEAM_H) * s}
@@ -288,7 +329,7 @@ export default function PartitionFrame() {
         style={{ width: FRONT_W, background: C_BG_SVG, borderRadius: 8 }}>
 
         <text x={FRONT_W/2} y={24} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={14} fontWeight="bold">
-          Вид сзади (со стороны спальни) — внутренний слой
+          Л3.Сх2 — Внутренний слой, со стороны спальни
         </text>
         <text x={FRONT_W/2} y={42} textAnchor="middle" fill={C_TEXT_DIM} fontSize={10}>
           Короткая перегородка примыкает к этому слою, сдвигая раскладку на {horizProfileW}мм
@@ -315,13 +356,16 @@ export default function PartitionFrame() {
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
 
         {/* Стойка у ванной */}
-        <rect x={p} y={p + PN_H * s}
-          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-        {/* Брус внутри стойки у ванной */}
-        <rect x={p} y={p + PN_H * s}
-          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-          fill={C_BEAM_FILL} stroke={C_BEAM} strokeWidth={1.5}/>
+        <g>
+          <rect x={p} y={p + PN_H * s}
+            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+            fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+          {/* Брус внутри стойки у ванной */}
+          <rect x={p} y={p + PN_H * s}
+            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+            fill={C_BEAM_FILL} stroke={C_BEAM} strokeWidth={1.5}/>
+          <StudLabel x={p + PS_W/2 * s} y={p + CEILING_H/2 * s} num={getStudNumberBack(0)} color={C_BEAM}/>
+        </g>
 
         {/* Дверной проём */}
         <rect x={p + doorStartMirror * s} y={p + (CEILING_H - DOOR_H) * s}
@@ -347,9 +391,12 @@ export default function PartitionFrame() {
         </text>
 
         {/* Стойка после короткой перегородки */}
-        <rect x={p + horizPartitionEnd * s} y={p + PN_H * s}
-          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <g>
+          <rect x={p + horizPartitionEnd * s} y={p + PN_H * s}
+            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+            fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+          <StudLabel x={p + (horizPartitionEnd + PS_W/2) * s} y={p + CEILING_H/2 * s} num={getStudNumberBack(1)} color={C_FRAME}/>
+        </g>
 
         {/* === ЛДСП панели (от короткой перегородки к внешней стене) — вплотную к потолку === */}
         {/* Панель 1: 1000-1900 (900мм) */}
@@ -360,9 +407,12 @@ export default function PartitionFrame() {
           textAnchor="middle" fill={C_PANEL} fontSize={9}>ЛДСП {PANEL_W}×{PANEL_H}</text>
 
         {/* Стойка между панелями */}
-        <rect x={p + (panel1End - PS_W/2) * s} y={p + PN_H * s}
-          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <g>
+          <rect x={p + (panel1End - PS_W/2) * s} y={p + PN_H * s}
+            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+            fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+          <StudLabel x={p + panel1End * s} y={p + CEILING_H/2 * s} num={getStudNumberBack(2)} color={C_FRAME}/>
+        </g>
 
         {/* Остаток у внешней стены: 1900-2770 (870мм) */}
         <rect x={p + panel1End * s} y={p}
@@ -372,9 +422,12 @@ export default function PartitionFrame() {
           textAnchor="middle" fill={C_PANEL} fontSize={9}>ЛДСП {remainderW}×{PANEL_H}</text>
 
         {/* Стойка у внешней стены */}
-        <rect x={p + (VERT_LEN - PS_W) * s} y={p + PN_H * s}
-          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <g>
+          <rect x={p + (VERT_LEN - PS_W) * s} y={p + PN_H * s}
+            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+            fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+          <StudLabel x={p + (VERT_LEN - PS_W/2) * s} y={p + CEILING_H/2 * s} num={getStudNumberBack(3)} color={C_FRAME}/>
+        </g>
 
         {/* Доборка снизу (у пола) */}
         <rect x={p + panelAreaStart * s} y={p + PANEL_H * s} width={panelAreaLen * s} height={DOBOR_H * s}
@@ -492,7 +545,7 @@ export default function PartitionFrame() {
         style={{ width: w, background: C_BG_SVG, borderRadius: 8 }}>
 
         <text x={w/2} y={18} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={13} fontWeight="bold">
-          Разрез двойной перегородки
+          Л3.Сх3 — Разрез двойной перегородки
         </text>
         <text x={w/2} y={34} textAnchor="middle" fill={C_TEXT_DIM} fontSize={10}>
           ЛДСП только снаружи | ПН 75 между слоями
@@ -577,7 +630,7 @@ export default function PartitionFrame() {
         style={{ width: w, background: C_BG_SVG, borderRadius: 8 }}>
 
         <text x={w/2} y={18} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={13} fontWeight="bold">
-          Горизонтальная часть — вид со стороны двери в ванную
+          Л3.Сх5 — Горизонтальная часть (вид со стороны двери в ванную)
         </text>
         <text x={w/2} y={34} textAnchor="middle" fill={C_TEXT_DIM} fontSize={10}>
           Внутренний слой двойной перегородки продолжается как горизонтальная часть
@@ -707,7 +760,7 @@ export default function PartitionFrame() {
         style={{ width: w, background: C_BG_SVG, borderRadius: 8 }}>
 
         <text x={w/2} y={18} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={13} fontWeight="bold">
-          Разрез горизонтальной части
+          Л3.Сх4 — Разрез горизонтальной части
         </text>
         <text x={w/2} y={34} textAnchor="middle" fill={C_TEXT_DIM} fontSize={10}>
           Одинарная 50 мм, ЛДСП с двух сторон
@@ -798,25 +851,17 @@ export default function PartitionFrame() {
   return (
     <div style={{ background: C_BG, minHeight: "100vh", padding: 20, fontFamily: "sans-serif", color: C_TEXT }}>
       <h2 style={{ textAlign: "center", color: C_COLUMN_TEXT, margin: "0 0 4px" }}>
-        Каркас перегородки спальни
+        Лист 3 — Каркас перегородки спальни (ЛДСП)
       </h2>
       <p style={{ textAlign: "center", color: C_TEXT_DIM, margin: "0 0 16px", fontSize: 14 }}>
         Двойная вертикальная перегородка {PARTITION_T} мм + горизонтальная часть {HORIZ_W}×{HORIZ_T} мм |
         Обшивка ЛДСП {PANEL_T} мм
       </p>
 
-      {/* Вид спереди (внешний слой) */}
-      <h3 style={{ textAlign: "center", color: C_COLUMN_TEXT, margin: "20px 0 12px", fontSize: 16 }}>
-        Внешний слой (со стороны лестницы)
-      </h3>
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
         <FrontView />
       </div>
 
-      {/* Вид сзади (внутренний слой) */}
-      <h3 style={{ textAlign: "center", color: C_COLUMN_TEXT, margin: "20px 0 12px", fontSize: 16 }}>
-        Внутренний слой (со стороны спальни)
-      </h3>
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
         <BackView />
       </div>

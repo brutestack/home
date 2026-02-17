@@ -77,3 +77,14 @@ export function DoorwayCross({ x1, y1, x2, y2, color }: {
     <line x1={x1} y1={y2} x2={x2} y2={y1} stroke={color} strokeWidth={1}/>
   </>;
 }
+
+// Номер стойки в кружке
+export function StudLabel({ x, y, num, r = 10, color = "#8B4513", fontSize = 10 }: {
+  x: number; y: number; num: number;
+  r?: number; color?: string; fontSize?: number;
+}) {
+  return <>
+    <circle cx={x} cy={y} r={r} fill={color} fillOpacity={0.85}/>
+    <text x={x} y={y + fontSize * 0.35} textAnchor="middle" fill="white" fontSize={fontSize} fontWeight="bold">{num}</text>
+  </>;
+}
