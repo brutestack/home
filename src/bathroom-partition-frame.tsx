@@ -69,8 +69,8 @@ const C_DOOR = "#228B22";      // Дверной проём (зелёный)
 const DOOR_STUD_POS = DOOR_END; // 1150 мм
 
 // Позиция примыкания перегородки спальни (от левого края колонны 2)
-// PIPES_END - (IWALL_X + IWALL_T) = 4.43 - 3.25 = 1.18м = 1180мм
-const BEDROOM_PART_LEFT = 1180;  // Левый край перегородки спальни
+// Совпадает с правым краем дверного проёма (DOOR_END = 1150 мм)
+const BEDROOM_PART_LEFT = 1150;  // Левый край перегородки спальни
 const BEDROOM_PART_T = 175;      // Толщина перегородки спальни (50+75+50)
 const BEDROOM_PART_RIGHT = BEDROOM_PART_LEFT + BEDROOM_PART_T; // 1355 мм
 

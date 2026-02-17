@@ -128,13 +128,16 @@ export default function FloorPlan(){
           {/* Колонна 2 (левая, у внутренней стены): 200x150мм */}
           <rect x={p+(IWALL_X+IWALL_T)*s} y={p+(H-IWALL_LEN)*s} width={COL2_W*s} height={COL2_H*s} fill={C_COLUMN} stroke={C_COLUMN_BORDER} strokeWidth={1}/>
           <text x={p+(IWALL_X+IWALL_T+COL2_W/2)*s} y={p+(H-IWALL_LEN+COL2_H/2)*s+3} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={6}>{COL2_W*1000}×{COL2_H*1000}</text>
-          {/* Часть от левого проёма до колонны 1 */}
-          <GklPanel x={p+(IWALL_X+IWALL_T+COL2_W+DOOR_W)*s} y={p+(H-IWALL_LEN)*s} width={(IWALL_X+IWALL_T+COL_DIST-IWALL_X-IWALL_T-COL2_W-DOOR_W)*s} height={GKL_LAYER*s}/>
-          <GklPanel x={p+(IWALL_X+IWALL_T+COL2_W+DOOR_W)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP)*s} width={(IWALL_X+IWALL_T+COL_DIST-IWALL_X-IWALL_T-COL2_W-DOOR_W)*s} height={GKL_LAYER*s}/>
-          <text x={p+(IWALL_X+IWALL_T+COL2_W+DOOR_W+(IWALL_X+IWALL_T+COL_DIST-IWALL_X-IWALL_T-COL2_W-DOOR_W)/2)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP/2)*s+3} textAnchor="middle" fill={C_GKL_TEXT} fontSize={7}>ГКЛ</text>
-          {/* Обозначение левого проёма (от колонны 2) */}
-          <DoorwayCross x1={p+(IWALL_X+IWALL_T+COL2_W)*s} y1={p+(H-IWALL_LEN)*s} x2={p+(IWALL_X+IWALL_T+COL2_W+DOOR_W)*s} y2={p+(H-IWALL_LEN+GKL_T)*s} color={C_COLUMN_BORDER}/>
-          <text x={p+(IWALL_X+IWALL_T+COL2_W+DOOR_W/2)*s} y={p+(H-IWALL_LEN+GKL_T/2)*s+3} textAnchor="middle" fill={C_GKL_TEXT} fontSize={7}>{DOOR_W*1000}</text>
+          {/* ГКЛ под стойкой у колонны 2 (50мм = GKL_LAYER) */}
+          <GklPanel x={p+(IWALL_X+IWALL_T+COL2_W)*s} y={p+(H-IWALL_LEN)*s} width={GKL_LAYER*s} height={GKL_LAYER*s}/>
+          <GklPanel x={p+(IWALL_X+IWALL_T+COL2_W)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP)*s} width={GKL_LAYER*s} height={GKL_LAYER*s}/>
+          {/* Часть от проёма до колонны 1 */}
+          <GklPanel x={p+(IWALL_X+IWALL_T+COL2_W+GKL_LAYER+DOOR_W)*s} y={p+(H-IWALL_LEN)*s} width={(COL_DIST-COL2_W-GKL_LAYER-DOOR_W)*s} height={GKL_LAYER*s}/>
+          <GklPanel x={p+(IWALL_X+IWALL_T+COL2_W+GKL_LAYER+DOOR_W)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP)*s} width={(COL_DIST-COL2_W-GKL_LAYER-DOOR_W)*s} height={GKL_LAYER*s}/>
+          <text x={p+(IWALL_X+IWALL_T+COL2_W+GKL_LAYER+DOOR_W+(COL_DIST-COL2_W-GKL_LAYER-DOOR_W)/2)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP/2)*s+3} textAnchor="middle" fill={C_GKL_TEXT} fontSize={7}>ГКЛ</text>
+          {/* Обозначение проёма (после стойки у колонны 2) */}
+          <DoorwayCross x1={p+(IWALL_X+IWALL_T+COL2_W+GKL_LAYER)*s} y1={p+(H-IWALL_LEN)*s} x2={p+(IWALL_X+IWALL_T+COL2_W+GKL_LAYER+DOOR_W)*s} y2={p+(H-IWALL_LEN+GKL_T)*s} color={C_COLUMN_BORDER}/>
+          <text x={p+(IWALL_X+IWALL_T+COL2_W+GKL_LAYER+DOOR_W/2)*s} y={p+(H-IWALL_LEN+GKL_T/2)*s+3} textAnchor="middle" fill={C_GKL_TEXT} fontSize={7}>{DOOR_W*1000}</text>
           {/* ГКЛ перегородка вертикальная: от колонны до нижней стены, правый край совпадает с правым краем колонны */}
           <GklPanel x={p+(IWALL_X+IWALL_T+COL_DIST+COL_W-GKL2_T)*s} y={p+(H-IWALL_LEN+COL_H)*s} width={GKL2_T*s} height={(IWALL_LEN-COL_H)*s}/>
           <text x={p+(IWALL_X+IWALL_T+COL_DIST+COL_W-GKL2_T/2)*s} y={p+(H-(IWALL_LEN-COL_H)/2)*s} textAnchor="middle" fill={C_GKL_TEXT} fontSize={7} transform={`rotate(-90,${p+(IWALL_X+IWALL_T+COL_DIST+COL_W-GKL2_T/2)*s},${p+(H-(IWALL_LEN-COL_H)/2)*s})`}>ГКЛ</text>

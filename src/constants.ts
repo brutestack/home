@@ -85,7 +85,7 @@ export const PROEM_Y = 0.15;
 export const PROEM_W = 3.0;
 export const PROEM_H = 1.7;
 export const PIPES_START = PROEM_W + 0.84;
-export const PIPES_END = PROEM_W + 1.43;
+export const PIPES_END = PROEM_W + 1.40;
 
 // === Мебель спальни ===
 // Угловой диван: 3000x2050мм, глубина 1050мм
