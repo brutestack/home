@@ -356,10 +356,12 @@ export default function PartitionFrameGkl() {
         <text x={p + (doorStartMirror + DOOR_W/2) * s} y={p + (CEILING_H - DOOR_H/2) * s}
           textAnchor="middle" fill={C_DOOR} fontSize={12} fontWeight="bold">ПРОЁМ</text>
 
-        {/* Перемычка над дверью — брус на 2100 мм */}
-        <rect x={p} y={p + (CEILING_H - BEAM_LEVEL - BEAM_H) * s}
-          width={(doorEndMirror + PS_W) * s} height={BEAM_H * s}
+        {/* Перемычка над дверью — брус на 2100 мм (от внешней стены до конца проёма) */}
+        <rect x={p + DOOR_OFFSET * s} y={p + (CEILING_H - BEAM_LEVEL - BEAM_H) * s}
+          width={DOOR_END * s} height={BEAM_H * s}
           fill={C_BEAM_FILL} stroke={C_BEAM} strokeWidth={2}/>
+        <text x={p + (DOOR_OFFSET + DOOR_END/2) * s} y={p + (CEILING_H - BEAM_LEVEL - BEAM_H/2) * s + 3}
+          textAnchor="middle" fill={C_BEAM} fontSize={8}>брус {DOOR_END}×{BEAM_H}×{BEAM_W}</text>
 
         {/* Горизонтальная направляющая ПН над дверью — от ванной до середины стойки, низ на 2000 мм */}
         <rect x={p} y={p + (CEILING_H - DOOR_H - PN_H) * s}
