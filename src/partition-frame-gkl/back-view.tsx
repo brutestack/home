@@ -1,4 +1,4 @@
-import { HDim, VDim, StudLabel, SpecLabel } from "../svg-primitives";
+import { HDim, VDim, StudLabel, SpecLabel, Crosshair, createMouseHandler, MousePos, SchemaArea } from "../svg-primitives";
 import {
   CEILING_H_MM, DOOR_W_MM, DOOR_OFFSET_MM, DOOR_H_MM, GKL_SHEET_H_MM, GKL_SHEET_W_MM,
   DOBOR_H_MM, OVER_DOOR_H_MM, PN_H_MM, PS_W_MM, BEAM_W_MM, BEAM_H_MM, BEAM_LEVEL_MM,
@@ -11,11 +11,20 @@ import {
   C_FRAME, C_FRAME_FILL, C_BEAM, C_BEAM_FILL, C_GKL_PANEL, C_GKL_PANEL_FILL, C_DOOR_OPENING
 } from "../colors";
 
-export function BackView() {
+interface BackViewProps {
+  onMouseMove?: (pos: MousePos | null) => void;
+  mouse?: MousePos | null;
+}
+
+export function BackView({ onMouseMove, mouse }: BackViewProps) {
   const FRONT_W = 1000;
   const FRONT_H = 900;
   const p = 70;
   const s = S_FRONT_LDSP;
+
+  const area: SchemaArea = {
+    padding: p, scale: s, width: BEDROOM_VERT_FULL_LEN_MM, height: CEILING_H_MM, svgWidth: FRONT_W
+  };
 
   // Зеркальные координаты (0 = ванная)
   const doorStartMirror = DOOR_OFFSET_MM;
@@ -23,6 +32,8 @@ export function BackView() {
 
   return (
     <svg viewBox={`0 0 ${FRONT_W} ${FRONT_H}`}
+      onMouseMove={onMouseMove ? createMouseHandler(area, onMouseMove) : undefined}
+      onMouseLeave={() => onMouseMove?.(null)}
       style={{ width: FRONT_W, background: C_BG_SVG, borderRadius: 8 }}>
 
       <text x={FRONT_W/2} y={24} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={14} fontWeight="bold">
@@ -161,6 +172,9 @@ export function BackView() {
       <text x={p + BEDROOM_VERT_FULL_LEN_MM * s + 30} y={p + CEILING_H_MM/3 * s} textAnchor="start" fill={C_WARDROBE} fontSize={8}>
         Внешняя стена →
       </text>
+
+      {/* Курсор */}
+      <Crosshair mouse={mouse} area={area} />
 
     </svg>
   );

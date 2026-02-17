@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { HDim, VDim, StudLabel, SpecLabel } from "../svg-primitives";
+import { HDim, VDim, StudLabel, SpecLabel, Crosshair, createMouseHandler, MousePos, SchemaArea } from "../svg-primitives";
 import {
   CEILING_H_MM, DOOR_W_MM, DOOR_OFFSET_MM, PANEL_H_MM, PANEL_W_MM, PANEL_T_MM,
   LDSP_DOBOR_H_MM, OVER_DOOR_PANEL_H_MM, PN_H_MM, PS_W_MM, BEAM_W_MM, BEAM_H_MM,
@@ -7,13 +6,13 @@ import {
   STUD_POSITIONS_FRONT_LDSP, getStudNumberFrontLDSP
 } from "../constants";
 import {
-  C_BG_SVG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT, C_TOOLTIP_BG, C_DIM, C_GKL,
+  C_BG_SVG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT, C_GKL,
   C_FRAME, C_FRAME_FILL, C_BEAM, C_BEAM_FILL, C_PANEL, C_PANEL_FILL, C_DOBOR, C_DOOR_OPENING
 } from "../colors";
 
 interface FrontViewProps {
-  onMouseMove?: (pos: {x: number, y: number} | null) => void;
-  mouse?: {x: number, y: number, view: string} | null;
+  onMouseMove?: (pos: MousePos | null) => void;
+  mouse?: MousePos | null;
 }
 
 export function FrontView({ onMouseMove, mouse }: FrontViewProps) {
@@ -21,6 +20,10 @@ export function FrontView({ onMouseMove, mouse }: FrontViewProps) {
   const FRONT_H = 900;
   const p = 70;
   const s = S_FRONT_LDSP;
+
+  const area: SchemaArea = {
+    padding: p, scale: s, width: BEDROOM_VERT_FULL_LEN_MM, height: CEILING_H_MM, svgWidth: FRONT_W
+  };
 
   const GAP_LEFT = BEDROOM_VERT_FULL_LEN_MM - DOOR_OFFSET_MM - DOOR_W_MM - PANEL_W_MM * 2;
   const stud1 = GAP_LEFT;
@@ -30,17 +33,7 @@ export function FrontView({ onMouseMove, mouse }: FrontViewProps) {
 
   return (
     <svg viewBox={`0 0 ${FRONT_W} ${FRONT_H}`}
-      onMouseMove={e => {
-        const r = e.currentTarget.getBoundingClientRect();
-        const scale = FRONT_W / r.width;
-        const x = (e.clientX - r.left) * scale - p;
-        const y = (e.clientY - r.top) * scale - p;
-        if (x >= 0 && x <= BEDROOM_VERT_FULL_LEN_MM * s && y >= 0 && y <= CEILING_H_MM * s) {
-          onMouseMove?.({ x: x / s, y: CEILING_H_MM - y / s });
-        } else {
-          onMouseMove?.(null);
-        }
-      }}
+      onMouseMove={onMouseMove ? createMouseHandler(area, onMouseMove) : undefined}
       onMouseLeave={() => onMouseMove?.(null)}
       style={{ width: FRONT_W, background: C_BG_SVG, borderRadius: 8 }}>
 
@@ -186,16 +179,7 @@ export function FrontView({ onMouseMove, mouse }: FrontViewProps) {
         color={C_DOBOR} textColor={C_DOBOR} label={LDSP_DOBOR_H_MM} fontSize={8} labelX={p + BEDROOM_VERT_FULL_LEN_MM * s + 20}/>
 
       {/* Курсор */}
-      {mouse && mouse.view === 'front' && <>
-        <line x1={p + mouse.x * s} y1={p} x2={p + mouse.x * s} y2={p + CEILING_H_MM * s}
-          stroke={C_DIM + "44"} strokeDasharray="4"/>
-        <line x1={p} y1={p + (CEILING_H_MM - mouse.y) * s} x2={p + BEDROOM_VERT_FULL_LEN_MM * s} y2={p + (CEILING_H_MM - mouse.y) * s}
-          stroke={C_DIM + "44"} strokeDasharray="4"/>
-        <rect x={p + mouse.x * s + 10} y={p + (CEILING_H_MM - mouse.y) * s - 26} width={90} height={22} rx={4} fill={C_TOOLTIP_BG}/>
-        <text x={p + mouse.x * s + 14} y={p + (CEILING_H_MM - mouse.y) * s - 10} fill={C_DIM} fontSize={11}>
-          {mouse.x.toFixed(0)}×{mouse.y.toFixed(0)}
-        </text>
-      </>}
+      <Crosshair mouse={mouse} area={area} />
 
     </svg>
   );

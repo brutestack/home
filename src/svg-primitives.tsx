@@ -133,3 +133,78 @@ export function SpecHighlightFilter() {
     </filter>
   );
 }
+
+// === Интерактивный курсор (перекрестье с координатами) ===
+
+import { C_TOOLTIP_BG } from "./colors";
+
+// Тип для позиции мыши
+export interface MousePos {
+  x: number;  // координата X в мм
+  y: number;  // координата Y в мм (от пола)
+}
+
+// Параметры области схемы
+export interface SchemaArea {
+  padding: number;     // отступ от края SVG (px)
+  scale: number;       // масштаб (px/мм)
+  width: number;       // ширина области в мм
+  height: number;      // высота области в мм
+  svgWidth: number;    // ширина SVG (px)
+  invertY?: boolean;   // инвертировать Y (true = 0 снизу, false = 0 сверху)
+}
+
+// Компонент перекрестья с координатами
+export function Crosshair({ mouse, area }: {
+  mouse: MousePos | null;
+  area: SchemaArea;
+}) {
+  if (!mouse) return null;
+
+  const { padding: p, scale: s, width, height, invertY = true } = area;
+  const screenY = invertY ? (height - mouse.y) * s : mouse.y * s;
+
+  return <>
+    {/* Вертикальная линия */}
+    <line
+      x1={p + mouse.x * s} y1={p}
+      x2={p + mouse.x * s} y2={p + height * s}
+      stroke={C_DIM + "44"} strokeDasharray="4"/>
+    {/* Горизонтальная линия */}
+    <line
+      x1={p} y1={p + screenY}
+      x2={p + width * s} y2={p + screenY}
+      stroke={C_DIM + "44"} strokeDasharray="4"/>
+    {/* Подсказка с координатами */}
+    <rect
+      x={p + mouse.x * s + 10} y={p + screenY - 26}
+      width={90} height={22} rx={4} fill={C_TOOLTIP_BG}/>
+    <text
+      x={p + mouse.x * s + 14} y={p + screenY - 10}
+      fill={C_DIM} fontSize={11}>
+      {mouse.x.toFixed(0)}×{mouse.y.toFixed(0)}
+    </text>
+  </>;
+}
+
+// Создаёт обработчик движения мыши для SVG схемы
+export function createMouseHandler(
+  area: SchemaArea,
+  onMouseMove: (pos: MousePos | null) => void
+) {
+  return (e: React.MouseEvent<SVGSVGElement>) => {
+    const { padding: p, scale: s, width, height, svgWidth, invertY = true } = area;
+    const r = e.currentTarget.getBoundingClientRect();
+    const svgScale = svgWidth / r.width;
+    const x = (e.clientX - r.left) * svgScale - p;
+    const y = (e.clientY - r.top) * svgScale - p;
+
+    if (x >= 0 && x <= width * s && y >= 0 && y <= height * s) {
+      const mmX = x / s;
+      const mmY = invertY ? height - y / s : y / s;
+      onMouseMove({ x: mmX, y: mmY });
+    } else {
+      onMouseMove(null);
+    }
+  };
+}

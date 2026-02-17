@@ -4,13 +4,15 @@ import { BackView } from "./back-view";
 import { Legend } from "./legend";
 import { SectionView } from "./section-view";
 import { Specification } from "./specification";
+import { MousePos } from "../svg-primitives";
 import {
   PARTITION_T_MM, GKL_SHEET_W_MM, GKL_SHEET_H_MM, GKL_THICKNESS_MM, STUD_STEP_MM
 } from "../constants";
 import { C_BG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT } from "../colors";
 
 export default function PartitionFrameGkl() {
-  const [mouse, setMouse] = useState<{x: number, y: number, view: string} | null>(null);
+  const [mouseFront, setMouseFront] = useState<MousePos | null>(null);
+  const [mouseBack, setMouseBack] = useState<MousePos | null>(null);
 
   return (
     <div style={{ background: C_BG, minHeight: "100vh", padding: 20, fontFamily: "sans-serif", color: C_TEXT }}>
@@ -22,14 +24,11 @@ export default function PartitionFrameGkl() {
       </p>
 
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
-        <FrontView
-          onMouseMove={(pos) => setMouse(pos ? { ...pos, view: 'front' } : null)}
-          mouse={mouse}
-        />
+        <FrontView onMouseMove={setMouseFront} mouse={mouseFront} />
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
-        <BackView />
+        <BackView onMouseMove={setMouseBack} mouse={mouseBack} />
       </div>
 
       <div style={{ marginBottom: 20 }}>

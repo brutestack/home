@@ -6,11 +6,13 @@ import { SectionView } from "./section-view";
 import { HorizFrontView } from "./horiz-front-view";
 import { HorizSectionView } from "./horiz-section-view";
 import { Specification } from "./specification";
+import { MousePos } from "../svg-primitives";
 import { PARTITION_T_MM, HORIZ_W_MM, HORIZ_T_MM, PANEL_T_MM } from "../constants";
 import { C_BG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT } from "../colors";
 
 export default function PartitionFrame() {
-  const [mouse, setMouse] = useState<{x: number, y: number, view: string} | null>(null);
+  const [mouseFront, setMouseFront] = useState<MousePos | null>(null);
+  const [mouseBack, setMouseBack] = useState<MousePos | null>(null);
 
   return (
     <div style={{ background: C_BG, minHeight: "100vh", padding: 20, fontFamily: "sans-serif", color: C_TEXT }}>
@@ -24,13 +26,16 @@ export default function PartitionFrame() {
 
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
         <FrontView
-          onMouseMove={(pos) => setMouse(pos ? { ...pos, view: 'front' } : null)}
-          mouse={mouse}
+          onMouseMove={setMouseFront}
+          mouse={mouseFront}
         />
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
-        <BackView />
+        <BackView
+          onMouseMove={setMouseBack}
+          mouse={mouseBack}
+        />
       </div>
 
       {/* Легенда */}

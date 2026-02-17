@@ -5,19 +5,15 @@ import { TopView } from "./top-view";
 import { Legend } from "./legend";
 import { SectionView } from "./section-view";
 import { Specification } from "./specification";
+import { MousePos } from "../svg-primitives";
 import {
   COL_W_MM, COL_H_MM, PARTITION_T_MM, STUD_STEP_MM
 } from "../constants";
 import { C_BG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT } from "../colors";
 
-interface MouseState {
-  x: number;
-  y: number;
-  view: string;
-}
-
 export default function BathroomPartitionFrame() {
-  const [mouse, setMouse] = useState<MouseState | null>(null);
+  const [mouseFront, setMouseFront] = useState<MousePos | null>(null);
+  const [mouseBack, setMouseBack] = useState<MousePos | null>(null);
 
   return (
     <div style={{ background: C_BG, minHeight: "100vh", padding: 20, fontFamily: "sans-serif", color: C_TEXT }}>
@@ -29,11 +25,11 @@ export default function BathroomPartitionFrame() {
       </p>
 
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
-        <FrontView mouse={mouse} setMouse={setMouse} />
+        <FrontView onMouseMove={setMouseFront} mouse={mouseFront} />
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
-        <BackView />
+        <BackView onMouseMove={setMouseBack} mouse={mouseBack} />
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>

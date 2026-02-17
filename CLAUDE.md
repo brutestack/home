@@ -156,3 +156,77 @@ export function PartitionFrame() {
 | Лист 3 | Директория | `partition-frame/` |
 | Лист 4 | Директория | `partition-frame-gkl/` |
 | Лист 5 | Директория | `bathroom-partition-frame/` |
+
+## Интерактивный курсор (перекрестье)
+
+Все SVG-схемы должны иметь интерактивный курсор с координатами в миллиметрах.
+
+### Обязательные компоненты
+
+Используй компоненты из `svg-primitives.tsx`:
+
+- `Crosshair` — отрисовка перекрестья с подсказкой координат
+- `createMouseHandler` — создание обработчика движения мыши
+- `MousePos` — тип для координат `{ x: number, y: number }`
+- `SchemaArea` — параметры области схемы
+
+### Пример использования
+
+```tsx
+import { Crosshair, createMouseHandler, MousePos, SchemaArea } from "../svg-primitives";
+
+interface ViewProps {
+  onMouseMove?: (pos: MousePos | null) => void;
+  mouse?: MousePos | null;
+}
+
+export function MyView({ onMouseMove, mouse }: ViewProps) {
+  const area: SchemaArea = {
+    padding: 70,        // отступ от края SVG (px)
+    scale: 0.28,        // масштаб (px/мм)
+    width: 2770,        // ширина области в мм
+    height: 2800,       // высота области в мм
+    svgWidth: 1000,     // ширина SVG (px)
+    invertY: true       // true = координата Y от пола (по умолчанию)
+  };
+
+  return (
+    <svg viewBox="0 0 1000 900"
+      onMouseMove={onMouseMove ? createMouseHandler(area, onMouseMove) : undefined}
+      onMouseLeave={() => onMouseMove?.(null)}>
+
+      {/* ... содержимое схемы ... */}
+
+      {/* Курсор — в конце SVG */}
+      <Crosshair mouse={mouse} area={area} />
+    </svg>
+  );
+}
+```
+
+### Управление состоянием в index.tsx
+
+```tsx
+import { useState } from "react";
+import { MousePos } from "../svg-primitives";
+
+export default function MySheet() {
+  const [mouseFront, setMouseFront] = useState<MousePos | null>(null);
+  const [mouseBack, setMouseBack] = useState<MousePos | null>(null);
+
+  return (
+    <>
+      <FrontView onMouseMove={setMouseFront} mouse={mouseFront} />
+      <BackView onMouseMove={setMouseBack} mouse={mouseBack} />
+    </>
+  );
+}
+```
+
+### Правила
+
+1. **Не дублируй код курсора** — всегда используй `Crosshair` и `createMouseHandler`
+2. **Отдельное состояние для каждой схемы** — каждый view имеет свой mouse state
+3. **Курсор в конце SVG** — `<Crosshair>` должен быть последним элементом внутри `<svg>`
+4. **invertY: true** для видов спереди/сзади (координата Y от пола)
+5. **invertY: false** для видов сверху (координата Y сверху вниз)
