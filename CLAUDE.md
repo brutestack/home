@@ -78,3 +78,81 @@
 | 1 | Название | 000×000×00 | N шт | комментарий |
 
 При добавлении нового листа или схемы — обновить нумерацию в `README.md` и `CLAUDE.md`.
+
+## Структура файлов листов
+
+Для избежания слишком больших файлов (>300–400 строк) листы разбиваются на модули:
+
+### Порог разбиения
+
+- **< 300 строк** — один файл `имя-листа.tsx`
+- **> 300 строк** — директория `имя-листа/` с модулями
+
+### Структура директории листа
+
+```
+src/имя-листа/
+├── index.tsx           # Главный компонент, импортирует и компонует все части
+├── front-view.tsx      # Л{N}.Сх1 — отдельная схема
+├── back-view.tsx       # Л{N}.Сх2 — отдельная схема
+├── section-view.tsx    # Л{N}.СхM — разрез
+├── top-view.tsx        # Вид сверху (если есть)
+├── legend.tsx          # Легенда (если есть)
+└── specification.tsx   # Таблица спецификации
+```
+
+### Правила импортов
+
+**Константы и цвета должны быть в общих файлах:**
+
+```typescript
+// ✅ Правильно — импорт из общих файлов
+import { CEILING_H_MM, GKL_SHEET_H_MM } from "../constants";
+import { C_FRAME, C_GKL_PANEL } from "../colors";
+
+// ❌ Неправильно — локальный файл констант
+import { CEILING_H, GKL_SHEET_H } from "./constants";
+```
+
+Это позволяет синхронизировать изменения между детальными листами и общим планом этажа.
+
+### Именование констант
+
+- Константы плана этажа (в метрах): `COL_W`, `GKL_LAYER`, `DOOR_W`
+- Константы детальных чертежей (в мм): `COL_W_MM`, `GKL_LAYER_MM`, `DOOR_W_MM`
+
+### Пример главного компонента (index.tsx)
+
+```tsx
+import { FrontView } from "./front-view";
+import { BackView } from "./back-view";
+import { TopView } from "./top-view";
+import { SectionView } from "./section-view";
+import { Legend } from "./legend";
+import { Specification } from "./specification";
+import { C_BG, C_COLUMN_TEXT } from "../colors";
+
+export function PartitionFrame() {
+  return (
+    <div style={{ background: C_BG, padding: 24 }}>
+      <h2 style={{ color: C_COLUMN_TEXT }}>Лист N — Название</h2>
+      <FrontView />
+      <BackView />
+      <TopView />
+      <SectionView />
+      <Legend />
+      <Specification />
+    </div>
+  );
+}
+```
+
+### Текущая структура листов
+
+| Лист | Структура | Файлы |
+|------|-----------|-------|
+| Лист 1 | Один файл | `2nd-floor-plan.tsx` |
+| Лист 2 | Один файл | `stair-detail.tsx` |
+| Лист 3 | Директория | `partition-frame/` |
+| Лист 4 | Директория | `partition-frame-gkl/` |
+| Лист 5 | Директория | `bathroom-partition-frame/` |

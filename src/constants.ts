@@ -162,3 +162,198 @@ export const R = (x: number, y: number, w: number, h: number, sc: number, pd: nu
   r: pd + (x + w) * sc,
   b: pd + (y + h) * sc
 });
+
+// ============================================================
+// === ДЕТАЛЬНЫЕ ЧЕРТЕЖИ (размеры в мм) ===
+// ============================================================
+
+// === Общие параметры помещения (мм) ===
+export const CEILING_H_MM = 2800;        // Высота потолка
+export const GKL_SHEET_H_MM = 2500;      // Высота листа ГКЛ
+export const GKL_SHEET_W_MM = 1200;      // Ширина листа ГКЛ
+export const GKL_THICKNESS_MM = 12.5;    // Толщина листа ГКЛ
+export const DOBOR_H_MM = CEILING_H_MM - GKL_SHEET_H_MM; // Доборка сверху (300мм)
+
+// === Дверные проёмы (мм) ===
+export const DOOR_W_MM = 900;            // Ширина дверного проёма
+export const DOOR_H_MM = 2000;           // Высота проёма до ГКЛ
+export const DOOR_OFFSET_MM = 50;        // Отступ проёма
+export const OVER_DOOR_H_MM = CEILING_H_MM - DOOR_H_MM; // ГКЛ над дверью (800мм)
+
+// === Брус для механизма двери (мм) ===
+export const BEAM_LEVEL_MM = 2100;       // Высота нижней грани бруса от пола
+export const BEAM_W_MM = 50;             // Ширина бруса
+export const BEAM_H_MM = 70;             // Высота бруса
+
+// === Каркас перегородки (мм) ===
+export const GKL_LAYER_MM = 50;          // Толщина слоя каркаса
+export const GKL_GAP_MM = 75;            // Зазор между слоями (профиль ПН 75×40)
+export const PARTITION_T_MM = GKL_LAYER_MM * 2 + GKL_GAP_MM; // Общая толщина каркаса (175мм)
+
+// === Профили каркаса (мм) ===
+export const PN_W_MM = 50;               // Ширина направляющего профиля
+export const PN_H_MM = 40;               // Высота направляющего профиля
+export const PN_GAP_W_MM = 75;           // Ширина ПН между слоями
+export const PN_GAP_H_MM = 40;           // Высота ПН между слоями
+export const PS_W_MM = 50;               // Ширина стоечного профиля
+export const PS_H_MM = 50;               // Толщина стоечного профиля
+export const STUD_STEP_MM = 600;         // Шаг стоечных профилей
+
+// === Колонны (мм) ===
+export const COL_W_MM = 200;             // Ширина колонны
+export const COL_H_MM = 150;             // Глубина колонны
+
+// === Перегородка ванной (Лист 5) ===
+export const BATH_HORIZ_LEN_MM = 2040;   // Длина горизонтальной перегородки (от кол.2 до кол.1)
+export const BATH_TOTAL_LEN_MM = COL_W_MM + BATH_HORIZ_LEN_MM + COL_W_MM; // 2440 мм
+
+// Позиции проёма ванной
+export const BATH_COL2_STUD_POS_MM = COL_W_MM;   // Стойка у колонны 2 (200 мм)
+export const BATH_DOOR_START_MM = COL_W_MM + PS_W_MM; // Начало проёма (250 мм)
+export const BATH_DOOR_END_MM = BATH_DOOR_START_MM + DOOR_W_MM; // Конец проёма (1150 мм)
+export const BATH_DOOR_STUD_POS_MM = BATH_DOOR_END_MM; // Стойка у проёма справа
+
+// === Примыкание перегородки спальни (мм) ===
+export const BEDROOM_PART_LEFT_MM = 1150;   // Левый край (совпадает с DOOR_END)
+export const BEDROOM_PART_T_MM = 175;       // Толщина перегородки спальни
+export const BEDROOM_PART_RIGHT_MM = BEDROOM_PART_LEFT_MM + BEDROOM_PART_T_MM; // 1325 мм
+
+// === Перегородка спальни (Лист 3, 4) ===
+export const BEDROOM_VERT_LEN_MM = 2770;    // Длина вертикальной перегородки (5400 - 2630)
+export const BEDROOM_DOOR_START_MM = BEDROOM_VERT_LEN_MM - DOOR_OFFSET_MM - DOOR_W_MM; // 1820 мм
+export const BEDROOM_DOOR_END_MM = BEDROOM_VERT_LEN_MM - DOOR_OFFSET_MM; // 2720 мм
+
+// === Масштабы схем ===
+export const S_FRONT = 0.32;             // Масштаб вида спереди (px/мм)
+export const S_FRONT_BEDROOM = 0.28;     // Масштаб для перегородки спальни
+export const S_SECTION = 1.3;            // Масштаб разреза (px/мм)
+
+// === Размеры SVG схем ===
+export const FRONT_W = 950;
+export const FRONT_H = 1100;
+export const FRONT_W_BEDROOM = 1000;
+export const FRONT_H_BEDROOM = 900;
+
+// === Расчёт позиций стоек перегородки ванной ===
+// Стойки для стороны коридора (с перегородкой спальни)
+const getStudPositionsCorridor = () => {
+  const studs: number[] = [];
+  studs.push(BATH_COL2_STUD_POS_MM);           // Стойка у колонны 2
+  studs.push(BATH_DOOR_STUD_POS_MM);           // Стойка у проёма справа
+  studs.push(BEDROOM_PART_RIGHT_MM);           // Стойка после перегородки спальни
+  let pos = BEDROOM_PART_RIGHT_MM + STUD_STEP_MM;
+  while (pos < COL_W_MM + BATH_HORIZ_LEN_MM - PS_W_MM) {
+    studs.push(pos);
+    pos += STUD_STEP_MM;
+  }
+  studs.push(COL_W_MM + BATH_HORIZ_LEN_MM - PS_W_MM); // Стойка у колонны 1
+  return studs;
+};
+
+// Стойки для стороны ванной (без перегородки спальни)
+const getStudPositionsBath = () => {
+  const studs: number[] = [];
+  studs.push(BATH_COL2_STUD_POS_MM);           // Стойка у колонны 2
+  studs.push(BATH_DOOR_STUD_POS_MM);           // Стойка у проёма справа
+  let pos = BATH_DOOR_END_MM + STUD_STEP_MM;
+  while (pos < COL_W_MM + BATH_HORIZ_LEN_MM - PS_W_MM) {
+    studs.push(pos);
+    pos += STUD_STEP_MM;
+  }
+  studs.push(COL_W_MM + BATH_HORIZ_LEN_MM - PS_W_MM); // Стойка у колонны 1
+  return studs;
+};
+
+export const STUD_POSITIONS_CORRIDOR = getStudPositionsCorridor();
+export const STUD_POSITIONS_BATH = getStudPositionsBath();
+export const STUD_POSITIONS = STUD_POSITIONS_CORRIDOR; // Для совместимости
+
+// Номера стоек: коридор 1-N, ванная (N+1)-M
+export const getStudNumberCorridor = (pos: number) => STUD_POSITIONS_CORRIDOR.indexOf(pos) + 1;
+export const getStudNumberBath = (pos: number) => STUD_POSITIONS_BATH.indexOf(pos) + 1 + STUD_POSITIONS_CORRIDOR.length;
+
+// ============================================================
+// === ПЕРЕГОРОДКА СПАЛЬНИ ЛДСП (Лист 3) ===
+// ============================================================
+
+// ЛДСП панели
+export const PANEL_H_MM = 2700;              // Высота ЛДСП панели
+export const PANEL_W_MM = 900;               // Ширина ЛДСП панели
+export const PANEL_T_MM = 16;                // Толщина ЛДСП панели
+export const LDSP_DOBOR_H_MM = CEILING_H_MM - PANEL_H_MM; // Доборка снизу (100 мм)
+
+// Панель над дверью (ЛДСП)
+export const OVER_DOOR_PANEL_H_MM = OVER_DOOR_H_MM + 100; // С перекрытием для механизма (800 мм)
+
+// Горизонтальная часть перегородки
+export const HORIZ_W_MM = 700;               // Длина горизонтальной части
+export const HORIZ_T_MM = 50;                // Толщина горизонтальной части
+
+// Длина вертикальной перегородки спальни
+export const BEDROOM_VERT_FULL_LEN_MM = 2770; // От верхней стены до ванной
+
+// Позиции стоек перегородки спальни (внешний слой, со стороны лестницы)
+const getStudPositionsFrontLDSP = () => {
+  const GAP_LEFT = BEDROOM_VERT_FULL_LEN_MM - DOOR_OFFSET_MM - DOOR_W_MM - PANEL_W_MM * 2; // 20 мм
+  const stud1 = GAP_LEFT;
+  const stud2 = GAP_LEFT + PANEL_W_MM;
+  const doorStart = GAP_LEFT + PANEL_W_MM * 2;
+  const doorEnd = BEDROOM_VERT_FULL_LEN_MM - DOOR_OFFSET_MM;
+  return [0, stud1, stud2, doorStart - PS_W_MM, doorEnd];
+};
+
+// Позиции стоек перегородки спальни (внутренний слой, со стороны спальни)
+const getStudPositionsBackLDSP = () => {
+  const doorStartMirror = DOOR_OFFSET_MM;
+  const doorEndMirror = DOOR_OFFSET_MM + DOOR_W_MM;
+  const horizPartitionEnd = doorEndMirror + PS_W_MM;
+  const panelAreaStart = horizPartitionEnd;
+  const panel1End = panelAreaStart + PANEL_W_MM;
+  return [0, panelAreaStart, panel1End - PS_W_MM / 2, BEDROOM_VERT_FULL_LEN_MM - PS_W_MM];
+};
+
+export const STUD_POSITIONS_FRONT_LDSP = getStudPositionsFrontLDSP();
+export const STUD_POSITIONS_BACK_LDSP = getStudPositionsBackLDSP();
+export const getStudNumberFrontLDSP = (index: number) => index + 1;
+export const getStudNumberBackLDSP = (index: number) => index + 1 + STUD_POSITIONS_FRONT_LDSP.length;
+
+// Масштабы схем Листа 3
+export const S_FRONT_LDSP = 0.28;
+export const S_TOP_LDSP = 1.5;
+export const S_SECTION_LDSP = 0.8;
+
+// ============================================================
+// === ПЕРЕГОРОДКА СПАЛЬНИ ГКЛ (Лист 4) ===
+// ============================================================
+
+// Раскладка ГКЛ (Лист 4)
+export const GKL_DOOR_START_MM = BEDROOM_VERT_FULL_LEN_MM - DOOR_OFFSET_MM - DOOR_W_MM; // 1820
+export const GKL_DOOR_END_MM = BEDROOM_VERT_FULL_LEN_MM - DOOR_OFFSET_MM;               // 2720
+export const GKL_DOOR_STUD_LEFT_MM = GKL_DOOR_START_MM - PS_W_MM;                       // 1770
+export const GKL_DOOR_STUD_LEFT_MID_MM = GKL_DOOR_STUD_LEFT_MM + PS_W_MM / 2;           // 1795
+
+// Узкий лист у стены: 1820 - 1200 = 620
+export const GKL_NARROW_SHEET_W_MM = GKL_DOOR_START_MM - GKL_SHEET_W_MM;                // 620
+export const GKL_SHEET_JOINT_MM = GKL_NARROW_SHEET_W_MM;                                // 620
+
+// Позиции стоек для ГКЛ варианта
+const getStudPositionsGkl = () => {
+  const studs: number[] = [0];
+  studs.push(GKL_SHEET_JOINT_MM - PS_W_MM / 2);
+  let pos = GKL_SHEET_JOINT_MM + STUD_STEP_MM;
+  while (pos < GKL_DOOR_START_MM - PS_W_MM) {
+    studs.push(pos - PS_W_MM / 2);
+    pos += STUD_STEP_MM;
+  }
+  studs.push(GKL_DOOR_START_MM - PS_W_MM);
+  studs.push(GKL_DOOR_END_MM);
+  return studs;
+};
+
+export const STUD_POSITIONS_GKL = getStudPositionsGkl();
+export const STUD_POSITIONS_GKL_BEDROOM = STUD_POSITIONS_GKL.map(pos => BEDROOM_VERT_FULL_LEN_MM - pos - PS_W_MM).reverse();
+export const getStudNumberGklStairs = (pos: number) => STUD_POSITIONS_GKL.indexOf(pos) + 1;
+export const getStudNumberGklBedroom = (pos: number) => STUD_POSITIONS_GKL_BEDROOM.indexOf(pos) + 1 + STUD_POSITIONS_GKL.length;
+
+// Цвет доборки ГКЛ
+// (уже есть в colors.ts как C_GKL_PANEL)
