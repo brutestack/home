@@ -500,6 +500,185 @@ export default function BathroomPartitionFrame() {
     );
   };
 
+  // === Вид сверху (план) ===
+  const TopView = () => {
+    const w = 950;
+    const svgH = 500;
+    const s = 0.32; // Масштаб
+    const p = 70; // padding
+
+    // Глубина перегородки (с ГКЛ)
+    const partDepth = PARTITION_T + GKL_T * 2; // 200 мм
+
+    // Позиции слоёв по вертикали (от стороны коридора)
+    const gkl1Y = 0;                          // ГКЛ коридор
+    const layer1Y = GKL_T;                    // Каркас слой 1 (коридор)
+    const gapY = GKL_T + GKL_LAYER;           // Зазор между слоями
+    const layer2Y = GKL_T + GKL_LAYER + GKL_GAP; // Каркас слой 2 (ванная)
+    const gkl2Y = GKL_T + PARTITION_T;        // ГКЛ ванная
+
+    // Длина кусочка перегородки спальни для отображения
+    const bedroomPartLen = 400; // мм
+
+    // Смещение перегородки относительно колонн (перегородка глубже)
+    const colOffset = (partDepth - COL_H) / 2; // 25 мм
+
+    return (
+      <svg viewBox={`0 0 ${w} ${svgH}`}
+        style={{ width: w, background: C_BG_SVG, borderRadius: 8 }}>
+
+        <text x={w/2} y={24} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={14} fontWeight="bold">
+          Вид сверху — структура двойной перегородки
+        </text>
+        <text x={w/2} y={42} textAnchor="middle" fill={C_TEXT_DIM} fontSize={10}>
+          Примыкание перегородки спальни к краю дверного проёма
+        </text>
+
+        {/* Подписи направлений */}
+        <text x={p - 30} y={p + partDepth/2 * s} textAnchor="end" fill={C_TEXT_DIM} fontSize={9}>
+          Коридор ↓
+        </text>
+        <text x={p - 30} y={p + partDepth * s + 20} textAnchor="end" fill={C_BATH} fontSize={9}>
+          ↑ Ванная
+        </text>
+
+        {/* === Колонна 2 (слева) === */}
+        <rect x={p} y={p + colOffset * s} width={COL_W * s} height={COL_H * s}
+          fill={C_COL_FILL} stroke={C_COLUMN} strokeWidth={2}/>
+        <text x={p + COL_W/2 * s} y={p + colOffset * s + COL_H/2 * s + 3}
+          textAnchor="middle" fill={C_COLUMN} fontSize={8}>Кол.2</text>
+
+        {/* === Колонна 1 (справа) === */}
+        <rect x={p + (COL_W + HORIZ_LEN) * s} y={p + colOffset * s} width={COL_W * s} height={COL_H * s}
+          fill={C_COL_FILL} stroke={C_COLUMN} strokeWidth={2}/>
+        <text x={p + (COL_W + HORIZ_LEN + COL_W/2) * s} y={p + colOffset * s + COL_H/2 * s + 3}
+          textAnchor="middle" fill={C_COLUMN} fontSize={8}>Кол.1</text>
+
+        {/* === ГКЛ сторона коридора (сплошной от колонны 2 до колонны 1) === */}
+        <rect x={p} y={p + gkl1Y * s} width={TOTAL_LEN * s} height={GKL_T * s}
+          fill={C_GKL_FILL} stroke={C_GKL_PANEL} strokeWidth={1}/>
+
+        {/* === Каркас слой 1 (сторона коридора) === */}
+        {/* До проёма — стойка у колонны 2 */}
+        <rect x={p + COL_W * s} y={p + layer1Y * s} width={PS_W * s} height={GKL_LAYER * s}
+          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        {/* После проёма — от стойки до колонны 1 */}
+        <rect x={p + DOOR_END * s} y={p + layer1Y * s} width={(COL_W + HORIZ_LEN - DOOR_END) * s} height={GKL_LAYER * s}
+          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+
+        {/* === Зазор между слоями (ПН 75) === */}
+        {/* До проёма — стойка */}
+        <rect x={p + COL_W * s} y={p + gapY * s} width={PS_W * s} height={GKL_GAP * s}
+          fill="none" stroke={C_FRAME} strokeWidth={1} strokeDasharray="3 2"/>
+        {/* После проёма */}
+        <rect x={p + DOOR_END * s} y={p + gapY * s} width={(COL_W + HORIZ_LEN - DOOR_END) * s} height={GKL_GAP * s}
+          fill="none" stroke={C_FRAME} strokeWidth={1} strokeDasharray="3 2"/>
+
+        {/* === Каркас слой 2 (сторона ванной) === */}
+        {/* До проёма — стойка */}
+        <rect x={p + COL_W * s} y={p + layer2Y * s} width={PS_W * s} height={GKL_LAYER * s}
+          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        {/* После проёма */}
+        <rect x={p + DOOR_END * s} y={p + layer2Y * s} width={(COL_W + HORIZ_LEN - DOOR_END) * s} height={GKL_LAYER * s}
+          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+
+        {/* === ГКЛ сторона ванной === */}
+        {/* До проёма — стойка */}
+        <rect x={p} y={p + gkl2Y * s} width={(COL_W + PS_W) * s} height={GKL_T * s}
+          fill={C_GKL_FILL} stroke={C_GKL_PANEL} strokeWidth={1}/>
+        {/* После проёма до колонны 1 */}
+        <rect x={p + DOOR_END * s} y={p + gkl2Y * s} width={(TOTAL_LEN - DOOR_END) * s} height={GKL_T * s}
+          fill={C_GKL_FILL} stroke={C_GKL_PANEL} strokeWidth={1}/>
+
+        {/* === Дверной проём (пустое пространство) === */}
+        <rect x={p + DOOR_START * s} y={p + layer1Y * s} width={DOOR_W * s} height={PARTITION_T * s}
+          fill={C_DOOR + "22"} stroke={C_DOOR} strokeWidth={2} strokeDasharray="6 3"/>
+        <text x={p + (DOOR_START + DOOR_W/2) * s} y={p + (layer1Y + PARTITION_T/2) * s + 3}
+          textAnchor="middle" fill={C_DOOR} fontSize={10} fontWeight="bold">ПРОЁМ {DOOR_W}</text>
+
+        {/* === Перегородка спальни (примыкает к правому краю проёма) === */}
+        {/* Внешний слой спальни (примыкает к слою 1 ванной) */}
+        <rect x={p + BEDROOM_PART_LEFT * s} y={p + (gkl2Y + GKL_T) * s}
+          width={GKL_LAYER * s} height={bedroomPartLen * s}
+          fill={C_BEDROOM_PART + "33"} stroke={C_BEDROOM_PART} strokeWidth={1.5}/>
+        {/* Зазор перегородки спальни */}
+        <rect x={p + (BEDROOM_PART_LEFT + GKL_LAYER) * s} y={p + (gkl2Y + GKL_T) * s}
+          width={GKL_GAP * s} height={bedroomPartLen * s}
+          fill="none" stroke={C_BEDROOM_PART} strokeWidth={1} strokeDasharray="3 2"/>
+        {/* Внутренний слой спальни */}
+        <rect x={p + (BEDROOM_PART_LEFT + GKL_LAYER + GKL_GAP) * s} y={p + (gkl2Y + GKL_T) * s}
+          width={GKL_LAYER * s} height={bedroomPartLen * s}
+          fill={C_BEDROOM_PART + "33"} stroke={C_BEDROOM_PART} strokeWidth={1.5}/>
+        {/* Подпись */}
+        <text x={p + (BEDROOM_PART_LEFT + BEDROOM_PART_T/2) * s} y={p + (gkl2Y + GKL_T + bedroomPartLen - 20) * s}
+          textAnchor="middle" fill={C_BEDROOM_PART} fontSize={8}
+          transform={`rotate(-90,${p + (BEDROOM_PART_LEFT + BEDROOM_PART_T/2) * s},${p + (gkl2Y + GKL_T + bedroomPartLen - 20) * s})`}>
+          перегородка спальни
+        </text>
+
+        {/* Стрелка направления перегородки спальни */}
+        <line x1={p + (BEDROOM_PART_LEFT + BEDROOM_PART_T/2) * s} y1={p + (gkl2Y + GKL_T + bedroomPartLen) * s}
+          x2={p + (BEDROOM_PART_LEFT + BEDROOM_PART_T/2) * s} y2={p + (gkl2Y + GKL_T + bedroomPartLen + 40) * s}
+          stroke={C_BEDROOM_PART} strokeWidth={2} markerEnd="url(#arrowBedroom)"/>
+        <defs>
+          <marker id="arrowBedroom" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill={C_BEDROOM_PART}/>
+          </marker>
+        </defs>
+        <text x={p + (BEDROOM_PART_LEFT + BEDROOM_PART_T/2) * s} y={p + (gkl2Y + GKL_T + bedroomPartLen + 55) * s}
+          textAnchor="middle" fill={C_BEDROOM_PART} fontSize={7}>к верхней стене</text>
+
+        {/* === Размерные линии === */}
+        {/* Колонна 2 */}
+        <HDim x1={p} x2={p + COL_W * s} y={p - 20}
+          color={C_COLUMN} textColor={C_COLUMN} label={COL_W} fontSize={8}/>
+        {/* Стойка у колонны 2 */}
+        <HDim x1={p + COL_W * s} x2={p + DOOR_START * s} y={p - 20}
+          color={C_FRAME} textColor={C_FRAME} label={PS_W} fontSize={8}/>
+        {/* Проём */}
+        <HDim x1={p + DOOR_START * s} x2={p + DOOR_END * s} y={p - 20}
+          color={C_DOOR} textColor={C_DOOR} label={DOOR_W} fontSize={9}/>
+        {/* После проёма до колонны 1 */}
+        <HDim x1={p + DOOR_END * s} x2={p + (COL_W + HORIZ_LEN) * s} y={p - 20}
+          label={COL_W + HORIZ_LEN - DOOR_END} fontSize={8}/>
+        {/* Колонна 1 */}
+        <HDim x1={p + (COL_W + HORIZ_LEN) * s} x2={p + TOTAL_LEN * s} y={p - 20}
+          color={C_COLUMN} textColor={C_COLUMN} label={COL_W} fontSize={8}/>
+
+        {/* Общая длина */}
+        <HDim x1={p} x2={p + TOTAL_LEN * s} y={p - 40}
+          label={TOTAL_LEN} fontSize={10}/>
+
+        {/* Толщина перегородки (справа) */}
+        <VDim x={p + TOTAL_LEN * s + 15} y1={p} y2={p + partDepth * s}
+          label={partDepth.toFixed(0)} fontSize={9} labelX={p + TOTAL_LEN * s + 25}/>
+
+        {/* Детализация толщины */}
+        <VDim x={p + TOTAL_LEN * s + 45} y1={p} y2={p + GKL_T * s}
+          color={C_GKL_PANEL} textColor={C_GKL_PANEL} label={GKL_T} fontSize={7} labelX={p + TOTAL_LEN * s + 55}/>
+        <VDim x={p + TOTAL_LEN * s + 45} y1={p + layer1Y * s} y2={p + gapY * s}
+          color={C_FRAME} textColor={C_FRAME} label={GKL_LAYER} fontSize={7} labelX={p + TOTAL_LEN * s + 55}/>
+        <VDim x={p + TOTAL_LEN * s + 45} y1={p + gapY * s} y2={p + layer2Y * s}
+          label={GKL_GAP} fontSize={7} labelX={p + TOTAL_LEN * s + 55}/>
+        <VDim x={p + TOTAL_LEN * s + 45} y1={p + layer2Y * s} y2={p + gkl2Y * s}
+          color={C_FRAME} textColor={C_FRAME} label={GKL_LAYER} fontSize={7} labelX={p + TOTAL_LEN * s + 55}/>
+        <VDim x={p + TOTAL_LEN * s + 45} y1={p + gkl2Y * s} y2={p + partDepth * s}
+          color={C_GKL_PANEL} textColor={C_GKL_PANEL} label={GKL_T} fontSize={7} labelX={p + TOTAL_LEN * s + 55}/>
+
+        {/* Позиция примыкания перегородки спальни */}
+        <HDim x1={p + COL_W * s} x2={p + BEDROOM_PART_LEFT * s} y={p + partDepth * s + 70}
+          color={C_BEDROOM_PART} textColor={C_BEDROOM_PART} label={BEDROOM_PART_LEFT - COL_W} fontSize={8}/>
+        <text x={p + (COL_W + (BEDROOM_PART_LEFT - COL_W)/2) * s} y={p + partDepth * s + 85}
+          textAnchor="middle" fill={C_TEXT_DIM} fontSize={7}>от колонны 2</text>
+
+        {/* Толщина перегородки спальни */}
+        <HDim x1={p + BEDROOM_PART_LEFT * s} x2={p + BEDROOM_PART_RIGHT * s} y={p + partDepth * s + 70}
+          color={C_BEDROOM_PART} textColor={C_BEDROOM_PART} label={BEDROOM_PART_T} fontSize={8}/>
+
+      </svg>
+    );
+  };
+
   // === Легенда ===
   const Legend = () => {
     const items = [
@@ -698,6 +877,14 @@ export default function BathroomPartitionFrame() {
       </h3>
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
         <BackView />
+      </div>
+
+      {/* Вид сверху */}
+      <h3 style={{ textAlign: "center", color: C_COLUMN_TEXT, margin: "20px 0 12px", fontSize: 16 }}>
+        Вид сверху — структура примыкания
+      </h3>
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+        <TopView />
       </div>
 
       {/* Легенда */}
