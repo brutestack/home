@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { HDim, VDim, StudLabel } from "./svg-primitives";
+import { HDim, VDim, StudLabel, SpecLabel } from "./svg-primitives";
 import {
   C_BG, C_BG_SVG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT, C_TOOLTIP_BG,
   C_DIM, C_BATH, C_COLUMN, C_COLUMN_BORDER
@@ -196,16 +196,19 @@ export default function BathroomPartitionFrame() {
         {/* Направляющие профили ПН на полу (под стойкой у колонны 2) */}
         <rect x={p + partStart * s} y={p + CEILING_H * s - PN_H * s} width={PS_W * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + (partStart + PS_W/2) * s} y={p + CEILING_H * s - PN_H/2 * s} num={8} color={C_FRAME}/>
 
         {/* Направляющие профили ПН на полу (после проёма) */}
         <rect x={p + DOOR_END * s} y={p + CEILING_H * s - PN_H * s} width={(partEnd - DOOR_END) * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + (DOOR_END + (partEnd - DOOR_END)/2) * s} y={p + CEILING_H * s - PN_H/2 * s} num={7} color={C_FRAME}/>
 
         {/* Направляющие профили ПН на потолке */}
         <rect x={p + partStart * s} y={p} width={HORIZ_LEN * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + (partStart + HORIZ_LEN) * s - 30} y={p + PN_H/2 * s} num={9} color={C_FRAME}/>
 
-        {/* Стоечные профили ПС */}
+        {/* Стоечные профили ПС (№13) */}
         {STUD_POSITIONS_BATH.map((pos, i) => (
           <g key={`stud${i}`}>
             <rect x={p + pos * s} y={p + PN_H * s}
@@ -214,6 +217,7 @@ export default function BathroomPartitionFrame() {
               stroke={C_FRAME}
               strokeWidth={1}/>
             <StudLabel x={p + (pos + PS_W/2) * s} y={p + CEILING_H/2 * s} num={getStudNumberBath(pos)} color={C_FRAME}/>
+            <SpecLabel x={p + (pos + PS_W/2) * s} y={p + CEILING_H/2 * s + 40} num={13} color={C_FRAME}/>
           </g>
         ))}
 
@@ -223,16 +227,19 @@ export default function BathroomPartitionFrame() {
           fill={C_BEAM_FILL} stroke={C_BEAM} strokeWidth={2}/>
         <text x={p + (partStart + HORIZ_LEN/2) * s} y={p + (CEILING_H - BEAM_LEVEL - BEAM_H/2) * s + 3}
           textAnchor="middle" fill={C_BEAM} fontSize={7}>брус {HORIZ_LEN}×{BEAM_H}×{BEAM_W}</text>
+        <SpecLabel x={p + (partStart + HORIZ_LEN/2) * s + 100} y={p + (CEILING_H - BEAM_LEVEL - BEAM_H/2) * s} num={6} color={C_BEAM}/>
 
         {/* Перемычка ПН над дверью — на высоте 2000 мм, только над проёмом (между стойками) */}
         <rect x={p + DOOR_START * s} y={p + (CEILING_H - DOOR_H - PN_H) * s}
           width={DOOR_W * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + (DOOR_START + DOOR_W/2) * s} y={p + (CEILING_H - DOOR_H - PN_H/2) * s} num={11} color={C_FRAME}/>
 
         {/* Горизонтальная направляющая ПН на стыке ГКЛ/доборки */}
         <rect x={p + (DOOR_END + PS_W) * s} y={p + (CEILING_H - GKL_SHEET_H - PN_H / 2) * s}
           width={(partEnd - DOOR_END - PS_W) * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + (DOOR_END + PS_W + (partEnd - DOOR_END - PS_W)/2) * s} y={p + (CEILING_H - GKL_SHEET_H) * s} num={12} color={C_FRAME}/>
 
         {/* Дверной проём */}
         <rect x={p + DOOR_START * s} y={p + (CEILING_H - DOOR_H) * s}
@@ -249,6 +256,7 @@ export default function BathroomPartitionFrame() {
           fill={C_GKL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
         <text x={p + (DOOR_END + PS_W/2)/2 * s} y={p + OVER_DOOR_H/2 * s}
           textAnchor="middle" fill={C_GKL_PANEL} fontSize={8}>ГКЛ {DOOR_END + PS_W/2}×{OVER_DOOR_H}</text>
+        <SpecLabel x={p + (DOOR_END + PS_W/2)/2 * s + 80} y={p + OVER_DOOR_H/2 * s} num={5} color={C_GKL_PANEL}/>
 
         {/* ГКЛ левее проёма (закрывает колонну 2 и левую стойку) */}
         <rect x={p} y={p + OVER_DOOR_H * s}
@@ -272,6 +280,7 @@ export default function BathroomPartitionFrame() {
           textAnchor="middle" fill={C_GKL_PANEL} fontSize={9}>ГКЛ {GKL_SHEET_W}×{GKL_SHEET_H}</text>
         <text x={p + (DOOR_END + PS_W/4) * s} y={p + (OVER_DOOR_H + 100) * s}
           textAnchor="middle" fill={C_GKL_PANEL} fontSize={7}>вырез</text>
+        <SpecLabel x={p + (DOOR_END + GKL_SHEET_W/2) * s} y={p + (DOBOR_H + 30)} num={1} color={C_GKL_PANEL}/>
 
         {/* ГКЛ доборка у колонны 1 (узкая полоса) */}
         <rect x={p + (DOOR_END + GKL_SHEET_W) * s} y={p + DOBOR_H * s}
@@ -279,6 +288,7 @@ export default function BathroomPartitionFrame() {
           fill={C_GKL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
         <text x={p + (DOOR_END + GKL_SHEET_W + (TOTAL_LEN - DOOR_END - GKL_SHEET_W)/2) * s} y={p + (DOBOR_H + GKL_SHEET_H/2) * s}
           textAnchor="middle" fill={C_GKL_PANEL} fontSize={7}>ГКЛ {(TOTAL_LEN - DOOR_END - GKL_SHEET_W).toFixed(0)}×{GKL_SHEET_H}</text>
+        <SpecLabel x={p + (DOOR_END + GKL_SHEET_W + (TOTAL_LEN - DOOR_END - GKL_SHEET_W)/2) * s} y={p + (DOBOR_H + 30)} num={2} color={C_GKL_PANEL}/>
 
         {/* ГКЛ доборка сверху (основная часть) */}
         <rect x={p + (DOOR_END + PS_W/2) * s} y={p}
@@ -286,6 +296,7 @@ export default function BathroomPartitionFrame() {
           fill={C_GKL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
         <text x={p + (DOOR_END + PS_W/2 + (GKL_SHEET_W - PS_W/2)/2) * s} y={p + DOBOR_H/2 * s + 3}
           textAnchor="middle" fill={C_GKL_PANEL} fontSize={8}>ГКЛ {GKL_SHEET_W - PS_W/2}×{DOBOR_H}</text>
+        <SpecLabel x={p + (DOOR_END + PS_W/2 + (GKL_SHEET_W - PS_W/2)/2) * s + 80} y={p + DOBOR_H/2 * s} num={3} color={C_GKL_PANEL}/>
 
         {/* ГКЛ доборка сверху (у колонны 1) */}
         <rect x={p + (DOOR_END + GKL_SHEET_W) * s} y={p}
@@ -293,6 +304,7 @@ export default function BathroomPartitionFrame() {
           fill={C_GKL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
         <text x={p + (DOOR_END + GKL_SHEET_W + (TOTAL_LEN - DOOR_END - GKL_SHEET_W)/2) * s} y={p + DOBOR_H/2 * s + 3}
           textAnchor="middle" fill={C_GKL_PANEL} fontSize={7}>ГКЛ {(TOTAL_LEN - DOOR_END - GKL_SHEET_W).toFixed(0)}×{DOBOR_H}</text>
+        <SpecLabel x={p + (DOOR_END + GKL_SHEET_W + (TOTAL_LEN - DOOR_END - GKL_SHEET_W)/2) * s} y={p + DOBOR_H/2 * s + 30} num={4} color={C_GKL_PANEL}/>
 
         {/* Примыкание перегородки спальни (пунктирные линии) */}
         <line x1={p + BEDROOM_PART_LEFT * s} y1={p} x2={p + BEDROOM_PART_LEFT * s} y2={p + CEILING_H * s}
@@ -420,14 +432,17 @@ export default function BathroomPartitionFrame() {
         {/* Направляющие ПН на полу (до проёма) */}
         <rect x={p + partStart * s} y={p + CEILING_H * s - PN_H * s} width={(doorStartMirror - partStart) * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + (partStart + (doorStartMirror - partStart)/2) * s} y={p + CEILING_H * s - PN_H/2 * s} num={7} color={C_FRAME}/>
 
         {/* Направляющие ПН на полу (под стойкой у колонны 2, справа в зеркальном виде) */}
         <rect x={p + doorEndMirror * s} y={p + CEILING_H * s - PN_H * s} width={PS_W * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + (doorEndMirror + PS_W/2) * s} y={p + CEILING_H * s - PN_H/2 * s} num={8} color={C_FRAME}/>
 
         {/* Направляющие ПН на потолке */}
         <rect x={p + partStart * s} y={p} width={HORIZ_LEN * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + partStart * s + 30} y={p + PN_H/2 * s} num={9} color={C_FRAME}/>
 
         {/* Стоечные профили */}
         {studsMirror.map((pos, i) => {
@@ -441,6 +456,7 @@ export default function BathroomPartitionFrame() {
                 stroke={C_FRAME}
                 strokeWidth={1}/>
               <StudLabel x={p + (pos + PS_W/2) * s} y={p + CEILING_H/2 * s} num={getStudNumberCorridor(originalPos)} color={C_FRAME}/>
+              <SpecLabel x={p + (pos + PS_W/2) * s} y={p + CEILING_H/2 * s + 40} num={13} color={C_FRAME}/>
             </g>
           );
         })}
@@ -449,16 +465,19 @@ export default function BathroomPartitionFrame() {
         <rect x={p + partStart * s} y={p + (CEILING_H - BEAM_LEVEL - BEAM_H) * s}
           width={HORIZ_LEN * s} height={BEAM_H * s}
           fill={C_BEAM_FILL} stroke={C_BEAM} strokeWidth={2}/>
+        <SpecLabel x={p + (partStart + HORIZ_LEN/2) * s - 100} y={p + (CEILING_H - BEAM_LEVEL - BEAM_H/2) * s} num={6} color={C_BEAM}/>
 
         {/* Перемычка ПН над дверью — на высоте 2000 мм, только над проёмом */}
         <rect x={p + doorStartMirror * s} y={p + (CEILING_H - DOOR_H - PN_H) * s}
           width={DOOR_W * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + (doorStartMirror + DOOR_W/2) * s} y={p + (CEILING_H - DOOR_H - PN_H/2) * s} num={11} color={C_FRAME}/>
 
         {/* Горизонтальная направляющая на стыке ГКЛ/доборки */}
         <rect x={p + partStart * s} y={p + (CEILING_H - GKL_SHEET_H - PN_H / 2) * s}
           width={(doorStartMirror - partStart - PS_W) * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + (partStart + (doorStartMirror - partStart - PS_W)/2) * s} y={p + (CEILING_H - GKL_SHEET_H) * s} num={12} color={C_FRAME}/>
 
         {/* Дверной проём */}
         <rect x={p + doorStartMirror * s} y={p + (CEILING_H - DOOR_H) * s}
@@ -474,6 +493,7 @@ export default function BathroomPartitionFrame() {
           fill={C_GKL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
         <text x={p + (TOTAL_LEN - BEDROOM_PART_LEFT/2) * s} y={p + (CEILING_H - DOOR_H)/2 * s}
           textAnchor="middle" fill={C_GKL_PANEL} fontSize={8}>ГКЛ {BEDROOM_PART_LEFT}×{CEILING_H - DOOR_H}</text>
+        <SpecLabel x={p + (TOTAL_LEN - BEDROOM_PART_LEFT/2) * s + 60} y={p + (CEILING_H - DOOR_H)/2 * s} num={5} color={C_GKL_PANEL}/>
 
         {/* ГКЛ правее проёма (закрывает колонну 2 и стойку) — на зеркальном виде */}
         <rect x={p + doorEndMirror * s} y={p + OVER_DOOR_H * s}
@@ -488,6 +508,7 @@ export default function BathroomPartitionFrame() {
           fill={C_GKL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
         <text x={p + (TOTAL_LEN - BEDROOM_PART_RIGHT)/2 * s} y={p + (DOBOR_H + GKL_SHEET_H/2) * s}
           textAnchor="middle" fill={C_GKL_PANEL} fontSize={9}>ГКЛ {(TOTAL_LEN - BEDROOM_PART_RIGHT).toFixed(0)}×{GKL_SHEET_H}</text>
+        <SpecLabel x={p + (TOTAL_LEN - BEDROOM_PART_RIGHT)/2 * s} y={p + (DOBOR_H + 30)} num={1} color={C_GKL_PANEL}/>
 
         {/* ГКЛ доборка сверху (от колонны 1 до перегородки спальни) */}
         <rect x={p} y={p}
@@ -667,9 +688,11 @@ export default function BathroomPartitionFrame() {
         {/* Левая часть: от колонны 2 до перегородки спальни */}
         <rect x={p} y={p + gkl1Y * s} width={BEDROOM_PART_LEFT * s} height={GKL_T * s}
           fill={C_GKL_FILL} stroke={C_GKL_PANEL} strokeWidth={1}/>
+        <SpecLabel x={p + BEDROOM_PART_LEFT/2 * s} y={p + gkl1Y * s - 12} num={5} size={12} fontSize={8} color={C_GKL_PANEL}/>
         {/* Правая часть: от перегородки спальни до колонны 1 */}
         <rect x={p + BEDROOM_PART_RIGHT * s} y={p + gkl1Y * s} width={(TOTAL_LEN - BEDROOM_PART_RIGHT) * s} height={GKL_T * s}
           fill={C_GKL_FILL} stroke={C_GKL_PANEL} strokeWidth={1}/>
+        <SpecLabel x={p + (BEDROOM_PART_RIGHT + (TOTAL_LEN - BEDROOM_PART_RIGHT)/2) * s} y={p + gkl1Y * s - 12} num={1} size={12} fontSize={8} color={C_GKL_PANEL}/>
 
         {/* === Дверной проём (заливка под каркасом) === */}
         <rect x={p + DOOR_START * s} y={p + layer1Y * s} width={DOOR_W * s} height={PARTITION_T * s}
@@ -695,6 +718,7 @@ export default function BathroomPartitionFrame() {
         {/* Брус 75×50 между стойками у колонны 2 */}
         <rect x={p + COL_W * s} y={p + gapY * s} width={PS_W * s} height={GKL_GAP * s}
           fill={C_BEAM_FILL} stroke={C_BEAM} strokeWidth={1.5}/>
+        <SpecLabel x={p + (COL_W + PS_W/2) * s} y={p + (gapY + GKL_GAP/2) * s} num={6} size={12} fontSize={8} color={C_BEAM}/>
         {/* В проёме — пунктирные линии */}
         <line x1={p + DOOR_START * s} y1={p + gapY * s} x2={p + DOOR_END * s} y2={p + gapY * s}
           stroke={C_FRAME} strokeWidth={1} strokeDasharray="4 3"/>
@@ -703,6 +727,7 @@ export default function BathroomPartitionFrame() {
         {/* После проёма */}
         <rect x={p + DOOR_END * s} y={p + gapY * s} width={(COL_W + HORIZ_LEN - DOOR_END) * s} height={GKL_GAP * s}
           fill="none" stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + (DOOR_END + (COL_W + HORIZ_LEN - DOOR_END)/2) * s} y={p + (gapY + GKL_GAP/2) * s} num={10} size={12} fontSize={8} color={C_FRAME}/>
 
         {/* === Каркас слой 2 (сторона ванной) === */}
         {/* До проёма — стойка */}
@@ -725,6 +750,7 @@ export default function BathroomPartitionFrame() {
             <line x1={p + (pos + PS_W) * s} y1={p + layer1Y * s} x2={p + (pos + PS_W) * s} y2={p + (layer1Y + GKL_LAYER) * s}
               stroke={C_FRAME} strokeWidth={1.5}/>
             <StudLabel x={p + (pos + PS_W/2) * s} y={p + layer1Y * s - 10} num={getStudNumberCorridor(pos)} r={8} fontSize={9} color={C_FRAME}/>
+            <SpecLabel x={p + (pos + PS_W/2) * s} y={p + layer1Y * s - 30} num={13} size={12} fontSize={8} color={C_FRAME}/>
           </g>
         ))}
 
@@ -736,12 +762,14 @@ export default function BathroomPartitionFrame() {
             <line x1={p + (pos + PS_W) * s} y1={p + layer2Y * s} x2={p + (pos + PS_W) * s} y2={p + (layer2Y + GKL_LAYER) * s}
               stroke={C_FRAME} strokeWidth={1.5}/>
             <StudLabel x={p + (pos + PS_W/2) * s} y={p + (layer2Y + GKL_LAYER) * s + 10} num={getStudNumberBath(pos)} r={8} fontSize={9} color={C_FRAME}/>
+            <SpecLabel x={p + (pos + PS_W/2) * s} y={p + (layer2Y + GKL_LAYER) * s + 30} num={13} size={12} fontSize={8} color={C_FRAME}/>
           </g>
         ))}
 
         {/* === ГКЛ сторона ванной (непрерывно, включая над проёмом) === */}
         <rect x={p} y={p + gkl2Y * s} width={TOTAL_LEN * s} height={GKL_T * s}
           fill={C_GKL_FILL} stroke={C_GKL_PANEL} strokeWidth={1}/>
+        <SpecLabel x={p + TOTAL_LEN/2 * s} y={p + (gkl2Y + GKL_T) * s + 12} num={1} size={12} fontSize={8} color={C_GKL_PANEL}/>
 
         {/* === Дверной проём (контур поверх каркаса) === */}
         <rect x={p + DOOR_START * s} y={p + layer1Y * s} width={DOOR_W * s} height={PARTITION_T * s}
@@ -861,6 +889,7 @@ export default function BathroomPartitionFrame() {
         <rect x={p + gapX * s} y={topY + h - PN_GAP_H * s} width={PN_GAP_W * s} height={PN_GAP_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
         <text x={p + (gapX + GKL_GAP/2) * s} y={topY + h/2} textAnchor="middle" fill={C_FRAME} fontSize={7}>ПН 75</text>
+        <SpecLabel x={p + (gapX + GKL_GAP/2) * s} y={topY + h/2 + 25} num={10} color={C_FRAME}/>
 
         {/* Слой 2 */}
         <rect x={p + layer2X * s} y={topY} width={PS_W * s} height={h}
@@ -915,27 +944,28 @@ export default function BathroomPartitionFrame() {
     const pnJointLen = COL_W + HORIZ_LEN - DOOR_END; // 1090 мм
 
     const items = [
-      { name: `ГКЛ лист (основной)`, size: `${gklMainW}×${GKL_SHEET_H}×${GKL_T}`, qty: "2 шт", note: "от границы проёма, с вырезом × 2 стороны" },
-      { name: `ГКЛ (доборка у колонны 1)`, size: `${gklColDoborW.toFixed(0)}×${GKL_SHEET_H}×${GKL_T}`, qty: "2 шт", note: "закрывает колонну 1" },
-      { name: `ГКЛ (доборка сверху)`, size: `${gklMainW}×${DOBOR_H}×${GKL_T}`, qty: "2 шт", note: "над основным листом" },
-      { name: `ГКЛ (доборка сверху у кол.1)`, size: `${gklColDoborW.toFixed(0)}×${DOBOR_H}×${GKL_T}`, qty: "2 шт", note: "над колонной 1" },
-      { name: `ГКЛ (над дверью)`, size: `${gklOverDoorW.toFixed(0)}×${OVER_DOOR_H}×${GKL_T}`, qty: "2 шт", note: "закрывает колонну 2 и механизм" },
-      { name: `Брус (на всю перегородку)`, size: `${beamLen}×${BEAM_H}×${BEAM_W} мм`, qty: "2 шт", note: `низ на ${BEAM_LEVEL} мм, для механизма × 2 слоя` },
-      { name: "Профиль ПН 50×40 (пол, после проёма)", size: `${pnFloorLen} мм`, qty: "2 шт", note: "после проёма × 2 слоя" },
-      { name: "Профиль ПН 50×40 (пол, у кол.2)", size: `${PS_W} мм`, qty: "2 шт", note: "под стойкой у колонны 2 × 2 слоя" },
-      { name: "Профиль ПН 50×40 (потолок)", size: `${HORIZ_LEN} мм`, qty: "2 шт", note: "на всю длину × 2 слоя" },
-      { name: "Профиль ПН 75×40 (между слоями)", size: `${HORIZ_LEN} мм`, qty: "2 шт", note: "пол + потолок для зазора 75мм" },
-      { name: "Профиль ПН 50×40 (над дверью)", size: `${DOOR_W} мм`, qty: "2 шт", note: `только над проёмом, низ на ${DOOR_H} мм × 2 слоя` },
-      { name: "Профиль ПН 50×40 (стык ГКЛ)", size: `${pnJointLen} мм`, qty: "2 шт", note: `центр на ${GKL_SHEET_H} мм × 2 слоя` },
-      { name: "Профиль ПС 50×50", size: `${CEILING_H - PN_H * 2} мм`, qty: `${STUD_POSITIONS.length * 2} шт`, note: `${STUD_POSITIONS.length} стоек × 2 слоя` },
+      { num: 1, name: `ГКЛ лист (основной)`, size: `${gklMainW}×${GKL_SHEET_H}×${GKL_T}`, qty: "2 шт", note: "от границы проёма, с вырезом × 2 стороны" },
+      { num: 2, name: `ГКЛ (доборка у колонны 1)`, size: `${gklColDoborW.toFixed(0)}×${GKL_SHEET_H}×${GKL_T}`, qty: "2 шт", note: "закрывает колонну 1" },
+      { num: 3, name: `ГКЛ (доборка сверху)`, size: `${gklMainW}×${DOBOR_H}×${GKL_T}`, qty: "2 шт", note: "над основным листом" },
+      { num: 4, name: `ГКЛ (доборка сверху у кол.1)`, size: `${gklColDoborW.toFixed(0)}×${DOBOR_H}×${GKL_T}`, qty: "2 шт", note: "над колонной 1" },
+      { num: 5, name: `ГКЛ (над дверью)`, size: `${gklOverDoorW.toFixed(0)}×${OVER_DOOR_H}×${GKL_T}`, qty: "2 шт", note: "закрывает колонну 2 и механизм" },
+      { num: 6, name: `Брус (на всю перегородку)`, size: `${beamLen}×${BEAM_H}×${BEAM_W} мм`, qty: "2 шт", note: `низ на ${BEAM_LEVEL} мм, для механизма × 2 слоя` },
+      { num: 7, name: "Профиль ПН 50×40 (пол, после проёма)", size: `${pnFloorLen} мм`, qty: "2 шт", note: "после проёма × 2 слоя" },
+      { num: 8, name: "Профиль ПН 50×40 (пол, у кол.2)", size: `${PS_W} мм`, qty: "2 шт", note: "под стойкой у колонны 2 × 2 слоя" },
+      { num: 9, name: "Профиль ПН 50×40 (потолок)", size: `${HORIZ_LEN} мм`, qty: "2 шт", note: "на всю длину × 2 слоя" },
+      { num: 10, name: "Профиль ПН 75×40 (между слоями)", size: `${HORIZ_LEN} мм`, qty: "2 шт", note: "пол + потолок для зазора 75мм" },
+      { num: 11, name: "Профиль ПН 50×40 (над дверью)", size: `${DOOR_W} мм`, qty: "2 шт", note: `только над проёмом, низ на ${DOOR_H} мм × 2 слоя` },
+      { num: 12, name: "Профиль ПН 50×40 (стык ГКЛ)", size: `${pnJointLen} мм`, qty: "2 шт", note: `центр на ${GKL_SHEET_H} мм × 2 слоя` },
+      { num: 13, name: "Профиль ПС 50×50", size: `${CEILING_H - PN_H * 2} мм`, qty: `${STUD_POSITIONS.length * 2} шт`, note: `${STUD_POSITIONS.length} стоек × 2 слоя` },
     ];
 
     return (
-      <div style={{ background: C_BG_SVG, borderRadius: 8, padding: 16, maxWidth: 700 }}>
+      <div style={{ background: C_BG_SVG, borderRadius: 8, padding: 16, maxWidth: 750 }}>
         <h3 style={{ color: C_COLUMN_TEXT, margin: "0 0 12px", fontSize: 14 }}>Спецификация материалов</h3>
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
           <thead>
             <tr style={{ borderBottom: `1px solid ${C_TEXT_DIM}` }}>
+              <th style={{ textAlign: "center", padding: "8px 4px", color: C_TEXT, width: 30 }}>№</th>
               <th style={{ textAlign: "left", padding: "8px 4px", color: C_TEXT }}>Элемент</th>
               <th style={{ textAlign: "left", padding: "8px 4px", color: C_TEXT }}>Размер</th>
               <th style={{ textAlign: "center", padding: "8px 4px", color: C_TEXT }}>Кол-во</th>
@@ -943,8 +973,9 @@ export default function BathroomPartitionFrame() {
             </tr>
           </thead>
           <tbody>
-            {items.map((item, i) => (
-              <tr key={i} style={{ borderBottom: `1px solid ${C_TEXT_DIM}33` }}>
+            {items.map((item) => (
+              <tr key={item.num} style={{ borderBottom: `1px solid ${C_TEXT_DIM}33` }}>
+                <td style={{ padding: "6px 4px", color: C_DIM, textAlign: "center", fontWeight: "bold" }}>{item.num}</td>
                 <td style={{ padding: "6px 4px", color: C_DIM }}>{item.name}</td>
                 <td style={{ padding: "6px 4px", color: C_TEXT_DIM }}>{item.size}</td>
                 <td style={{ padding: "6px 4px", color: C_TEXT_DIM, textAlign: "center" }}>{item.qty}</td>

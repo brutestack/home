@@ -88,3 +88,48 @@ export function StudLabel({ x, y, num, r = 10, color = "#8B4513", fontSize = 10 
     <text x={x} y={y + fontSize * 0.35} textAnchor="middle" fill="white" fontSize={fontSize} fontWeight="bold">{num}</text>
   </>;
 }
+
+// Номер элемента спецификации (квадрат с номером)
+export function SpecLabel({ x, y, num, size = 16, color = "#4fc3f7", fontSize = 10, highlighted = false }: {
+  x: number; y: number; num: number;
+  size?: number; color?: string; fontSize?: number; highlighted?: boolean;
+}) {
+  const half = size / 2;
+  const scale = highlighted ? 1.3 : 1;
+  return <g transform={`translate(${x}, ${y}) scale(${scale}) translate(${-x}, ${-y})`}>
+    <rect x={x - half} y={y - half} width={size} height={size} rx={2}
+      fill={color} fillOpacity={highlighted ? 1 : 0.9} stroke="white" strokeWidth={highlighted ? 1.5 : 0.5}/>
+    <text x={x} y={y + fontSize * 0.35} textAnchor="middle" fill="white" fontSize={fontSize} fontWeight="bold">{num}</text>
+  </g>;
+}
+
+// Группа элементов с одинаковым номером спецификации (подсвечивается при наведении)
+export function SpecGroup({ specNum, hoveredSpec, setHoveredSpec, children, highlightColor = "#fff" }: {
+  specNum: number;
+  hoveredSpec: number | null;
+  setHoveredSpec: (num: number | null) => void;
+  children: React.ReactNode;
+  highlightColor?: string;
+}) {
+  const isHighlighted = hoveredSpec === specNum;
+  return (
+    <g
+      onMouseEnter={() => setHoveredSpec(specNum)}
+      onMouseLeave={() => setHoveredSpec(null)}
+      style={{ cursor: "pointer" }}
+      filter={isHighlighted ? "url(#specHighlight)" : undefined}
+      opacity={hoveredSpec !== null && !isHighlighted ? 0.4 : 1}
+    >
+      {children}
+    </g>
+  );
+}
+
+// SVG фильтр для подсветки элементов спецификации (добавить в <defs> SVG)
+export function SpecHighlightFilter() {
+  return (
+    <filter id="specHighlight" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#fff" floodOpacity="0.8"/>
+    </filter>
+  );
+}

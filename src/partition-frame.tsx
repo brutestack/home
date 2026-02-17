@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { HDim, VDim, StudLabel } from "./svg-primitives";
+import { HDim, VDim, StudLabel, SpecLabel } from "./svg-primitives";
 import {
   C_BG, C_BG_SVG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT, C_TOOLTIP_BG,
   C_DIM, C_DIM_TRANS, C_GKL, C_GKL_BORDER, C_WARDROBE, C_WARDROBE_FILL
@@ -147,24 +147,27 @@ export default function PartitionFrame() {
         <line x1={p} y1={p} x2={p + VERT_LEN * s} y2={p}
           stroke={C_TEXT} strokeWidth={2}/>
 
-        {/* Направляющие профили ПН на полу */}
+        {/* Направляющие профили ПН на полу (№9) */}
         <rect x={p} y={p + CEILING_H * s - PN_H * s} width={doorStart * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + doorStart/2 * s} y={p + CEILING_H * s - PN_H/2 * s} num={9} color={C_FRAME}/>
         <rect x={p + doorEnd * s} y={p + CEILING_H * s - PN_H * s} width={(VERT_LEN - doorEnd) * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + (doorEnd + (VERT_LEN - doorEnd)/2) * s} y={p + CEILING_H * s - PN_H/2 * s} num={9} color={C_FRAME}/>
 
-        {/* Направляющие профили ПН на потолке */}
+        {/* Направляющие профили ПН на потолке (№9) */}
         <rect x={p} y={p} width={VERT_LEN * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + VERT_LEN * s - 30} y={p + PN_H/2 * s} num={9} color={C_FRAME}/>
 
-        {/* Стоечные профили ПС */}
-        {/* Стойка у стены (0) — левый край на линии стены */}
-        <g>
-          <rect x={p} y={p + PN_H * s}
-            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-            fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-          <StudLabel x={p + PS_W/2 * s} y={p + CEILING_H/2 * s} num={getStudNumberFront(0)} color={C_FRAME}/>
-        </g>
+        {/* Стоечные профили ПС (№11) */}
+        {/* Стойка у стены (0) */}
+        <rect x={p} y={p + PN_H * s}
+          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <StudLabel x={p + PS_W/2 * s} y={p + CEILING_H/2 * s} num={getStudNumberFront(0)} color={C_FRAME}/>
+        <SpecLabel x={p + PS_W/2 * s} y={p + CEILING_H/2 * s + 40} num={11} color={C_FRAME}/>
+
         {/* Стойки под панели (центрированы) */}
         {[stud1, stud2].map((pos, i) => (
           <g key={`stud${i}`}>
@@ -172,36 +175,34 @@ export default function PartitionFrame() {
               width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
               fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
             <StudLabel x={p + pos * s} y={p + CEILING_H/2 * s} num={getStudNumberFront(i + 1)} color={C_FRAME}/>
+            <SpecLabel x={p + pos * s} y={p + CEILING_H/2 * s + 40} num={11} color={C_FRAME}/>
           </g>
         ))}
-        {/* Стойка у начала проёма — правый край на doorStart (не выступает в проём) */}
-        <g>
-          <rect x={p + (doorStart - PS_W) * s} y={p + PN_H * s}
-            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-            fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-          <StudLabel x={p + (doorStart - PS_W/2) * s} y={p + CEILING_H/2 * s} num={getStudNumberFront(3)} color={C_FRAME}/>
-        </g>
-        {/* Стойка у конца проёма — левый край на doorEnd (не выступает в проём) */}
-        <g>
-          <rect x={p + doorEnd * s} y={p + PN_H * s}
-            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-            fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-          {/* Брус внутри стойки справа от двери */}
-          <rect x={p + doorEnd * s} y={p + PN_H * s}
-            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-            fill={C_BEAM_FILL} stroke={C_BEAM} strokeWidth={1.5}/>
-          <text x={p + (doorEnd + PS_W/2) * s} y={p + CEILING_H/2 * s - 50}
-            textAnchor="middle" fill={C_BEAM} fontSize={7}
-            transform={`rotate(-90,${p + (doorEnd + PS_W/2) * s},${p + CEILING_H/2 * s - 50})`}>брус {BEAM_W}×{BEAM_H}</text>
-          <StudLabel x={p + (doorEnd + PS_W/2) * s} y={p + CEILING_H/2 * s + 60} num={getStudNumberFront(4)} color={C_BEAM}/>
-        </g>
 
-        {/* Перемычка над дверью — деревянный брус 50×70, от стены до конца проёма */}
+        {/* Стойка у начала проёма */}
+        <rect x={p + (doorStart - PS_W) * s} y={p + PN_H * s}
+          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <StudLabel x={p + (doorStart - PS_W/2) * s} y={p + CEILING_H/2 * s} num={getStudNumberFront(3)} color={C_FRAME}/>
+        <SpecLabel x={p + (doorStart - PS_W/2) * s} y={p + CEILING_H/2 * s + 40} num={11} color={C_FRAME}/>
+
+        {/* Стойка у ванной с брусом (№8) */}
+        <rect x={p + doorEnd * s} y={p + PN_H * s}
+          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+          fill={C_BEAM_FILL} stroke={C_BEAM} strokeWidth={1.5}/>
+        <text x={p + (doorEnd + PS_W/2) * s} y={p + CEILING_H/2 * s - 50}
+          textAnchor="middle" fill={C_BEAM} fontSize={7}
+          transform={`rotate(-90,${p + (doorEnd + PS_W/2) * s},${p + CEILING_H/2 * s - 50})`}>брус {BEAM_W}×{BEAM_H}</text>
+        <StudLabel x={p + (doorEnd + PS_W/2) * s} y={p + CEILING_H/2 * s + 60} num={getStudNumberFront(4)} color={C_BEAM}/>
+        <SpecLabel x={p + (doorEnd + PS_W/2) * s} y={p + CEILING_H/2 * s + 100} num={8} color={C_BEAM}/>
+
+        {/* Перемычка над дверью — деревянный брус 50×70 (№7) */}
         <rect x={p} y={p + (CEILING_H - DOOR_H - BEAM_H) * s}
           width={doorEnd * s} height={BEAM_H * s}
           fill={C_BEAM_FILL} stroke={C_BEAM} strokeWidth={2}/>
         <text x={p + doorEnd/2 * s} y={p + (CEILING_H - DOOR_H - BEAM_H/2) * s + 3}
           textAnchor="middle" fill={C_BEAM} fontSize={8}>брус {doorEnd}×{BEAM_H}×{BEAM_W}</text>
+        <SpecLabel x={p + doorEnd/2 * s + 100} y={p + (CEILING_H - DOOR_H - BEAM_H/2) * s} num={7} color={C_BEAM}/>
 
         {/* Дверной проём */}
         <rect x={p + doorStart * s} y={p + (CEILING_H - DOOR_H) * s}
@@ -212,13 +213,14 @@ export default function PartitionFrame() {
         <text x={p + (doorStart + DOOR_W/2) * s} y={p + (CEILING_H - DOOR_H/2) * s + 16}
           textAnchor="middle" fill={C_DOOR} fontSize={10}>{DOOR_W}×{DOOR_H}</text>
 
-        {/* ЛДСП панели (до проёма) — вплотную к потолку */}
+        {/* ЛДСП панели до проёма (№1) — вплотную к потолку */}
         {/* Панель 1: 20-920 */}
         <rect x={p + stud1 * s} y={p}
           width={PANEL_W * s} height={PANEL_H * s}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
         <text x={p + (stud1 + PANEL_W/2) * s} y={p + PANEL_H/2 * s}
           textAnchor="middle" fill={C_PANEL} fontSize={9}>ЛДСП {PANEL_W}×{PANEL_H}×{PANEL_T}</text>
+        <SpecLabel x={p + (stud1 + PANEL_W - 20) * s} y={p + 30} num={1} color={C_PANEL}/>
 
         {/* Панель 2: 920-1820 */}
         <rect x={p + stud2 * s} y={p}
@@ -226,27 +228,31 @@ export default function PartitionFrame() {
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
         <text x={p + (stud2 + PANEL_W/2) * s} y={p + PANEL_H/2 * s}
           textAnchor="middle" fill={C_PANEL} fontSize={9}>ЛДСП {PANEL_W}×{PANEL_H}×{PANEL_T}</text>
+        <SpecLabel x={p + (stud2 + PANEL_W - 20) * s} y={p + 30} num={1} color={C_PANEL}/>
 
-        {/* Доборные планки снизу (у пола) */}
+        {/* Доборные планки снизу (№6) */}
         <rect x={p + stud1 * s} y={p + PANEL_H * s}
           width={PANEL_W * 2 * s} height={DOBOR_H * s}
           fill="none" stroke={C_DOBOR} strokeWidth={1} strokeDasharray="3 2"/>
         <text x={p + (stud1 + PANEL_W) * s} y={p + (PANEL_H + DOBOR_H/2) * s + 3}
           textAnchor="middle" fill={C_DOBOR} fontSize={8}>доборка {DOBOR_H}</text>
+        <SpecLabel x={p + (stud1 + PANEL_W) * s + 50} y={p + (PANEL_H + DOBOR_H/2) * s} num={6} color={C_DOBOR}/>
 
-        {/* Панель над дверью — до потолка + 100мм перекрытия для механизма */}
+        {/* Панель над дверью (№2) */}
         <rect x={p + doorStart * s} y={p}
           width={DOOR_W * s} height={OVER_DOOR_PANEL_H * s}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
         <text x={p + (doorStart + DOOR_W/2) * s} y={p + OVER_DOOR_PANEL_H/2 * s}
           textAnchor="middle" fill={C_PANEL} fontSize={8}>ЛДСП {DOOR_W}×{OVER_DOOR_PANEL_H}</text>
+        <SpecLabel x={p + (doorStart + DOOR_W - 30) * s} y={p + 30} num={2} color={C_PANEL}/>
 
-        {/* Панель после проёма (короткая часть до ванной) */}
+        {/* Панель после проёма — доборка (№5) */}
         <rect x={p + doorEnd * s} y={p}
           width={(VERT_LEN - doorEnd) * s} height={PANEL_H * s}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={1} strokeDasharray="4 2"/>
         <text x={p + (doorEnd + (VERT_LEN - doorEnd)/2) * s} y={p + PANEL_H/2 * s}
           textAnchor="middle" fill={C_PANEL} fontSize={7}>{VERT_LEN - doorEnd}</text>
+        <SpecLabel x={p + (doorEnd + 15) * s} y={p + 30} num={5} color={C_PANEL}/>
 
         {/* Размерные линии */}
         {/* Зазор слева (у верхней стены) */}
@@ -345,27 +351,25 @@ export default function PartitionFrame() {
         <line x1={p} y1={p} x2={p + VERT_LEN * s} y2={p}
           stroke={C_TEXT} strokeWidth={2}/>
 
-        {/* Направляющие ПН на полу — с учётом проёма */}
+        {/* Направляющие ПН на полу (№9) */}
         <rect x={p} y={p + CEILING_H * s - PN_H * s} width={doorStartMirror * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + doorStartMirror/2 * s} y={p + CEILING_H * s - PN_H/2 * s} num={9} color={C_FRAME}/>
         <rect x={p + horizPartitionEnd * s} y={p + CEILING_H * s - PN_H * s} width={panelAreaLen * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + (horizPartitionEnd + panelAreaLen/2) * s} y={p + CEILING_H * s - PN_H/2 * s} num={9} color={C_FRAME}/>
 
-        {/* Направляющие ПН на потолке */}
+        {/* Направляющие ПН на потолке (№9) */}
         <rect x={p} y={p} width={VERT_LEN * s} height={PN_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + VERT_LEN * s - 30} y={p + PN_H/2 * s} num={9} color={C_FRAME}/>
 
-        {/* Стойка у ванной */}
-        <g>
-          <rect x={p} y={p + PN_H * s}
-            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-            fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-          {/* Брус внутри стойки у ванной */}
-          <rect x={p} y={p + PN_H * s}
-            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-            fill={C_BEAM_FILL} stroke={C_BEAM} strokeWidth={1.5}/>
-          <StudLabel x={p + PS_W/2 * s} y={p + CEILING_H/2 * s} num={getStudNumberBack(0)} color={C_BEAM}/>
-        </g>
+        {/* Стойка у ванной с брусом (№8) */}
+        <rect x={p} y={p + PN_H * s}
+          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+          fill={C_BEAM_FILL} stroke={C_BEAM} strokeWidth={1.5}/>
+        <StudLabel x={p + PS_W/2 * s} y={p + CEILING_H/2 * s} num={getStudNumberBack(0)} color={C_BEAM}/>
+        <SpecLabel x={p + PS_W/2 * s} y={p + CEILING_H/2 * s + 40} num={8} color={C_BEAM}/>
 
         {/* Дверной проём */}
         <rect x={p + doorStartMirror * s} y={p + (CEILING_H - DOOR_H) * s}
@@ -376,10 +380,11 @@ export default function PartitionFrame() {
         <text x={p + (doorStartMirror + DOOR_W/2) * s} y={p + (CEILING_H - DOOR_H/2) * s + 16}
           textAnchor="middle" fill={C_DOOR} fontSize={10}>{DOOR_W}×{DOOR_H}</text>
 
-        {/* Перемычка над дверью — от ванной до конца короткой перегородки */}
+        {/* Перемычка над дверью (№7) */}
         <rect x={p} y={p + (CEILING_H - DOOR_H - BEAM_H) * s}
           width={horizPartitionEnd * s} height={BEAM_H * s}
           fill={C_BEAM_FILL} stroke={C_BEAM} strokeWidth={2}/>
+        <SpecLabel x={p + horizPartitionEnd/2 * s + 60} y={p + (CEILING_H - DOOR_H - BEAM_H/2) * s} num={7} color={C_BEAM}/>
 
         {/* === Разрез короткой перегородки (50мм) === */}
         <rect x={p + horizPartitionStart * s} y={p} width={horizProfileW * s} height={CEILING_H * s}
@@ -390,29 +395,35 @@ export default function PartitionFrame() {
           Короткая перегородка (разрез)
         </text>
 
+        {/* Стоечные профили ПС (№11) */}
         {/* Стойка после короткой перегородки */}
-        <g>
-          <rect x={p + horizPartitionEnd * s} y={p + PN_H * s}
-            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-            fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-          <StudLabel x={p + (horizPartitionEnd + PS_W/2) * s} y={p + CEILING_H/2 * s} num={getStudNumberBack(1)} color={C_FRAME}/>
-        </g>
+        <rect x={p + horizPartitionEnd * s} y={p + PN_H * s}
+          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <StudLabel x={p + (horizPartitionEnd + PS_W/2) * s} y={p + CEILING_H/2 * s} num={getStudNumberBack(1)} color={C_FRAME}/>
+        <SpecLabel x={p + (horizPartitionEnd + PS_W/2) * s} y={p + CEILING_H/2 * s + 40} num={11} color={C_FRAME}/>
 
-        {/* === ЛДСП панели (от короткой перегородки к внешней стене) — вплотную к потолку === */}
-        {/* Панель 1: 1000-1900 (900мм) */}
+        {/* Стойка между панелями */}
+        <rect x={p + (panel1End - PS_W/2) * s} y={p + PN_H * s}
+          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <StudLabel x={p + panel1End * s} y={p + CEILING_H/2 * s} num={getStudNumberBack(2)} color={C_FRAME}/>
+        <SpecLabel x={p + panel1End * s} y={p + CEILING_H/2 * s + 40} num={11} color={C_FRAME}/>
+
+        {/* Стойка у внешней стены */}
+        <rect x={p + (VERT_LEN - PS_W) * s} y={p + PN_H * s}
+          width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
+          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <StudLabel x={p + (VERT_LEN - PS_W/2) * s} y={p + CEILING_H/2 * s} num={getStudNumberBack(3)} color={C_FRAME}/>
+        <SpecLabel x={p + (VERT_LEN - PS_W/2) * s} y={p + CEILING_H/2 * s + 40} num={11} color={C_FRAME}/>
+
+        {/* ЛДСП панель 1: 1000-1900 (900мм) (№1) */}
         <rect x={p + panelAreaStart * s} y={p}
           width={PANEL_W * s} height={PANEL_H * s}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
         <text x={p + (panelAreaStart + PANEL_W/2) * s} y={p + PANEL_H/2 * s}
           textAnchor="middle" fill={C_PANEL} fontSize={9}>ЛДСП {PANEL_W}×{PANEL_H}</text>
-
-        {/* Стойка между панелями */}
-        <g>
-          <rect x={p + (panel1End - PS_W/2) * s} y={p + PN_H * s}
-            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-            fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-          <StudLabel x={p + panel1End * s} y={p + CEILING_H/2 * s} num={getStudNumberBack(2)} color={C_FRAME}/>
-        </g>
+        <SpecLabel x={p + (panelAreaStart + PANEL_W - 30) * s} y={p + 30} num={1} color={C_PANEL}/>
 
         {/* Остаток у внешней стены: 1900-2770 (870мм) */}
         <rect x={p + panel1End * s} y={p}
@@ -420,32 +431,28 @@ export default function PartitionFrame() {
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
         <text x={p + (panel1End + remainderW/2) * s} y={p + PANEL_H/2 * s}
           textAnchor="middle" fill={C_PANEL} fontSize={9}>ЛДСП {remainderW}×{PANEL_H}</text>
+        <SpecLabel x={p + (panel1End + remainderW - 30) * s} y={p + 30} num={1} color={C_PANEL}/>
 
-        {/* Стойка у внешней стены */}
-        <g>
-          <rect x={p + (VERT_LEN - PS_W) * s} y={p + PN_H * s}
-            width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
-            fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-          <StudLabel x={p + (VERT_LEN - PS_W/2) * s} y={p + CEILING_H/2 * s} num={getStudNumberBack(3)} color={C_FRAME}/>
-        </g>
-
-        {/* Доборка снизу (у пола) */}
+        {/* Доборка снизу (№6) */}
         <rect x={p + panelAreaStart * s} y={p + PANEL_H * s} width={panelAreaLen * s} height={DOBOR_H * s}
           fill="none" stroke={C_DOBOR} strokeWidth={1} strokeDasharray="3 2"/>
+        <SpecLabel x={p + (panelAreaStart + panelAreaLen/2) * s} y={p + (PANEL_H + DOBOR_H/2) * s} num={6} color={C_DOBOR}/>
 
-        {/* Панель над дверью */}
+        {/* Панель над дверью (№2) */}
         <rect x={p + doorStartMirror * s} y={p}
           width={DOOR_W * s} height={OVER_DOOR_PANEL_H * s}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
         <text x={p + (doorStartMirror + DOOR_W/2) * s} y={p + OVER_DOOR_PANEL_H/2 * s}
           textAnchor="middle" fill={C_PANEL} fontSize={8}>ЛДСП {DOOR_W}×{OVER_DOOR_PANEL_H}</text>
+        <SpecLabel x={p + (doorStartMirror + DOOR_W - 30) * s} y={p + 30} num={2} color={C_PANEL}/>
 
-        {/* Панель у ванной (маленькая) */}
+        {/* Панель у ванной — доборка (№5) */}
         <rect x={p} y={p}
           width={doorStartMirror * s} height={PANEL_H * s}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={1} strokeDasharray="4 2"/>
         <text x={p + doorStartMirror/2 * s} y={p + PANEL_H/2 * s}
           textAnchor="middle" fill={C_PANEL} fontSize={7}>{doorStartMirror}</text>
+        <SpecLabel x={p + doorStartMirror/2 * s} y={p + 30} num={5} color={C_PANEL}/>
 
         {/* === Размерные линии === */}
         {/* Отступ от ванной */}
@@ -551,34 +558,35 @@ export default function PartitionFrame() {
           ЛДСП только снаружи | ПН 75 между слоями
         </text>
 
-        {/* Слой 1 (сторона лестницы) */}
+        {/* Стоечные профили ПС (№11) */}
         <rect x={p + layer1X * s} y={topY} width={PS_W * s} height={h}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
         <text x={p + PS_W/2 * s} y={topY + h/2} textAnchor="middle" fill={C_FRAME} fontSize={8}>ПС</text>
+        <SpecLabel x={p + PS_W/2 * s} y={topY + h/2 + 25} num={11} color={C_FRAME}/>
 
-        {/* Зазор между слоями — профиль ПН 75 на полу и потолке */}
-        <rect x={p + gapX * s} y={topY} width={GKL_GAP * s} height={h}
-          fill="none" stroke={C_TEXT_DIM} strokeWidth={1} strokeDasharray="4 2"/>
-        {/* ПН 75 на потолке */}
-        <rect x={p + gapX * s} y={topY} width={PN_GAP_W * s} height={PN_GAP_H * s}
-          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-        {/* ПН 75 на полу */}
-        <rect x={p + gapX * s} y={topY + h - PN_GAP_H * s} width={PN_GAP_W * s} height={PN_GAP_H * s}
-          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-        <text x={p + (gapX + GKL_GAP/2) * s} y={topY + h/2} textAnchor="middle" fill={C_FRAME} fontSize={7}>ПН 75</text>
-
-        {/* Слой 2 (сторона спальни) */}
         <rect x={p + layer2X * s} y={topY} width={PS_W * s} height={h}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
         <text x={p + (layer2X + PS_W/2) * s} y={topY + h/2} textAnchor="middle" fill={C_FRAME} fontSize={8}>ПС</text>
+        <SpecLabel x={p + (layer2X + PS_W/2) * s} y={topY + h/2 + 25} num={11} color={C_FRAME}/>
 
-        {/* ЛДСП только снаружи — слева (сторона лестницы) */}
+        {/* Профиль ПН 75 между слоями (№10) */}
+        <rect x={p + gapX * s} y={topY} width={GKL_GAP * s} height={h}
+          fill="none" stroke={C_TEXT_DIM} strokeWidth={1} strokeDasharray="4 2"/>
+        <rect x={p + gapX * s} y={topY} width={PN_GAP_W * s} height={PN_GAP_H * s}
+          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + (gapX + GKL_GAP/2) * s} y={topY + PN_GAP_H/2 * s} num={10} color={C_FRAME}/>
+        <rect x={p + gapX * s} y={topY + h - PN_GAP_H * s} width={PN_GAP_W * s} height={PN_GAP_H * s}
+          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <SpecLabel x={p + (gapX + GKL_GAP/2) * s} y={topY + h - PN_GAP_H/2 * s} num={10} color={C_FRAME}/>
+        <text x={p + (gapX + GKL_GAP/2) * s} y={topY + h/2} textAnchor="middle" fill={C_FRAME} fontSize={7}>ПН 75</text>
+
+        {/* ЛДСП панели (№1) */}
         <rect x={p - PANEL_T * s} y={topY} width={PANEL_T * s} height={h}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
-
-        {/* ЛДСП только снаружи — справа (сторона спальни) */}
+        <SpecLabel x={p - PANEL_T/2 * s} y={topY + h/2} num={1} color={C_PANEL}/>
         <rect x={p + (layer2X + PS_W) * s} y={topY} width={PANEL_T * s} height={h}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
+        <SpecLabel x={p + (layer2X + PS_W + PANEL_T/2) * s} y={topY + h/2} num={1} color={C_PANEL}/>
 
         {/* Подписи сторон */}
         <text x={p - PANEL_T * s - 5} y={topY + h/2} textAnchor="end" fill={C_TEXT_DIM} fontSize={8}>Лестница</text>
@@ -639,9 +647,11 @@ export default function PartitionFrame() {
         {/* === Внешний слой двойной перегородки (сторона лестницы) === */}
         <rect x={p} y={topY} width={GKL_LAYER * s} height={CEILING_H * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-        {/* ЛДСП на внешнем слое — вплотную к потолку */}
+        <SpecLabel x={p + GKL_LAYER/2 * s} y={topY + CEILING_H/2 * s} num={11} color={C_FRAME}/>
+        {/* ЛДСП на внешнем слое (№1) */}
         <rect x={p - PANEL_T * s} y={topY} width={PANEL_T * s} height={PANEL_H * s}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={1.5}/>
+        <SpecLabel x={p - PANEL_T/2 * s} y={topY + PANEL_H/2 * s} num={1} color={C_PANEL}/>
 
         {/* Зазор между слоями — над проёмом (с ПН 75 на полу и потолке) */}
         <rect x={p + GKL_LAYER * s} y={topY} width={GKL_GAP * s} height={(CEILING_H - DOOR_H) * s}
@@ -694,15 +704,17 @@ export default function PartitionFrame() {
         <rect x={innerLayerX + (GKL_LAYER + HORIZ_W - PS_W) * s} y={topY + PN_H * s} width={PS_W * s} height={(CEILING_H - PN_H * 2) * s}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
 
-        {/* ЛДСП панель (сторона шкафа) — вплотную к потолку */}
+        {/* ЛДСП панель горизонтальной части (№3) */}
         <rect x={innerLayerX + GKL_LAYER * s} y={topY} width={HORIZ_W * s} height={PANEL_H * s}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
         <text x={innerLayerX + (GKL_LAYER + HORIZ_W/2) * s} y={topY + PANEL_H/2 * s}
           textAnchor="middle" fill={C_PANEL} fontSize={9}>ЛДСП {HORIZ_W}×{PANEL_H}</text>
+        <SpecLabel x={innerLayerX + (GKL_LAYER + HORIZ_W - 25) * s} y={topY + 25} num={3} color={C_PANEL}/>
 
-        {/* Доборка снизу (у пола) */}
+        {/* Доборка снизу (№4) */}
         <rect x={innerLayerX + GKL_LAYER * s} y={topY + PANEL_H * s} width={HORIZ_W * s} height={DOBOR_H * s}
           fill="none" stroke={C_DOBOR} strokeWidth={1} strokeDasharray="3 2"/>
+        <SpecLabel x={innerLayerX + (GKL_LAYER + HORIZ_W/2) * s} y={topY + (PANEL_H + DOBOR_H/2) * s} num={4} color={C_DOBOR}/>
 
 
         {/* Разделительная линия между зонами (пунктир) */}
@@ -766,18 +778,21 @@ export default function PartitionFrame() {
           Одинарная 50 мм, ЛДСП с двух сторон
         </text>
 
-        {/* ЛДСП слева (сторона проёма) */}
+        {/* ЛДСП панели горизонтальной части (№3) — слева */}
         <rect x={p - PANEL_T * s} y={topY} width={PANEL_T * s} height={h}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
+        <SpecLabel x={p - PANEL_T/2 * s} y={topY + h/2} num={3} color={C_PANEL}/>
 
-        {/* Каркас ПС */}
+        {/* Каркас ПС (№11) */}
         <rect x={p} y={topY} width={PS_W * s} height={h}
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
         <text x={p + PS_W/2 * s} y={topY + h/2} textAnchor="middle" fill={C_FRAME} fontSize={9}>ПС</text>
+        <SpecLabel x={p + PS_W/2 * s} y={topY + h/2 + 25} num={11} color={C_FRAME}/>
 
-        {/* ЛДСП справа (сторона шкафа) */}
+        {/* ЛДСП справа (сторона шкафа) — тот же элемент №3 */}
         <rect x={p + PS_W * s} y={topY} width={PANEL_T * s} height={h}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={2}/>
+        <SpecLabel x={p + PS_W * s + PANEL_T/2 * s} y={topY + h/2} num={3} color={C_PANEL}/>
 
         {/* Подписи сторон */}
         <text x={p - PANEL_T * s - 5} y={topY + h/2} textAnchor="end" fill={C_DOOR} fontSize={8}>Проём</text>
@@ -802,25 +817,26 @@ export default function PartitionFrame() {
   const Specification = () => {
     const gapLeft = VERT_LEN - DOOR_OFFSET - DOOR_W - PANEL_W * 2; // 20 мм
     const items = [
-      { name: "ЛДСП панель (до проёма)", size: `${PANEL_W}×${PANEL_H}×${PANEL_T}`, qty: "4 шт", note: "2 панели × 2 стороны перегородки" },
-      { name: "ЛДСП панель (над дверью)", size: `${DOOR_W}×${OVER_DOOR_PANEL_H}×${PANEL_T}`, qty: "2 шт", note: "до потолка + 100мм для механизма двери" },
-      { name: "ЛДСП панель (горизонтальная)", size: `${HORIZ_W}×${PANEL_H}×${PANEL_T}`, qty: "2 шт", note: "верх и низ горизонтальной части" },
-      { name: "ЛДСП доборка (у стены)", size: `${gapLeft}×${PANEL_H}×${PANEL_T}`, qty: "2 шт", note: "зазор у верхней стены" },
-      { name: "ЛДСП доборка (после проёма)", size: `${DOOR_OFFSET}×${PANEL_H}×${PANEL_T}`, qty: "2 шт", note: "от проёма до ванной" },
-      { name: "Доборная планка (верх)", size: `~1800×${DOBOR_H}×${PANEL_T}`, qty: "2 шт", note: "над панелями до потолка" },
-      { name: "Брус (над дверью)", size: `${VERT_LEN - DOOR_OFFSET}×${BEAM_H}×${BEAM_W}`, qty: "2 шт", note: "от стены до конца проёма × 2 слоя" },
-      { name: "Брус (в стойке)", size: `${CEILING_H - PN_H * 2}×${BEAM_H}×${BEAM_W}`, qty: "2 шт", note: "усиление стойки у ванной × 2 слоя" },
-      { name: "Профиль ПН 50×40", size: `${VERT_LEN} мм`, qty: "4 шт", note: "пол + потолок × 2 слоя" },
-      { name: "Профиль ПН 75×40", size: `${VERT_LEN} мм`, qty: "2 шт", note: "между слоями (пол + потолок) для зазора 75мм" },
-      { name: "Профиль ПС 50×50", size: `${CEILING_H - PN_H * 2} мм`, qty: "10 шт", note: "5 стоек × 2 слоя" },
+      { num: 1, name: "ЛДСП панель (до проёма)", size: `${PANEL_W}×${PANEL_H}×${PANEL_T}`, qty: "4 шт", note: "2 панели × 2 стороны перегородки" },
+      { num: 2, name: "ЛДСП панель (над дверью)", size: `${DOOR_W}×${OVER_DOOR_PANEL_H}×${PANEL_T}`, qty: "2 шт", note: "до потолка + 100мм для механизма двери" },
+      { num: 3, name: "ЛДСП панель (горизонтальная)", size: `${HORIZ_W}×${PANEL_H}×${PANEL_T}`, qty: "2 шт", note: "обе стороны горизонтальной части" },
+      { num: 4, name: "ЛДСП доборка (у стены)", size: `${gapLeft}×${PANEL_H}×${PANEL_T}`, qty: "2 шт", note: "зазор у верхней стены" },
+      { num: 5, name: "ЛДСП доборка (после проёма)", size: `${DOOR_OFFSET}×${PANEL_H}×${PANEL_T}`, qty: "2 шт", note: "от проёма до ванной" },
+      { num: 6, name: "Доборная планка (низ)", size: `~1800×${DOBOR_H}×${PANEL_T}`, qty: "2 шт", note: "под панелями у пола" },
+      { num: 7, name: "Брус (над дверью)", size: `${VERT_LEN - DOOR_OFFSET}×${BEAM_H}×${BEAM_W}`, qty: "2 шт", note: "от стены до конца проёма × 2 слоя" },
+      { num: 8, name: "Брус (в стойке)", size: `${CEILING_H - PN_H * 2}×${BEAM_H}×${BEAM_W}`, qty: "2 шт", note: "усиление стойки у ванной × 2 слоя" },
+      { num: 9, name: "Профиль ПН 50×40", size: `${VERT_LEN} мм`, qty: "4 шт", note: "пол + потолок × 2 слоя" },
+      { num: 10, name: "Профиль ПН 75×40", size: `${VERT_LEN} мм`, qty: "2 шт", note: "между слоями (пол + потолок) для зазора 75мм" },
+      { num: 11, name: "Профиль ПС 50×50", size: `${CEILING_H - PN_H * 2} мм`, qty: "10 шт", note: "5 стоек × 2 слоя" },
     ];
 
     return (
-      <div style={{ background: C_BG_SVG, borderRadius: 8, padding: 16, maxWidth: 700 }}>
+      <div style={{ background: C_BG_SVG, borderRadius: 8, padding: 16, maxWidth: 750 }}>
         <h3 style={{ color: C_COLUMN_TEXT, margin: "0 0 12px", fontSize: 14 }}>Спецификация материалов</h3>
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
           <thead>
             <tr style={{ borderBottom: `1px solid ${C_TEXT_DIM}` }}>
+              <th style={{ textAlign: "center", padding: "8px 4px", color: C_TEXT, width: 30 }}>№</th>
               <th style={{ textAlign: "left", padding: "8px 4px", color: C_TEXT }}>Элемент</th>
               <th style={{ textAlign: "left", padding: "8px 4px", color: C_TEXT }}>Размер</th>
               <th style={{ textAlign: "center", padding: "8px 4px", color: C_TEXT }}>Кол-во</th>
@@ -828,8 +844,9 @@ export default function PartitionFrame() {
             </tr>
           </thead>
           <tbody>
-            {items.map((item, i) => (
-              <tr key={i} style={{ borderBottom: `1px solid ${C_TEXT_DIM}33` }}>
+            {items.map((item) => (
+              <tr key={item.num} style={{ borderBottom: `1px solid ${C_TEXT_DIM}33` }}>
+                <td style={{ padding: "6px 4px", color: C_DIM, textAlign: "center", fontWeight: "bold" }}>{item.num}</td>
                 <td style={{ padding: "6px 4px", color: C_DIM }}>{item.name}</td>
                 <td style={{ padding: "6px 4px", color: C_TEXT_DIM }}>{item.size}</td>
                 <td style={{ padding: "6px 4px", color: C_TEXT_DIM, textAlign: "center" }}>{item.qty}</td>

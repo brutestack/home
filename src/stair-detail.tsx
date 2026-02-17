@@ -335,9 +335,16 @@ export default function StairDetail(){
       <div style={{display:"flex",justifyContent:"center",marginBottom:12}}><TopView/></div>
       <div style={{display:"flex",justifyContent:"center",marginBottom:12}}><SideView/></div>
       <div style={{display:"flex",justifyContent:"center",marginBottom:12}}><SectionView/></div>
-      <div style={{maxWidth:520,margin:"20px auto",background:"#1e2d4a",borderRadius:8,padding:16}}>
+      <div style={{maxWidth:560,margin:"20px auto",background:"#1e2d4a",borderRadius:8,padding:16}}>
         <h3 style={{color:"#ff9800",margin:"0 0 12px",fontSize:14,textAlign:"center"}}>Спецификация лестницы</h3>
         <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+          <thead>
+            <tr style={{borderBottom:"1px solid #ffffff30"}}>
+              <th style={{padding:"6px 4px",color:"#888",textAlign:"center",width:30}}>№</th>
+              <th style={{padding:"6px 8px",color:"#888",textAlign:"left"}}>Параметр</th>
+              <th style={{padding:"6px 8px",color:"#888",textAlign:"left"}}>Значение</th>
+            </tr>
+          </thead>
           <tbody>
             {[
               ["Тип","П-образная, двухуровневая площадка"],
@@ -355,6 +362,7 @@ export default function StairDetail(){
               ["Уклон",`${(Math.atan(RISE_H/(TREAD*1000))*180/Math.PI).toFixed(1)}°`],
             ].map(([k,v],i)=>(
               <tr key={i} style={{borderBottom:"1px solid #ffffff10"}}>
+                <td style={{padding:"6px 4px",color:"#4fc3f7",textAlign:"center",fontWeight:"bold"}}>{i+1}</td>
                 <td style={{padding:"6px 8px",color:"#888"}}>{k}</td>
                 <td style={{padding:"6px 8px",color:"#e0e0e0",fontWeight:"bold"}}>{v}</td>
               </tr>
