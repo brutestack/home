@@ -3,15 +3,17 @@ import FloorPlan from './2nd-floor-plan'
 import StairDetail from './stair-detail'
 import Stair3D from './stair-3d'
 import PartitionFrame from './partition-frame'
+import PartitionFrameGkl from './partition-frame-gkl'
 
-type View = 'floor' | 'detail' | '3d' | 'partition'
+type View = 'floor' | 'detail' | '3d' | 'partition' | 'partition-gkl'
 
 export default function App() {
   const [view, setView] = useState<View>('floor')
 
   const tabs: { id: View; label: string }[] = [
     { id: 'floor', label: 'План 2 этажа' },
-    { id: 'partition', label: 'Каркас перегородки' },
+    { id: 'partition', label: 'Каркас (ЛДСП)' },
+    { id: 'partition-gkl', label: 'Каркас (ГКЛ)' },
     { id: 'detail', label: 'Детали лестницы' },
     { id: '3d', label: '3D модель' },
   ]
@@ -49,6 +51,7 @@ export default function App() {
 
       {view === 'floor' && <FloorPlan />}
       {view === 'partition' && <PartitionFrame />}
+      {view === 'partition-gkl' && <PartitionFrameGkl />}
       {view === 'detail' && <StairDetail />}
       {view === '3d' && <Stair3D />}
     </div>

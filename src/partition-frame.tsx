@@ -19,8 +19,12 @@ const OVER_DOOR_H = CEILING_H - DOOR_H; // Над дверью (700мм)
 const OVER_DOOR_PANEL_H = OVER_DOOR_H + 100; // Панель над дверью с перекрытием для механизма (800мм)
 
 const GKL_LAYER = 50;          // Толщина слоя ГКЛ (мм)
-const GKL_GAP = 50;            // Зазор между слоями (мм)
-const PARTITION_T = GKL_LAYER * 2 + GKL_GAP; // Общая толщина (150мм)
+const GKL_GAP = 75;            // Зазор между слоями (мм) — профиль ПН 75×40
+const PARTITION_T = GKL_LAYER * 2 + GKL_GAP; // Общая толщина (175мм)
+
+// Профиль между слоями (для равномерного зазора)
+const PN_GAP_W = 75;           // Ширина направляющего профиля между слоями (мм)
+const PN_GAP_H = 40;           // Высота направляющего профиля между слоями (мм)
 
 const HORIZ_W = 700;           // Длина горизонтальной части (мм)
 const HORIZ_T = 50;            // Толщина горизонтальной части (мм)
@@ -477,7 +481,7 @@ export default function PartitionFrame() {
     const layer1X = 0;
     const gapX = PS_W;
     const layer2X = PS_W + GKL_GAP;
-    const totalW = PS_W * 2 + GKL_GAP; // 150 мм
+    const totalW = PS_W * 2 + GKL_GAP; // 175 мм
 
     // Центрирование по горизонтали
     const schemaW = (totalW + PANEL_T * 2) * s;
@@ -491,7 +495,7 @@ export default function PartitionFrame() {
           Разрез двойной перегородки
         </text>
         <text x={w/2} y={34} textAnchor="middle" fill={C_TEXT_DIM} fontSize={10}>
-          ЛДСП только снаружи
+          ЛДСП только снаружи | ПН 75 между слоями
         </text>
 
         {/* Слой 1 (сторона лестницы) */}
@@ -499,10 +503,16 @@ export default function PartitionFrame() {
           fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
         <text x={p + PS_W/2 * s} y={topY + h/2} textAnchor="middle" fill={C_FRAME} fontSize={8}>ПС</text>
 
-        {/* Зазор между слоями */}
+        {/* Зазор между слоями — профиль ПН 75 на полу и потолке */}
         <rect x={p + gapX * s} y={topY} width={GKL_GAP * s} height={h}
           fill="none" stroke={C_TEXT_DIM} strokeWidth={1} strokeDasharray="4 2"/>
-        <text x={p + (gapX + GKL_GAP/2) * s} y={topY + h/2} textAnchor="middle" fill={C_TEXT_DIM} fontSize={7}>зазор</text>
+        {/* ПН 75 на потолке */}
+        <rect x={p + gapX * s} y={topY} width={PN_GAP_W * s} height={PN_GAP_H * s}
+          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        {/* ПН 75 на полу */}
+        <rect x={p + gapX * s} y={topY + h - PN_GAP_H * s} width={PN_GAP_W * s} height={PN_GAP_H * s}
+          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
+        <text x={p + (gapX + GKL_GAP/2) * s} y={topY + h/2} textAnchor="middle" fill={C_FRAME} fontSize={7}>ПН 75</text>
 
         {/* Слой 2 (сторона спальни) */}
         <rect x={p + layer2X * s} y={topY} width={PS_W * s} height={h}
@@ -539,7 +549,7 @@ export default function PartitionFrame() {
 
         {/* Подпись */}
         <text x={w/2} y={topY + h + 55} textAnchor="middle" fill={C_TEXT_DIM} fontSize={9}>
-          Внутри без ЛДСП
+          Внутри без ЛДСП (при обшивке останется 50мм для двери)
         </text>
       </svg>
     );
@@ -558,7 +568,7 @@ export default function PartitionFrame() {
     const p = (w - drawingW) / 2;
 
     // Внешний слой + зазор слева от внутреннего слоя
-    const outerPartW = GKL_LAYER + GKL_GAP; // 100 мм
+    const outerPartW = GKL_LAYER + GKL_GAP; // 125 мм
     // Внутренний слой — это начало горизонтальной части
     const innerLayerX = p + outerPartW * s;
 
@@ -580,9 +590,12 @@ export default function PartitionFrame() {
         <rect x={p - PANEL_T * s} y={topY} width={PANEL_T * s} height={PANEL_H * s}
           fill={C_PANEL_FILL} stroke={C_PANEL} strokeWidth={1.5}/>
 
-        {/* Зазор между слоями — над проёмом */}
+        {/* Зазор между слоями — над проёмом (с ПН 75 на полу и потолке) */}
         <rect x={p + GKL_LAYER * s} y={topY} width={GKL_GAP * s} height={(CEILING_H - DOOR_H) * s}
           fill="none" stroke={C_TEXT_DIM} strokeWidth={1} strokeDasharray="2 2"/>
+        {/* ПН 75 на потолке (в зазоре) */}
+        <rect x={p + GKL_LAYER * s} y={topY} width={PN_GAP_W * s} height={PN_GAP_H * s}
+          fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
         {/* Проём в двойной перегородке — зазор открыт */}
         <rect x={p + GKL_LAYER * s} y={topY + (CEILING_H - DOOR_H) * s} width={GKL_GAP * s} height={DOOR_H * s}
           fill={C_DOOR + "22"} stroke={C_DOOR} strokeWidth={1.5} strokeDasharray="4 2"/>
@@ -745,6 +758,7 @@ export default function PartitionFrame() {
       { name: "Брус (над дверью)", size: `${VERT_LEN - DOOR_OFFSET}×${BEAM_H}×${BEAM_W}`, qty: "2 шт", note: "от стены до конца проёма × 2 слоя" },
       { name: "Брус (в стойке)", size: `${CEILING_H - PN_H * 2}×${BEAM_H}×${BEAM_W}`, qty: "2 шт", note: "усиление стойки у ванной × 2 слоя" },
       { name: "Профиль ПН 50×40", size: `${VERT_LEN} мм`, qty: "4 шт", note: "пол + потолок × 2 слоя" },
+      { name: "Профиль ПН 75×40", size: `${VERT_LEN} мм`, qty: "2 шт", note: "между слоями (пол + потолок) для зазора 75мм" },
       { name: "Профиль ПС 50×50", size: `${CEILING_H - PN_H * 2} мм`, qty: "10 шт", note: "5 стоек × 2 слоя" },
     ];
 
@@ -773,6 +787,9 @@ export default function PartitionFrame() {
         </table>
         <p style={{ color: C_TEXT_DIM, fontSize: 10, marginTop: 12 }}>
           * Панель вплотную к потолку | Доборка снизу: {DOBOR_H} мм | Высота проёма: {DOOR_H} мм | Отступ проёма от ванной: {DOOR_OFFSET} мм
+        </p>
+        <p style={{ color: C_TEXT_DIM, fontSize: 10, marginTop: 4 }}>
+          * ПН 75 между слоями: при обшивке ГКЛ 12.5мм с каждой стороны останется 50мм для откатной двери
         </p>
       </div>
     );
