@@ -13,7 +13,7 @@ export function Specification() {
     { num: 3, name: `ГКЛ (над дверью)`, size: `${BEDROOM_VERT_FULL_LEN_MM - GKL_DOOR_STUD_LEFT_MID_MM}×${OVER_DOOR_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: "от середины стойки до ванной, закрывает механизм" },
     { num: 4, name: `ГКЛ (сверху)`, size: `${GKL_DOOR_STUD_LEFT_MID_MM}×${DOBOR_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: "от стены до середины стойки" },
     { num: 5, name: `ГКЛ (у ванной)`, size: `${BEDROOM_VERT_FULL_LEN_MM - GKL_DOOR_END_MM}×${DOOR_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: "узкая полоса, высота до 2000 мм" },
-    { num: 6, name: "Брус (над дверью)", size: `${GKL_DOOR_END_MM}×${BEAM_H_MM}×${BEAM_W_MM}`, qty: "2 шт", note: "для механизма откатной двери × 2 слоя" },
+    { num: 6, name: "Брус (над дверью)", size: `${GKL_DOOR_END_MM}×${BEAM_H_MM}×${BEAM_W_MM}`, qty: "1 шт", note: "между слоями, для механизма откатной двери" },
     { num: 7, name: "Профиль ПН 50×40 (пол/потолок)", size: `${BEDROOM_VERT_FULL_LEN_MM} мм`, qty: "4 шт", note: "пол + потолок × 2 слоя" },
     { num: 8, name: "Профиль ПН 75×40 (между слоями)", size: `${BEDROOM_VERT_FULL_LEN_MM} мм`, qty: "2 шт", note: "пол + потолок для зазора 75мм" },
     { num: 9, name: "Профиль ПН 50×40 (над дверью)", size: `${BEDROOM_VERT_FULL_LEN_MM - GKL_DOOR_STUD_LEFT_MID_MM} мм`, qty: "2 шт", note: `низ на ${DOOR_H_MM} мм × 2 слоя` },

@@ -26,7 +26,7 @@ export function Specification() {
     { num: 3, name: `ГКЛ (доборка сверху)`, size: `${gklMainW}×${DOBOR_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: "над основным листом" },
     { num: 4, name: `ГКЛ (доборка сверху у кол.1)`, size: `${gklColDoborW.toFixed(0)}×${DOBOR_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: "над колонной 1" },
     { num: 5, name: `ГКЛ (над дверью)`, size: `${gklOverDoorW.toFixed(0)}×${OVER_DOOR_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: "закрывает колонну 2 и механизм" },
-    { num: 6, name: `Брус (на всю перегородку)`, size: `${beamLen}×${BEAM_H_MM}×${BEAM_W_MM} мм`, qty: "2 шт", note: `низ на ${BEAM_LEVEL_MM} мм, для механизма × 2 слоя` },
+    { num: 6, name: `Брус (на всю перегородку)`, size: `${beamLen}×${BEAM_H_MM}×${BEAM_W_MM} мм`, qty: "1 шт", note: `низ на ${BEAM_LEVEL_MM} мм, между слоями, для механизма` },
     { num: 7, name: "Профиль ПН 50×40 (пол, после проёма)", size: `${pnFloorLen} мм`, qty: "2 шт", note: "после проёма × 2 слоя" },
     { num: 8, name: "Профиль ПН 50×40 (пол, у кол.2)", size: `${PS_W_MM} мм`, qty: "2 шт", note: "под стойкой у колонны 2 × 2 слоя" },
     { num: 9, name: "Профиль ПН 50×40 (потолок)", size: `${BATH_HORIZ_LEN_MM} мм`, qty: "2 шт", note: "на всю длину × 2 слоя" },

@@ -16,7 +16,7 @@ export function Specification() {
     { num: 4, name: "ЛДСП доборка (у стены)", size: `${gapLeft}×${PANEL_H_MM}×${PANEL_T_MM}`, qty: "2 шт", note: "зазор у верхней стены" },
     { num: 5, name: "ЛДСП доборка (после проёма)", size: `${DOOR_OFFSET_MM}×${PANEL_H_MM}×${PANEL_T_MM}`, qty: "2 шт", note: "от проёма до ванной" },
     { num: 6, name: "Доборная планка (низ)", size: `~1800×${LDSP_DOBOR_H_MM}×${PANEL_T_MM}`, qty: "2 шт", note: "под панелями у пола" },
-    { num: 7, name: "Брус (над дверью)", size: `${doorEnd}×${BEAM_H_MM}×${BEAM_W_MM}`, qty: "2 шт", note: "от стены до конца проёма × 2 слоя" },
+    { num: 7, name: "Брус (над дверью)", size: `${doorEnd}×${BEAM_H_MM}×${BEAM_W_MM}`, qty: "1 шт", note: "между слоями, от стены до конца проёма" },
     { num: 8, name: "Брус (в стойке)", size: `${CEILING_H_MM - PN_H_MM * 2}×${BEAM_H_MM}×${BEAM_W_MM}`, qty: "2 шт", note: "усиление стойки у ванной × 2 слоя" },
     { num: 9, name: "Профиль ПН 50×40", size: `${BEDROOM_VERT_FULL_LEN_MM} мм`, qty: "4 шт", note: "пол + потолок × 2 слоя" },
     { num: 10, name: "Профиль ПН 75×40", size: `${BEDROOM_VERT_FULL_LEN_MM} мм`, qty: "2 шт", note: "между слоями (пол + потолок) для зазора 75мм" },

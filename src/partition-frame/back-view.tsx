@@ -1,7 +1,7 @@
 import { HDim, VDim, StudLabel, SpecLabel, Crosshair, createMouseHandler, MousePos, SchemaArea } from "../svg-primitives";
 import {
   CEILING_H_MM, DOOR_W_MM, DOOR_OFFSET_MM, DOOR_H_MM, PANEL_H_MM, PANEL_W_MM,
-  LDSP_DOBOR_H_MM, OVER_DOOR_PANEL_H_MM, PN_H_MM, PS_W_MM, BEAM_H_MM,
+  LDSP_DOBOR_H_MM, OVER_DOOR_PANEL_H_MM, PN_H_MM, PS_W_MM, BEAM_H_MM, BEAM_W_MM,
   BEDROOM_VERT_FULL_LEN_MM, S_FRONT_LDSP, getStudNumberBackLDSP
 } from "../constants";
 import {
@@ -86,11 +86,13 @@ export function BackView({ onMouseMove, mouse }: BackViewProps) {
       <text x={p + (doorStartMirror + DOOR_W_MM/2) * s} y={p + (CEILING_H_MM - DOOR_H_MM/2) * s + 16}
         textAnchor="middle" fill={C_DOOR_OPENING} fontSize={10}>{DOOR_W_MM}×{DOOR_H_MM}</text>
 
-      {/* Перемычка над дверью (№7) */}
+      {/* Перемычка над дверью — деревянный брус 50×70 (№7) — на всю длину перегородки */}
       <rect x={p} y={p + (CEILING_H_MM - DOOR_H_MM - BEAM_H_MM) * s}
-        width={horizPartitionEnd * s} height={BEAM_H_MM * s}
+        width={(BEDROOM_VERT_FULL_LEN_MM - DOOR_OFFSET_MM) * s} height={BEAM_H_MM * s}
         fill={C_BEAM_FILL} stroke={C_BEAM} strokeWidth={2}/>
-      <SpecLabel x={p + horizPartitionEnd/2 * s + 60} y={p + (CEILING_H_MM - DOOR_H_MM - BEAM_H_MM/2) * s} num={7} color={C_BEAM}/>
+      <text x={p + (BEDROOM_VERT_FULL_LEN_MM - DOOR_OFFSET_MM)/2 * s} y={p + (CEILING_H_MM - DOOR_H_MM - BEAM_H_MM/2) * s + 3}
+        textAnchor="middle" fill={C_BEAM} fontSize={8}>брус {BEDROOM_VERT_FULL_LEN_MM - DOOR_OFFSET_MM}×{BEAM_H_MM}×{BEAM_W_MM}</text>
+      <SpecLabel x={p + (BEDROOM_VERT_FULL_LEN_MM - DOOR_OFFSET_MM)/2 * s + 100} y={p + (CEILING_H_MM - DOOR_H_MM - BEAM_H_MM/2) * s} num={7} color={C_BEAM}/>
 
       {/* === Разрез короткой перегородки (50мм) === */}
       <rect x={p + horizPartitionStart * s} y={p} width={horizProfileW * s} height={CEILING_H_MM * s}

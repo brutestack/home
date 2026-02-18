@@ -181,13 +181,25 @@ interface ViewProps {
 }
 
 export function MyView({ onMouseMove, mouse }: ViewProps) {
+  // Вариант 1: одинаковые отступы X и Y
   const area: SchemaArea = {
-    padding: 70,        // отступ от края SVG (px)
+    padding: 70,        // отступ от края SVG (px) — используется если paddingX/paddingY не заданы
     scale: 0.28,        // масштаб (px/мм)
     width: 2770,        // ширина области в мм
     height: 2800,       // высота области в мм
     svgWidth: 1000,     // ширина SVG (px)
     invertY: true       // true = координата Y от пола (по умолчанию)
+  };
+
+  // Вариант 2: разные отступы X и Y (для разрезов и других схем)
+  const areaWithDifferentPadding: SchemaArea = {
+    paddingX: 50,       // отступ слева (px)
+    paddingY: 70,       // отступ сверху (px)
+    scale: 1.5,
+    width: 200,
+    height: 300,
+    svgWidth: 400,
+    invertY: true
   };
 
   return (
