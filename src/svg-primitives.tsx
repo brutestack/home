@@ -146,7 +146,9 @@ export interface MousePos {
 
 // Параметры области схемы
 export interface SchemaArea {
-  padding: number;     // отступ от края SVG (px)
+  padding?: number;    // отступ от края SVG (px) — используется если paddingX/paddingY не заданы
+  paddingX?: number;   // отступ слева (px)
+  paddingY?: number;   // отступ сверху (px)
   scale: number;       // масштаб (px/мм)
   width: number;       // ширина области в мм
   height: number;      // высота области в мм
@@ -161,26 +163,28 @@ export function Crosshair({ mouse, area }: {
 }) {
   if (!mouse) return null;
 
-  const { padding: p, scale: s, width, height, invertY = true } = area;
+  const { padding = 0, paddingX, paddingY, scale: s, width, height, invertY = true } = area;
+  const px = paddingX ?? padding;
+  const py = paddingY ?? padding;
   const screenY = invertY ? (height - mouse.y) * s : mouse.y * s;
 
   return <>
     {/* Вертикальная линия */}
     <line
-      x1={p + mouse.x * s} y1={p}
-      x2={p + mouse.x * s} y2={p + height * s}
+      x1={px + mouse.x * s} y1={py}
+      x2={px + mouse.x * s} y2={py + height * s}
       stroke={C_DIM + "44"} strokeDasharray="4"/>
     {/* Горизонтальная линия */}
     <line
-      x1={p} y1={p + screenY}
-      x2={p + width * s} y2={p + screenY}
+      x1={px} y1={py + screenY}
+      x2={px + width * s} y2={py + screenY}
       stroke={C_DIM + "44"} strokeDasharray="4"/>
     {/* Подсказка с координатами */}
     <rect
-      x={p + mouse.x * s + 10} y={p + screenY - 26}
+      x={px + mouse.x * s + 10} y={py + screenY - 26}
       width={90} height={22} rx={4} fill={C_TOOLTIP_BG}/>
     <text
-      x={p + mouse.x * s + 14} y={p + screenY - 10}
+      x={px + mouse.x * s + 14} y={py + screenY - 10}
       fill={C_DIM} fontSize={11}>
       {mouse.x.toFixed(0)}×{mouse.y.toFixed(0)}
     </text>
@@ -193,11 +197,13 @@ export function createMouseHandler(
   onMouseMove: (pos: MousePos | null) => void
 ) {
   return (e: React.MouseEvent<SVGSVGElement>) => {
-    const { padding: p, scale: s, width, height, svgWidth, invertY = true } = area;
+    const { padding = 0, paddingX, paddingY, scale: s, width, height, svgWidth, invertY = true } = area;
+    const px = paddingX ?? padding;
+    const py = paddingY ?? padding;
     const r = e.currentTarget.getBoundingClientRect();
     const svgScale = svgWidth / r.width;
-    const x = (e.clientX - r.left) * svgScale - p;
-    const y = (e.clientY - r.top) * svgScale - p;
+    const x = (e.clientX - r.left) * svgScale - px;
+    const y = (e.clientY - r.top) * svgScale - py;
 
     if (x >= 0 && x <= width * s && y >= 0 && y <= height * s) {
       const mmX = x / s;

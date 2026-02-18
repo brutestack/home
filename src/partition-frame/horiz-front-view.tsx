@@ -1,4 +1,4 @@
-import { HDim, VDim, SpecLabel } from "../svg-primitives";
+import { HDim, VDim, SpecLabel, Crosshair, createMouseHandler, MousePos, SchemaArea } from "../svg-primitives";
 import {
   CEILING_H_MM, DOOR_H_MM, PANEL_H_MM, PANEL_T_MM, LDSP_DOBOR_H_MM,
   GKL_LAYER_MM, GKL_GAP_MM, PARTITION_T_MM, HORIZ_W_MM, PN_H_MM, PS_W_MM, PN_GAP_W_MM, PN_GAP_H_MM
@@ -8,7 +8,10 @@ import {
   C_FRAME, C_FRAME_FILL, C_PANEL, C_PANEL_FILL, C_DOBOR, C_DOOR_OPENING
 } from "../colors";
 
-export function HorizFrontView() {
+export function HorizFrontView({ onMouseMove, mouse }: {
+  onMouseMove?: (pos: MousePos | null) => void;
+  mouse?: MousePos | null;
+}) {
   const s = 0.266;
   const w = 585;
   const topY = 73;
@@ -21,9 +24,24 @@ export function HorizFrontView() {
   const outerPartW = GKL_LAYER_MM + GKL_GAP_MM;
   const innerLayerX = p + outerPartW * s;
 
+  // Область для курсора
+  const totalWidthMm = PARTITION_T_MM + GKL_LAYER_MM + HORIZ_W_MM;
+  const heightMm = CEILING_H_MM;
+  const area: SchemaArea = {
+    paddingX: p,
+    paddingY: topY,
+    scale: s,
+    width: totalWidthMm,
+    height: heightMm,
+    svgWidth: w,
+    invertY: true
+  };
+
   return (
     <svg viewBox={`0 0 ${w} ${svgH}`}
-      style={{ width: w, background: C_BG_SVG, borderRadius: 8 }}>
+      style={{ width: w, background: C_BG_SVG, borderRadius: 8, cursor: onMouseMove ? "crosshair" : undefined }}
+      onMouseMove={onMouseMove ? createMouseHandler(area, onMouseMove) : undefined}
+      onMouseLeave={onMouseMove ? () => onMouseMove(null) : undefined}>
 
       <text x={w/2} y={18} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={13} fontWeight="bold">
         Л3.Сх5 — Горизонтальная часть (вид со стороны двери в ванную)
@@ -125,6 +143,9 @@ export function HorizFrontView() {
         color={C_DOBOR} textColor={C_DOBOR} label={LDSP_DOBOR_H_MM} fontSize={8} labelX={innerLayerX + (GKL_LAYER_MM + HORIZ_W_MM) * s + 45}/>
       <VDim x={p - PANEL_T_MM * s - 15} y1={topY + (CEILING_H_MM - DOOR_H_MM) * s} y2={topY + CEILING_H_MM * s}
         color={C_DOOR_OPENING} textColor={C_DOOR_OPENING} label={DOOR_H_MM} fontSize={8}/>
+
+      {/* Курсор */}
+      <Crosshair mouse={mouse ?? null} area={area} />
     </svg>
   );
 }

@@ -1,8 +1,11 @@
-import { HDim, SpecLabel } from "../svg-primitives";
+import { HDim, SpecLabel, Crosshair, createMouseHandler, MousePos, SchemaArea } from "../svg-primitives";
 import { PS_W_MM, PANEL_T_MM, HORIZ_T_MM } from "../constants";
 import { C_BG_SVG, C_TEXT_DIM, C_COLUMN_TEXT, C_WARDROBE, C_FRAME, C_FRAME_FILL, C_PANEL, C_PANEL_FILL, C_DOOR_OPENING } from "../colors";
 
-export function HorizSectionView() {
+export function HorizSectionView({ onMouseMove, mouse }: {
+  onMouseMove?: (pos: MousePos | null) => void;
+  mouse?: MousePos | null;
+}) {
   const w = 408;
   const svgH = 420;
   const s = 1.7;
@@ -12,9 +15,24 @@ export function HorizSectionView() {
   const schemaW = (PS_W_MM + PANEL_T_MM * 2) * s;
   const p = (w - schemaW) / 2 + PANEL_T_MM * s;
 
+  // Область для курсора
+  const totalWidthMm = PS_W_MM + PANEL_T_MM * 2;
+  const heightMm = h / s;
+  const area: SchemaArea = {
+    paddingX: p - PANEL_T_MM * s,
+    paddingY: topY,
+    scale: s,
+    width: totalWidthMm,
+    height: heightMm,
+    svgWidth: w,
+    invertY: true
+  };
+
   return (
     <svg viewBox={`0 0 ${w} ${svgH}`}
-      style={{ width: w, background: C_BG_SVG, borderRadius: 8 }}>
+      style={{ width: w, background: C_BG_SVG, borderRadius: 8, cursor: onMouseMove ? "crosshair" : undefined }}
+      onMouseMove={onMouseMove ? createMouseHandler(area, onMouseMove) : undefined}
+      onMouseLeave={onMouseMove ? () => onMouseMove(null) : undefined}>
 
       <text x={w/2} y={18} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={13} fontWeight="bold">
         Л3.Сх4 — Разрез горизонтальной части
@@ -52,6 +70,9 @@ export function HorizSectionView() {
       {/* Общая толщина */}
       <HDim x1={p - PANEL_T_MM * s} x2={p + PS_W_MM * s + PANEL_T_MM * s} y={topY + h + 35}
         label={HORIZ_T_MM + PANEL_T_MM * 2} fontSize={9}/>
+
+      {/* Курсор */}
+      <Crosshair mouse={mouse ?? null} area={area} />
     </svg>
   );
 }

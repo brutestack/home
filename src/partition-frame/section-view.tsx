@@ -1,4 +1,4 @@
-import { HDim, SpecLabel } from "../svg-primitives";
+import { HDim, SpecLabel, Crosshair, createMouseHandler, MousePos, SchemaArea } from "../svg-primitives";
 import {
   GKL_GAP_MM, GKL_LAYER_MM, PARTITION_T_MM, PS_W_MM, PANEL_T_MM, PN_GAP_W_MM, PN_GAP_H_MM
 } from "../constants";
@@ -6,7 +6,10 @@ import {
   C_BG_SVG, C_TEXT_DIM, C_COLUMN_TEXT, C_WARDROBE, C_FRAME, C_FRAME_FILL, C_PANEL, C_PANEL_FILL
 } from "../colors";
 
-export function SectionView() {
+export function SectionView({ onMouseMove, mouse }: {
+  onMouseMove?: (pos: MousePos | null) => void;
+  mouse?: MousePos | null;
+}) {
   const w = 408;
   const svgH = 420;
   const s = 1.3;
@@ -21,9 +24,24 @@ export function SectionView() {
   const schemaW = (totalW + PANEL_T_MM * 2) * s;
   const p = (w - schemaW) / 2 + PANEL_T_MM * s;
 
+  // Область для курсора
+  const totalWidthMm = totalW + PANEL_T_MM * 2;
+  const heightMm = h / s;
+  const area: SchemaArea = {
+    paddingX: p - PANEL_T_MM * s,
+    paddingY: topY,
+    scale: s,
+    width: totalWidthMm,
+    height: heightMm,
+    svgWidth: w,
+    invertY: true
+  };
+
   return (
     <svg viewBox={`0 0 ${w} ${svgH}`}
-      style={{ width: w, background: C_BG_SVG, borderRadius: 8 }}>
+      style={{ width: w, background: C_BG_SVG, borderRadius: 8, cursor: onMouseMove ? "crosshair" : undefined }}
+      onMouseMove={onMouseMove ? createMouseHandler(area, onMouseMove) : undefined}
+      onMouseLeave={onMouseMove ? () => onMouseMove(null) : undefined}>
 
       <text x={w/2} y={18} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={13} fontWeight="bold">
         Л3.Сх3 — Разрез двойной перегородки
@@ -84,6 +102,9 @@ export function SectionView() {
       <text x={w/2} y={topY + h + 55} textAnchor="middle" fill={C_TEXT_DIM} fontSize={9}>
         Внутри без ЛДСП (при обшивке останется 50мм для двери)
       </text>
+
+      {/* Курсор */}
+      <Crosshair mouse={mouse ?? null} area={area} />
     </svg>
   );
 }

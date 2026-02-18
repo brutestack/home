@@ -13,6 +13,9 @@ import { C_BG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT } from "../colors";
 export default function PartitionFrame() {
   const [mouseFront, setMouseFront] = useState<MousePos | null>(null);
   const [mouseBack, setMouseBack] = useState<MousePos | null>(null);
+  const [mouseSection, setMouseSection] = useState<MousePos | null>(null);
+  const [mouseHorizSection, setMouseHorizSection] = useState<MousePos | null>(null);
+  const [mouseHorizFront, setMouseHorizFront] = useState<MousePos | null>(null);
 
   return (
     <div style={{ background: C_BG, minHeight: "100vh", padding: 20, fontFamily: "sans-serif", color: C_TEXT }}>
@@ -48,8 +51,8 @@ export default function PartitionFrame() {
         Разрезы перегородок
       </h3>
       <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap", marginBottom: 20 }}>
-        <SectionView />
-        <HorizSectionView />
+        <SectionView onMouseMove={setMouseSection} mouse={mouseSection} />
+        <HorizSectionView onMouseMove={setMouseHorizSection} mouse={mouseHorizSection} />
       </div>
 
       {/* Горизонтальная часть и спецификация */}
@@ -57,7 +60,7 @@ export default function PartitionFrame() {
         Горизонтальная одинарная перегородка (отгораживает шкаф)
       </h3>
       <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap", alignItems: "flex-start" }}>
-        <HorizFrontView />
+        <HorizFrontView onMouseMove={setMouseHorizFront} mouse={mouseHorizFront} />
         <Specification />
       </div>
     </div>

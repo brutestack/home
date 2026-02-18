@@ -1,4 +1,4 @@
-import { HDim, VDim, StudLabel, SpecLabel } from "../svg-primitives";
+import { HDim, VDim, StudLabel, SpecLabel, Crosshair, createMouseHandler, MousePos, SchemaArea } from "../svg-primitives";
 import {
   PARTITION_T_MM, GKL_THICKNESS_MM, GKL_LAYER_MM, GKL_GAP_MM,
   COL_W_MM, COL_H_MM, BATH_HORIZ_LEN_MM, BATH_TOTAL_LEN_MM,
@@ -13,7 +13,10 @@ import {
   C_DOOR_OPENING, C_BEDROOM_PART, C_COL_FILL
 } from "../colors";
 
-export function TopView() {
+export function TopView({ onMouseMove, mouse }: {
+  onMouseMove?: (pos: MousePos | null) => void;
+  mouse?: MousePos | null;
+}) {
   const w = 950;
   const svgH = 340;
   const s = 0.28; // Масштаб
@@ -40,9 +43,24 @@ export function TopView() {
   // Смещение колонн относительно перегородки
   const colOffset = (partDepth - COL_H_MM) / 2; // 25 мм
 
+  // Область для курсора (вид сверху: X = позиция, Y = глубина от коридора к ванной)
+  const totalWidthMm = BATH_TOTAL_LEN_MM;
+  const heightMm = partDepth;
+  const area: SchemaArea = {
+    paddingX: p,
+    paddingY: p,
+    scale: s,
+    width: totalWidthMm,
+    height: heightMm,
+    svgWidth: w,
+    invertY: false  // вид сверху: Y растёт вниз
+  };
+
   return (
     <svg viewBox={`0 0 ${w} ${svgH}`}
-      style={{ width: w, background: C_BG_SVG, borderRadius: 8 }}>
+      style={{ width: w, background: C_BG_SVG, borderRadius: 8, cursor: onMouseMove ? "crosshair" : undefined }}
+      onMouseMove={onMouseMove ? createMouseHandler(area, onMouseMove) : undefined}
+      onMouseLeave={onMouseMove ? () => onMouseMove(null) : undefined}>
 
       <text x={w/2} y={24} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={14} fontWeight="bold">
         Л5.Сх3 — Вид сверху — структура двойной перегородки
@@ -253,7 +271,8 @@ export function TopView() {
       <VDim x={p + BATH_TOTAL_LEN_MM * s + 45} y1={p + gkl2Y * s} y2={p + partDepth * s}
         color={C_GKL_PANEL} textColor={C_GKL_PANEL} label={GKL_THICKNESS_MM} fontSize={7} labelX={p + BATH_TOTAL_LEN_MM * s + 55}/>
 
-
+      {/* Курсор */}
+      <Crosshair mouse={mouse ?? null} area={area} />
     </svg>
   );
 }

@@ -13,6 +13,7 @@ import { C_BG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT } from "../colors";
 export default function PartitionFrameGkl() {
   const [mouseFront, setMouseFront] = useState<MousePos | null>(null);
   const [mouseBack, setMouseBack] = useState<MousePos | null>(null);
+  const [mouseSection, setMouseSection] = useState<MousePos | null>(null);
 
   return (
     <div style={{ background: C_BG, minHeight: "100vh", padding: 20, fontFamily: "sans-serif", color: C_TEXT }}>
@@ -39,7 +40,7 @@ export default function PartitionFrameGkl() {
         Разрез и спецификация
       </h3>
       <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap", alignItems: "flex-start" }}>
-        <SectionView />
+        <SectionView onMouseMove={setMouseSection} mouse={mouseSection} />
         <Specification />
       </div>
     </div>
