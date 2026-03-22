@@ -357,3 +357,43 @@ export const getStudNumberGklBedroom = (pos: number) => STUD_POSITIONS_GKL_BEDRO
 
 // Цвет доборки ГКЛ
 // (уже есть в colors.ts как C_GKL_PANEL)
+
+// ============================================================
+// === ВЕРТИКАЛЬНАЯ ПЕРЕГОРОДКА ВАННОЙ (Лист 6) ===
+// ============================================================
+
+// Параметры перегородки
+export const BATH_VERT_T_MM = 100;           // Толщина перегородки (100 мм одинарная)
+export const BATH_VERT_LEN_MM = 2480;        // Длина перегородки (IWALL_LEN - COL_H = 2630 - 150)
+export const BATH_VERT_H_MM = CEILING_H_MM;  // Высота перегородки (до потолка)
+
+// Профили каркаса
+export const BATH_VERT_PN_W_MM = 100;        // Ширина направляющего профиля ПН 100×40
+export const BATH_VERT_PN_H_MM = 40;         // Высота направляющего профиля
+export const BATH_VERT_PS_W_MM = 100;        // Ширина стоечного профиля ПС 100×50
+export const BATH_VERT_PS_H_MM = 50;         // Толщина стоечного профиля
+
+// Расчёт позиций стоек
+const getBathVertStudPositions = () => {
+  const studs: number[] = [0]; // У колонны
+  let pos = STUD_STEP_MM;
+  while (pos < BATH_VERT_LEN_MM - BATH_VERT_PS_W_MM) {
+    studs.push(pos - BATH_VERT_PS_W_MM / 2);
+    pos += STUD_STEP_MM;
+  }
+  studs.push(BATH_VERT_LEN_MM - BATH_VERT_PS_W_MM); // У стены
+  return studs;
+};
+
+export const BATH_VERT_STUD_POSITIONS = getBathVertStudPositions();
+export const getBathVertStudNumber = (index: number) => index + 1;
+
+// Раскладка ГКЛ
+export const BATH_VERT_GKL_SHEET1_W_MM = GKL_SHEET_W_MM;              // 1200
+export const BATH_VERT_GKL_SHEET2_W_MM = GKL_SHEET_W_MM;              // 1200
+export const BATH_VERT_GKL_DOBOR_W_MM = BATH_VERT_LEN_MM - GKL_SHEET_W_MM * 2; // 80
+
+// Масштаб схем
+export const S_BATH_VERT = 0.32;
+export const S_BATH_VERT_TOP = 2.0;
+export const S_BATH_VERT_SECTION = 1.5;
