@@ -6,6 +6,7 @@ import { SectionView } from "./section-view";
 import { HorizFrontView } from "./horiz-front-view";
 import { HorizSectionView } from "./horiz-section-view";
 import { Specification } from "./specification";
+import { Estimate } from "./estimate";
 import { MousePos } from "../svg-primitives";
 import { PARTITION_T_MM, HORIZ_W_MM, HORIZ_T_MM, PANEL_T_MM } from "../constants";
 import { C_BG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT } from "../colors";
@@ -62,6 +63,10 @@ export default function PartitionFrame() {
       <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap", alignItems: "flex-start" }}>
         <HorizFrontView onMouseMove={setMouseHorizFront} mouse={mouseHorizFront} />
         <Specification />
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
+        <Estimate />
       </div>
     </div>
   );

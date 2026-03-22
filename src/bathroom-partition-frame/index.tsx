@@ -5,6 +5,7 @@ import { TopView } from "./top-view";
 import { Legend } from "./legend";
 import { SectionView } from "./section-view";
 import { Specification } from "./specification";
+import { Estimate } from "./estimate";
 import { MousePos } from "../svg-primitives";
 import {
   COL_W_MM, COL_H_MM, PARTITION_T_MM, STUD_STEP_MM
@@ -50,6 +51,10 @@ export default function BathroomPartitionFrame() {
       <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap", alignItems: "flex-start" }}>
         <SectionView onMouseMove={setMouseSection} mouse={mouseSection} />
         <Specification />
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
+        <Estimate />
       </div>
     </div>
   );

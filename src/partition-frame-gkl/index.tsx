@@ -4,6 +4,7 @@ import { BackView } from "./back-view";
 import { Legend } from "./legend";
 import { SectionView } from "./section-view";
 import { Specification } from "./specification";
+import { Estimate } from "./estimate";
 import { MousePos } from "../svg-primitives";
 import {
   PARTITION_T_MM, GKL_SHEET_W_MM, GKL_SHEET_H_MM, GKL_THICKNESS_MM, STUD_STEP_MM
@@ -42,6 +43,10 @@ export default function PartitionFrameGkl() {
       <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap", alignItems: "flex-start" }}>
         <SectionView onMouseMove={setMouseSection} mouse={mouseSection} />
         <Specification />
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
+        <Estimate />
       </div>
     </div>
   );
