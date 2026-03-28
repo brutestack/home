@@ -90,6 +90,8 @@ export const C_BEAM = "#A0522D";           // Деревянный брус (с�
 export const C_BEAM_FILL = "#A0522D55";
 export const C_GKL_PANEL = "#9E9E9E";      // ГКЛ лист (серый)
 export const C_GKL_PANEL_FILL = "#9E9E9E22";
+export const C_GKL_LAYER2 = "#7986CB";      // ГКЛ 2-й слой (индиго)
+export const C_GKL_LAYER2_FILL = "#7986CB22";
 export const C_DOOR_OPENING = "#228B22";   // Дверной проём (зелёный)
 export const C_COL_FILL = "#88888855";     // Заливка колонны
 

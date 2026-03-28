@@ -1,13 +1,14 @@
 import {
-  C_TEXT, C_TEXT_DIM,
-  C_FRAME, C_FRAME_FILL, C_GKL_PANEL, C_GKL_PANEL_FILL, C_COLUMN, C_COL_FILL
+  C_TEXT,
+  C_FRAME, C_FRAME_FILL, C_GKL_PANEL, C_GKL_PANEL_FILL,
+  C_GKL_LAYER2, C_GKL_LAYER2_FILL
 } from "../colors";
 
 export function Legend() {
   const items = [
-    { color: C_GKL_PANEL, fill: C_GKL_PANEL_FILL, label: "ГКЛ 12.5 мм" },
-    { color: C_FRAME, fill: C_FRAME_FILL, label: "Профиль ПН 100×40 / ПС 100×50" },
-    { color: C_COLUMN, fill: C_COL_FILL, label: "Колонна 200×150" },
+    { color: C_GKL_PANEL, fill: C_GKL_PANEL_FILL, label: "ГКЛ 1-й слой (вертикальный)" },
+    { color: C_GKL_LAYER2, fill: C_GKL_LAYER2_FILL, label: "ГКЛ 2-й слой (горизонтальный)" },
+    { color: C_FRAME, fill: C_FRAME_FILL, label: "Профиль ПН 50×40 / ПС 50×50" },
   ];
 
   return (

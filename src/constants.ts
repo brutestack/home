@@ -36,8 +36,8 @@ export const GKL_LAYER = 0.05;
 export const GKL_GAP = 0.075;
 export const GKL_T = GKL_LAYER * 2 + GKL_GAP; // 175мм
 
-// Вертикальная (ванная): от колонны до нижней стены, 100мм
-export const GKL2_T = 0.1;
+// Вертикальная (ванная): от колонны до нижней стены, 50мм
+export const GKL2_T = 0.05;
 
 // Вертикальная двойная: от верхней стены до ванной, 50+75+50мм
 // Между слоями профиль ПН 75×40 (пол + потолок) для равномерного зазора
@@ -363,23 +363,27 @@ export const getStudNumberGklBedroom = (pos: number) => STUD_POSITIONS_GKL_BEDRO
 // ============================================================
 
 // Параметры перегородки
-export const BATH_VERT_T_MM = 100;           // Толщина перегородки (100 мм одинарная)
-export const BATH_VERT_LEN_MM = 2480;        // Длина перегородки (IWALL_LEN - COL_H = 2630 - 150)
+export const BATH_VERT_T_MM = 50;            // Толщина перегородки (50 мм одинарная)
+export const BATH_VERT_LEN_MM = 2630;        // Длина перегородки (от верхней стены до нижней стены)
 export const BATH_VERT_H_MM = CEILING_H_MM;  // Высота перегородки (до потолка)
 
 // Профили каркаса
-export const BATH_VERT_PN_W_MM = 100;        // Ширина направляющего профиля ПН 100×40
+export const BATH_VERT_PN_W_MM = 50;         // Ширина направляющего профиля ПН 50×40
 export const BATH_VERT_PN_H_MM = 40;         // Высота направляющего профиля
-export const BATH_VERT_PS_W_MM = 100;        // Ширина стоечного профиля ПС 100×50
+export const BATH_VERT_PS_W_MM = 50;         // Ширина стоечного профиля ПС 50×50
 export const BATH_VERT_PS_H_MM = 50;         // Толщина стоечного профиля
 
-// Расчёт позиций стоек
+// Шаг стоек Листа 6 (отдельный от общего STUD_STEP_MM)
+export const BATH_VERT_STUD_STEP_MM = 400;
+export const BATH_VERT_FIRST_STUD_MM = 200; // Центр первой промежуточной стойки (от угла)
+
+// Расчёт позиций стоек (от угла с отступом, далее через 400 мм)
 const getBathVertStudPositions = () => {
-  const studs: number[] = [0]; // У колонны
-  let pos = STUD_STEP_MM;
-  while (pos < BATH_VERT_LEN_MM - BATH_VERT_PS_W_MM) {
-    studs.push(pos - BATH_VERT_PS_W_MM / 2);
-    pos += STUD_STEP_MM;
+  const studs: number[] = [0]; // У внутреннего угла
+  let center = BATH_VERT_FIRST_STUD_MM;
+  while (center < BATH_VERT_LEN_MM - BATH_VERT_PS_W_MM) {
+    studs.push(center - BATH_VERT_PS_W_MM / 2);
+    center += BATH_VERT_STUD_STEP_MM;
   }
   studs.push(BATH_VERT_LEN_MM - BATH_VERT_PS_W_MM); // У стены
   return studs;
@@ -388,12 +392,10 @@ const getBathVertStudPositions = () => {
 export const BATH_VERT_STUD_POSITIONS = getBathVertStudPositions();
 export const getBathVertStudNumber = (index: number) => index + 1;
 
-// Раскладка ГКЛ
-export const BATH_VERT_GKL_SHEET1_W_MM = GKL_SHEET_W_MM;              // 1200
-export const BATH_VERT_GKL_SHEET2_W_MM = GKL_SHEET_W_MM;              // 1200
-export const BATH_VERT_GKL_DOBOR_W_MM = BATH_VERT_LEN_MM - GKL_SHEET_W_MM * 2; // 80
+// Центры стоек (для расчёта раскладки ГКЛ)
+export const BATH_VERT_STUD_CENTERS = BATH_VERT_STUD_POSITIONS.map(p => p + BATH_VERT_PS_W_MM / 2);
 
 // Масштаб схем
 export const S_BATH_VERT = 0.32;
-export const S_BATH_VERT_TOP = 2.0;
-export const S_BATH_VERT_SECTION = 1.5;
+export const S_BATH_VERT_TOP = 3.0;
+export const S_BATH_VERT_SECTION = 2.5;

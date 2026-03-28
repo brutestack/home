@@ -1,120 +1,102 @@
-import { HDim, VDim, Crosshair, createMouseHandler, MousePos, SchemaArea } from "../svg-primitives";
+import { HDim, VDim } from "../svg-primitives";
 import {
-  COL_W_MM, COL_H_MM,
   BATH_VERT_T_MM, BATH_VERT_LEN_MM,
-  BATH_VERT_PS_W_MM, BATH_VERT_PN_W_MM, BATH_VERT_PN_H_MM,
+  BATH_VERT_PS_W_MM, BATH_VERT_PN_W_MM,
   BATH_VERT_STUD_POSITIONS, getBathVertStudNumber,
   GKL_THICKNESS_MM,
-  S_BATH_VERT_TOP
+  S_BATH_VERT
 } from "../constants";
 import {
-  C_BG_SVG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT, C_COLUMN,
-  C_FRAME, C_FRAME_FILL, C_GKL_PANEL, C_GKL_PANEL_FILL, C_COL_FILL
+  C_BG_SVG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT,
+  C_FRAME, C_FRAME_FILL, C_GKL_PANEL, C_GKL_PANEL_FILL,
+  C_GKL_LAYER2, C_GKL_LAYER2_FILL
 } from "../colors";
 
-interface TopViewProps {
-  onMouseMove?: (pos: MousePos | null) => void;
-  mouse?: MousePos | null;
-}
-
-export function TopView({ onMouseMove, mouse }: TopViewProps) {
+export function TopView() {
   const p = 50; // padding
-  const s = S_BATH_VERT_TOP;
+  const sX = S_BATH_VERT; // горизонтальный масштаб (как у фронта)
+  const sY = 4.0;         // вертикальный масштаб (крупнее для читаемости)
 
-  // Общая длина с колонной
-  const totalLen = COL_W_MM + BATH_VERT_LEN_MM;
-  // Общая толщина с ГКЛ
-  const totalT = BATH_VERT_T_MM + GKL_THICKNESS_MM * 2;
-
-  const svgW = totalLen * s + p * 2;
-  const svgH = totalT * s + p * 2 + 60;
-
-  const area: SchemaArea = {
-    paddingX: p, paddingY: p, scale: s, width: totalLen, height: totalT, svgWidth: svgW, invertY: false
-  };
-
-  const partStart = COL_W_MM;
   const gklT = GKL_THICKNESS_MM;
+  const totalT = BATH_VERT_T_MM + gklT * 3; // 2 слоя ванная + 1 слой спальня
+
+  const svgW = BATH_VERT_LEN_MM * sX + p * 2 + 40;
+  const svgH = totalT * sY + p * 2 + 60;
 
   return (
     <svg viewBox={`0 0 ${svgW} ${svgH}`}
-      onMouseMove={onMouseMove ? createMouseHandler(area, onMouseMove) : undefined}
-      onMouseLeave={() => onMouseMove?.(null)}
-      style={{ width: Math.min(svgW, 900), background: C_BG_SVG, borderRadius: 8 }}>
+      style={{ width: svgW, background: C_BG_SVG, borderRadius: 8 }}>
 
       <text x={svgW/2} y={24} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={14} fontWeight="bold">
-        Л6.Сх3 — Вид сверху
+        Л6.Сх4 — Вид сверху
       </text>
 
-      {/* Колонна 1 (слева) */}
-      <rect x={p} y={p + gklT * s} width={COL_W_MM * s} height={COL_H_MM * s}
-        fill={C_COL_FILL} stroke={C_COLUMN} strokeWidth={2}/>
-      <text x={p + COL_W_MM/2 * s} y={p + (gklT + COL_H_MM/2) * s}
-        textAnchor="middle" fill={C_COLUMN} fontSize={9} fontWeight="bold">Кол.1</text>
-
-      {/* Нижняя стена (справа) */}
-      <rect x={p + totalLen * s - 10} y={p} width={20} height={totalT * s}
+      {/* Нижняя стена (справа) — за пределами каркаса */}
+      <rect x={p + BATH_VERT_LEN_MM * sX} y={p} width={15} height={totalT * sY}
         fill={C_TEXT_DIM} stroke={C_TEXT} strokeWidth={1}/>
-      <text x={p + totalLen * s + 5} y={p + totalT/2 * s}
-        textAnchor="middle" fill={C_TEXT} fontSize={8} transform={`rotate(90,${p + totalLen * s + 5},${p + totalT/2 * s})`}>стена</text>
+      <text x={p + BATH_VERT_LEN_MM * sX + 24} y={p + totalT/2 * sY}
+        textAnchor="middle" fill={C_TEXT} fontSize={10} transform={`rotate(90,${p + BATH_VERT_LEN_MM * sX + 24},${p + totalT/2 * sY})`}>стена</text>
 
-      {/* Направляющий профиль ПН (ширина 100 мм) */}
-      <rect x={p + partStart * s} y={p + gklT * s} width={BATH_VERT_LEN_MM * s} height={BATH_VERT_PN_W_MM * s}
+      {/* Направляющий профиль ПН */}
+      <rect x={p} y={p + gklT * 2 * sY} width={BATH_VERT_LEN_MM * sX} height={BATH_VERT_PN_W_MM * sY}
         fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-      <text x={p + (partStart + BATH_VERT_LEN_MM/2) * s} y={p + (gklT + BATH_VERT_PN_W_MM/2) * s + 3}
-        textAnchor="middle" fill={C_FRAME} fontSize={8}>ПН 100×40</text>
+      <text x={p + BATH_VERT_LEN_MM/2 * sX} y={p + (gklT * 2 + BATH_VERT_PN_W_MM/2) * sY + 4}
+        textAnchor="middle" fill={C_FRAME} fontSize={12} fontWeight="bold">ПН 50×40</text>
 
       {/* Стоечные профили ПС */}
       {BATH_VERT_STUD_POSITIONS.map((pos, i) => (
         <g key={`stud${i}`}>
-          <rect x={p + (partStart + pos) * s} y={p + gklT * s}
-            width={BATH_VERT_PS_W_MM * s} height={BATH_VERT_T_MM * s}
+          <rect x={p + pos * sX} y={p + gklT * 2 * sY}
+            width={BATH_VERT_PS_W_MM * sX} height={BATH_VERT_T_MM * sY}
             fill={C_FRAME_FILL}
             stroke={C_FRAME}
             strokeWidth={1.5}/>
-          <text x={p + (partStart + pos + BATH_VERT_PS_W_MM/2) * s} y={p + (gklT + BATH_VERT_T_MM/2) * s + 3}
-            textAnchor="middle" fill={C_FRAME} fontSize={7}>{getBathVertStudNumber(i)}</text>
+          <text x={p + (pos + BATH_VERT_PS_W_MM/2) * sX} y={p + (gklT * 2 + BATH_VERT_T_MM/2) * sY + 4}
+            textAnchor="middle" fill={C_FRAME} fontSize={10} fontWeight="bold">{getBathVertStudNumber(i)}</text>
         </g>
       ))}
 
-      {/* ГКЛ со стороны ванной (сверху на схеме) */}
-      <rect x={p + partStart * s} y={p} width={BATH_VERT_LEN_MM * s} height={gklT * s}
+      {/* ГКЛ со стороны ванной — 1-й слой */}
+      <rect x={p} y={p + gklT * sY} width={BATH_VERT_LEN_MM * sX} height={gklT * sY}
         fill={C_GKL_PANEL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
-      <text x={p + (partStart + BATH_VERT_LEN_MM/2) * s} y={p + gklT/2 * s + 2}
-        textAnchor="middle" fill={C_GKL_PANEL} fontSize={6}>ГКЛ 12.5</text>
+      <text x={p + BATH_VERT_LEN_MM/2 * sX} y={p + gklT * 1.5 * sY + 4}
+        textAnchor="middle" fill={C_GKL_PANEL} fontSize={9}>1-й слой 12.5</text>
+
+      {/* ГКЛ со стороны ванной — 2-й слой (наружный) */}
+      <rect x={p} y={p} width={BATH_VERT_LEN_MM * sX} height={gklT * sY}
+        fill={C_GKL_LAYER2_FILL} stroke={C_GKL_LAYER2} strokeWidth={2}/>
+      <text x={p + BATH_VERT_LEN_MM/2 * sX} y={p + gklT/2 * sY + 4}
+        textAnchor="middle" fill={C_GKL_LAYER2} fontSize={9}>2-й слой 12.5</text>
 
       {/* ГКЛ со стороны спальни (снизу на схеме) */}
-      <rect x={p + partStart * s} y={p + (gklT + BATH_VERT_T_MM) * s} width={BATH_VERT_LEN_MM * s} height={gklT * s}
+      <rect x={p} y={p + (gklT * 2 + BATH_VERT_T_MM) * sY} width={BATH_VERT_LEN_MM * sX} height={gklT * sY}
         fill={C_GKL_PANEL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
-      <text x={p + (partStart + BATH_VERT_LEN_MM/2) * s} y={p + (gklT + BATH_VERT_T_MM + gklT/2) * s + 2}
-        textAnchor="middle" fill={C_GKL_PANEL} fontSize={6}>ГКЛ 12.5</text>
+      <text x={p + BATH_VERT_LEN_MM/2 * sX} y={p + (gklT * 2 + BATH_VERT_T_MM + gklT/2) * sY + 4}
+        textAnchor="middle" fill={C_GKL_PANEL} fontSize={10}>ГКЛ 12.5 мм</text>
 
       {/* Обозначения сторон */}
-      <text x={p + (partStart + BATH_VERT_LEN_MM/2) * s} y={p - 10}
-        textAnchor="middle" fill={C_TEXT_DIM} fontSize={9}>← ванная</text>
-      <text x={p + (partStart + BATH_VERT_LEN_MM/2) * s} y={p + totalT * s + 20}
-        textAnchor="middle" fill={C_TEXT_DIM} fontSize={9}>← спальня</text>
+      <text x={p + BATH_VERT_LEN_MM/2 * sX} y={p - 10}
+        textAnchor="middle" fill={C_TEXT_DIM} fontSize={11}>← ванная</text>
+      <text x={p + BATH_VERT_LEN_MM/2 * sX} y={p + totalT * sY + 22}
+        textAnchor="middle" fill={C_TEXT_DIM} fontSize={11}>← спальня</text>
 
       {/* Размерные линии */}
-      <HDim x1={p} x2={p + COL_W_MM * s} y={p + totalT * s + 35}
-        color={C_COLUMN} textColor={C_COLUMN} label={COL_W_MM} fontSize={8}/>
-      <HDim x1={p + partStart * s} x2={p + totalLen * s} y={p + totalT * s + 35}
-        label={BATH_VERT_LEN_MM} fontSize={9}/>
+      <HDim x1={p} x2={p + BATH_VERT_LEN_MM * sX} y={p + totalT * sY + 40}
+        label={BATH_VERT_LEN_MM} fontSize={10}/>
 
       {/* Толщина */}
-      <VDim x={p - 15} y1={p} y2={p + gklT * s}
-        color={C_GKL_PANEL} textColor={C_GKL_PANEL} label={gklT} fontSize={7} labelX={p - 20}/>
-      <VDim x={p - 15} y1={p + gklT * s} y2={p + (gklT + BATH_VERT_T_MM) * s}
-        color={C_FRAME} textColor={C_FRAME} label={BATH_VERT_T_MM} fontSize={8} labelX={p - 20}/>
-      <VDim x={p - 15} y1={p + (gklT + BATH_VERT_T_MM) * s} y2={p + totalT * s}
-        color={C_GKL_PANEL} textColor={C_GKL_PANEL} label={gklT} fontSize={7} labelX={p - 20}/>
+      <VDim x={p - 15} y1={p} y2={p + gklT * sY}
+        color={C_GKL_LAYER2} textColor={C_GKL_LAYER2} label={gklT} fontSize={9} labelX={p - 25}/>
+      <VDim x={p - 15} y1={p + gklT * sY} y2={p + gklT * 2 * sY}
+        color={C_GKL_PANEL} textColor={C_GKL_PANEL} label={gklT} fontSize={9} labelX={p - 25}/>
+      <VDim x={p - 15} y1={p + gklT * 2 * sY} y2={p + (gklT * 2 + BATH_VERT_T_MM) * sY}
+        color={C_FRAME} textColor={C_FRAME} label={BATH_VERT_T_MM} fontSize={10} labelX={p - 25}/>
+      <VDim x={p - 15} y1={p + (gklT * 2 + BATH_VERT_T_MM) * sY} y2={p + totalT * sY}
+        color={C_GKL_PANEL} textColor={C_GKL_PANEL} label={gklT} fontSize={9} labelX={p - 25}/>
 
       {/* Общая толщина */}
-      <VDim x={p + totalLen * s + 25} y1={p} y2={p + totalT * s}
-        label={totalT} fontSize={9} labelX={p + totalLen * s + 30}/>
-
-      {/* Курсор */}
-      <Crosshair mouse={mouse} area={area} />
+      <VDim x={p + BATH_VERT_LEN_MM * sX + 30} y1={p} y2={p + totalT * sY}
+        label={totalT} fontSize={10} labelX={p + BATH_VERT_LEN_MM * sX + 35}/>
 
     </svg>
   );

@@ -9,7 +9,8 @@ import {
 } from "../constants";
 import {
   C_BG_SVG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT,
-  C_FRAME, C_FRAME_FILL, C_GKL_PANEL, C_GKL_PANEL_FILL
+  C_FRAME, C_FRAME_FILL, C_GKL_PANEL, C_GKL_PANEL_FILL,
+  C_GKL_LAYER2, C_GKL_LAYER2_FILL
 } from "../colors";
 
 interface SectionViewProps {
@@ -22,7 +23,7 @@ export function SectionView({ onMouseMove, mouse }: SectionViewProps) {
   const s = S_BATH_VERT_SECTION;
 
   const gklT = GKL_THICKNESS_MM;
-  const totalT = BATH_VERT_T_MM + gklT * 2;
+  const totalT = BATH_VERT_T_MM + gklT * 3; // 2 слоя ванная + 1 слой спальня
   const sectionH = 400; // Высота разреза для отображения
 
   const svgW = totalT * s + p * 2 + 100;
@@ -39,46 +40,51 @@ export function SectionView({ onMouseMove, mouse }: SectionViewProps) {
       style={{ width: 300, background: C_BG_SVG, borderRadius: 8 }}>
 
       <text x={svgW/2} y={24} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={12} fontWeight="bold">
-        Л6.Сх4 — Разрез
+        Л6.Сх5 — Разрез
       </text>
 
       {/* Контур разреза */}
       <rect x={p} y={p} width={totalT * s} height={sectionH * s}
         fill="none" stroke={C_TEXT_DIM} strokeWidth={1} strokeDasharray="4 2"/>
 
-      {/* ГКЛ со стороны ванной (слева) */}
+      {/* ГКЛ со стороны ванной — 2-й слой (наружный, слева) */}
       <rect x={p} y={p} width={gklT * s} height={sectionH * s}
+        fill={C_GKL_LAYER2_FILL} stroke={C_GKL_LAYER2} strokeWidth={2}/>
+      <SpecLabel x={p + gklT/2 * s} y={p + sectionH/2 * s - 20} num={9} color={C_GKL_LAYER2}/>
+
+      {/* ГКЛ со стороны ванной — 1-й слой */}
+      <rect x={p + gklT * s} y={p} width={gklT * s} height={sectionH * s}
         fill={C_GKL_PANEL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
-      <SpecLabel x={p + gklT/2 * s} y={p + sectionH/2 * s} num={1} color={C_GKL_PANEL}/>
+      <SpecLabel x={p + gklT * 1.5 * s} y={p + sectionH/2 * s} num={1} color={C_GKL_PANEL}/>
 
       {/* Профиль ПН на полу */}
-      <rect x={p + gklT * s} y={p + sectionH * s - BATH_VERT_PN_H_MM * s}
+      <rect x={p + gklT * 2 * s} y={p + sectionH * s - BATH_VERT_PN_H_MM * s}
         width={BATH_VERT_PN_W_MM * s} height={BATH_VERT_PN_H_MM * s}
         fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-      <text x={p + (gklT + BATH_VERT_PN_W_MM/2) * s} y={p + (sectionH - BATH_VERT_PN_H_MM/2) * s + 3}
+      <text x={p + (gklT * 2 + BATH_VERT_PN_W_MM/2) * s} y={p + (sectionH - BATH_VERT_PN_H_MM/2) * s + 3}
         textAnchor="middle" fill={C_FRAME} fontSize={7}>ПН</text>
-      <SpecLabel x={p + (gklT + BATH_VERT_PN_W_MM/2) * s + 30} y={p + (sectionH - BATH_VERT_PN_H_MM/2) * s} num={5} color={C_FRAME}/>
+      <SpecLabel x={p + (gklT * 2 + BATH_VERT_PN_W_MM/2) * s + 30} y={p + (sectionH - BATH_VERT_PN_H_MM/2) * s} num={5} color={C_FRAME}/>
 
       {/* Профиль ПН на потолке */}
-      <rect x={p + gklT * s} y={p}
+      <rect x={p + gklT * 2 * s} y={p}
         width={BATH_VERT_PN_W_MM * s} height={BATH_VERT_PN_H_MM * s}
         fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-      <text x={p + (gklT + BATH_VERT_PN_W_MM/2) * s} y={p + BATH_VERT_PN_H_MM/2 * s + 3}
+      <text x={p + (gklT * 2 + BATH_VERT_PN_W_MM/2) * s} y={p + BATH_VERT_PN_H_MM/2 * s + 3}
         textAnchor="middle" fill={C_FRAME} fontSize={7}>ПН</text>
-      <SpecLabel x={p + (gklT + BATH_VERT_PN_W_MM/2) * s + 30} y={p + BATH_VERT_PN_H_MM/2 * s} num={6} color={C_FRAME}/>
+      <SpecLabel x={p + (gklT * 2 + BATH_VERT_PN_W_MM/2) * s + 30} y={p + BATH_VERT_PN_H_MM/2 * s} num={6} color={C_FRAME}/>
 
       {/* Профиль ПС (стойка) */}
-      <rect x={p + gklT * s} y={p + BATH_VERT_PN_H_MM * s}
+      <rect x={p + gklT * 2 * s} y={p + BATH_VERT_PN_H_MM * s}
         width={BATH_VERT_PS_W_MM * s} height={(sectionH - BATH_VERT_PN_H_MM * 2) * s}
         fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-      <text x={p + (gklT + BATH_VERT_PS_W_MM/2) * s} y={p + sectionH/2 * s}
+      <text x={p + (gklT * 2 + BATH_VERT_PS_W_MM/2) * s} y={p + sectionH/2 * s}
         textAnchor="middle" fill={C_FRAME} fontSize={8}>ПС</text>
-      <SpecLabel x={p + (gklT + BATH_VERT_PS_W_MM/2) * s + 35} y={p + sectionH/2 * s} num={7} color={C_FRAME}/>
+      <SpecLabel x={p + (gklT * 2 + BATH_VERT_PS_W_MM/2) * s + 35} y={p + sectionH/2 * s} num={7} color={C_FRAME}/>
 
       {/* ГКЛ со стороны спальни (справа) */}
-      <rect x={p + (gklT + BATH_VERT_T_MM) * s} y={p} width={gklT * s} height={sectionH * s}
+      <rect x={p + (gklT * 2 + BATH_VERT_T_MM) * s} y={p} width={gklT * s} height={sectionH * s}
         fill={C_GKL_PANEL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
-      <SpecLabel x={p + (gklT + BATH_VERT_T_MM + gklT/2) * s} y={p + sectionH/2 * s} num={1} color={C_GKL_PANEL}/>
+      <SpecLabel x={p + (gklT * 2 + BATH_VERT_T_MM + gklT/2) * s} y={p + sectionH/2 * s} num={1} color={C_GKL_PANEL}/>
 
       {/* Пол */}
       <line x1={p - 10} y1={p + sectionH * s} x2={p + totalT * s + 10} y2={p + sectionH * s}
@@ -100,10 +106,12 @@ export function SectionView({ onMouseMove, mouse }: SectionViewProps) {
 
       {/* Размерные линии */}
       <HDim x1={p} x2={p + gklT * s} y={p + sectionH * s + 30}
+        color={C_GKL_LAYER2} textColor={C_GKL_LAYER2} label={gklT} fontSize={7}/>
+      <HDim x1={p + gklT * s} x2={p + gklT * 2 * s} y={p + sectionH * s + 30}
         color={C_GKL_PANEL} textColor={C_GKL_PANEL} label={gklT} fontSize={7}/>
-      <HDim x1={p + gklT * s} x2={p + (gklT + BATH_VERT_T_MM) * s} y={p + sectionH * s + 30}
+      <HDim x1={p + gklT * 2 * s} x2={p + (gklT * 2 + BATH_VERT_T_MM) * s} y={p + sectionH * s + 30}
         color={C_FRAME} textColor={C_FRAME} label={BATH_VERT_T_MM} fontSize={8}/>
-      <HDim x1={p + (gklT + BATH_VERT_T_MM) * s} x2={p + totalT * s} y={p + sectionH * s + 30}
+      <HDim x1={p + (gklT * 2 + BATH_VERT_T_MM) * s} x2={p + totalT * s} y={p + sectionH * s + 30}
         color={C_GKL_PANEL} textColor={C_GKL_PANEL} label={gklT} fontSize={7}/>
 
       {/* Общая толщина */}
