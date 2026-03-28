@@ -4,14 +4,15 @@ import {
 } from "../constants";
 import {
   C_BG_SVG, C_TEXT_DIM, C_COLUMN_TEXT, C_BATH,
-  C_FRAME, C_FRAME_FILL, C_GKL_PANEL, C_GKL_PANEL_FILL
+  C_FRAME, C_FRAME_FILL, C_GKL_PANEL, C_GKL_PANEL_FILL,
+  C_GKL_LAYER2, C_GKL_LAYER2_FILL
 } from "../colors";
 
 export function SectionView({ onMouseMove, mouse }: {
   onMouseMove?: (pos: MousePos | null) => void;
   mouse?: MousePos | null;
 }) {
-  const w = 420;
+  const w = 450;
   const svgH = 420;
   const s = S_SECTION;
   const h = 300;
@@ -21,18 +22,17 @@ export function SectionView({ onMouseMove, mouse }: {
   const gapX = PS_W_MM;
   const layer2X = PS_W_MM + GKL_GAP_MM;
   const totalW = PS_W_MM * 2 + GKL_GAP_MM; // 175 мм
+  const totalThickness = totalW + GKL_THICKNESS_MM * 3; // 212.5 мм
 
-  const schemaW = (totalW + GKL_THICKNESS_MM * 2) * s;
+  const schemaW = totalThickness * s;
   const p = (w - schemaW) / 2 + GKL_THICKNESS_MM * s;
 
-  // Область для курсора
-  const totalWidthMm = totalW + GKL_THICKNESS_MM * 2;
   const heightMm = h / s;
   const area: SchemaArea = {
     paddingX: p - GKL_THICKNESS_MM * s,
     paddingY: topY,
     scale: s,
-    width: totalWidthMm,
+    width: totalThickness,
     height: heightMm,
     svgWidth: w,
     invertY: true
@@ -45,10 +45,10 @@ export function SectionView({ onMouseMove, mouse }: {
       onMouseLeave={onMouseMove ? () => onMouseMove(null) : undefined}>
 
       <text x={w/2} y={18} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={13} fontWeight="bold">
-        Л5.Сх4 — Разрез двойной перегородки
+        Л5.Сх5 — Разрез двойной перегородки
       </text>
       <text x={w/2} y={34} textAnchor="middle" fill={C_TEXT_DIM} fontSize={10}>
-        ГКЛ {GKL_THICKNESS_MM} мм в 1 слой | ПН 75 между слоями
+        ГКЛ {GKL_THICKNESS_MM} мм: 1 слой коридор + 2 слоя ванная
       </text>
 
       {/* Слой 1 */}
@@ -59,31 +59,33 @@ export function SectionView({ onMouseMove, mouse }: {
       {/* Зазор — профиль ПН 75 на полу и потолке */}
       <rect x={p + gapX * s} y={topY} width={GKL_GAP_MM * s} height={h}
         fill="none" stroke={C_TEXT_DIM} strokeWidth={1} strokeDasharray="4 2"/>
-      {/* ПН 75 на потолке */}
       <rect x={p + gapX * s} y={topY} width={PN_GAP_W_MM * s} height={PN_GAP_H_MM * s}
         fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
-      {/* ПН 75 на полу */}
       <rect x={p + gapX * s} y={topY + h - PN_GAP_H_MM * s} width={PN_GAP_W_MM * s} height={PN_GAP_H_MM * s}
         fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
       <text x={p + (gapX + GKL_GAP_MM/2) * s} y={topY + h/2} textAnchor="middle" fill={C_FRAME} fontSize={7}>ПН 75</text>
-      <SpecLabel x={p + (gapX + GKL_GAP_MM/2) * s} y={topY + h/2 + 25} num={10} color={C_FRAME}/>
+      <SpecLabel x={p + (gapX + GKL_GAP_MM/2) * s} y={topY + h/2 + 25} num={9} color={C_FRAME}/>
 
       {/* Слой 2 */}
       <rect x={p + layer2X * s} y={topY} width={PS_W_MM * s} height={h}
         fill={C_FRAME_FILL} stroke={C_FRAME} strokeWidth={1}/>
       <text x={p + (layer2X + PS_W_MM/2) * s} y={topY + h/2} textAnchor="middle" fill={C_FRAME} fontSize={8}>ПС</text>
 
-      {/* ГКЛ слева */}
+      {/* ГКЛ слева (коридор) */}
       <rect x={p - GKL_THICKNESS_MM * s} y={topY} width={GKL_THICKNESS_MM * s} height={h}
         fill={C_GKL_PANEL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
 
-      {/* ГКЛ справа */}
+      {/* ГКЛ справа (ванная) — 1-й слой */}
       <rect x={p + (layer2X + PS_W_MM) * s} y={topY} width={GKL_THICKNESS_MM * s} height={h}
         fill={C_GKL_PANEL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
 
+      {/* ГКЛ справа (ванная) — 2-й слой */}
+      <rect x={p + (layer2X + PS_W_MM + GKL_THICKNESS_MM) * s} y={topY} width={GKL_THICKNESS_MM * s} height={h}
+        fill={C_GKL_LAYER2_FILL} stroke={C_GKL_LAYER2} strokeWidth={2}/>
+
       {/* Подписи */}
       <text x={p - GKL_THICKNESS_MM * s - 5} y={topY + h/2} textAnchor="end" fill={C_TEXT_DIM} fontSize={8}>Коридор</text>
-      <text x={p + (layer2X + PS_W_MM) * s + GKL_THICKNESS_MM * s + 5} y={topY + h/2} textAnchor="start" fill={C_BATH} fontSize={8}>Ванная</text>
+      <text x={p + (layer2X + PS_W_MM + GKL_THICKNESS_MM * 2) * s + 5} y={topY + h/2} textAnchor="start" fill={C_BATH} fontSize={8}>Ванная</text>
 
       {/* Размерные линии */}
       <HDim x1={p - GKL_THICKNESS_MM * s} x2={p} y={topY + h + 15}
@@ -94,12 +96,14 @@ export function SectionView({ onMouseMove, mouse }: {
         label={GKL_GAP_MM} fontSize={8}/>
       <HDim x1={p + layer2X * s} x2={p + (layer2X + PS_W_MM) * s} y={topY + h + 15}
         color={C_FRAME} textColor={C_FRAME} label={PS_W_MM} fontSize={8}/>
-      <HDim x1={p + (layer2X + PS_W_MM) * s} x2={p + (layer2X + PS_W_MM) * s + GKL_THICKNESS_MM * s} y={topY + h + 15}
+      <HDim x1={p + (layer2X + PS_W_MM) * s} x2={p + (layer2X + PS_W_MM + GKL_THICKNESS_MM) * s} y={topY + h + 15}
         label={GKL_THICKNESS_MM} fontSize={8}/>
+      <HDim x1={p + (layer2X + PS_W_MM + GKL_THICKNESS_MM) * s} x2={p + (layer2X + PS_W_MM + GKL_THICKNESS_MM * 2) * s} y={topY + h + 15}
+        color={C_GKL_LAYER2} textColor={C_GKL_LAYER2} label={GKL_THICKNESS_MM} fontSize={8}/>
 
       {/* Общая толщина */}
-      <HDim x1={p - GKL_THICKNESS_MM * s} x2={p + (layer2X + PS_W_MM) * s + GKL_THICKNESS_MM * s} y={topY + h + 35}
-        label={PARTITION_T_MM + GKL_THICKNESS_MM * 2} fontSize={9}/>
+      <HDim x1={p - GKL_THICKNESS_MM * s} x2={p + (layer2X + PS_W_MM + GKL_THICKNESS_MM * 2) * s} y={topY + h + 35}
+        label={totalThickness} fontSize={9}/>
 
       {/* Курсор */}
       <Crosshair mouse={mouse ?? null} area={area} />

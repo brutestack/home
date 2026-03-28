@@ -204,17 +204,15 @@ export const COL_W_MM = 200;             // Ширина колонны
 export const COL_H_MM = 150;             // Глубина колонны
 
 // === Перегородка ванной (Лист 5) ===
-export const BATH_HORIZ_LEN_MM = 2040;   // Длина горизонтальной перегородки (от кол.2 до кол.1)
-export const BATH_TOTAL_LEN_MM = COL_W_MM + BATH_HORIZ_LEN_MM + COL_W_MM; // 2440 мм
+export const BATH_TOTAL_LEN_MM = 2440;     // Длина перегородки (вся стена, без колонн)
+export const BATH5_STUD_STEP_MM = 400;     // Шаг стоек Листа 5
 
-// Позиции проёма ванной
-export const BATH_COL2_STUD_POS_MM = COL_W_MM;   // Стойка у колонны 2 (200 мм)
-export const BATH_DOOR_START_MM = COL_W_MM + PS_W_MM; // Начало проёма (250 мм)
-export const BATH_DOOR_END_MM = BATH_DOOR_START_MM + DOOR_W_MM; // Конец проёма (1150 мм)
-export const BATH_DOOR_STUD_POS_MM = BATH_DOOR_END_MM; // Стойка у проёма справа
+// Позиции проёма ванной (дверь у края стены)
+export const BATH_DOOR_START_MM = PS_W_MM;                    // 50 мм (после краевой стойки)
+export const BATH_DOOR_END_MM = BATH_DOOR_START_MM + DOOR_W_MM; // 950 мм
 
 // === Примыкание перегородки спальни (мм) ===
-export const BEDROOM_PART_LEFT_MM = 1150;   // Левый край (совпадает с DOOR_END)
+export const BEDROOM_PART_LEFT_MM = 1150;   // Левый край
 export const BEDROOM_PART_T_MM = 175;       // Толщина перегородки спальни
 export const BEDROOM_PART_RIGHT_MM = BEDROOM_PART_LEFT_MM + BEDROOM_PART_T_MM; // 1325 мм
 
@@ -234,39 +232,41 @@ export const FRONT_H = 1100;
 export const FRONT_W_BEDROOM = 1000;
 export const FRONT_H_BEDROOM = 900;
 
-// === Расчёт позиций стоек перегородки ванной ===
+// === Расчёт позиций стоек перегородки ванной (Лист 5) ===
 // Стойки для стороны коридора (с перегородкой спальни)
 const getStudPositionsCorridor = () => {
   const studs: number[] = [];
-  studs.push(BATH_COL2_STUD_POS_MM);           // Стойка у колонны 2
-  studs.push(BATH_DOOR_STUD_POS_MM);           // Стойка у проёма справа
-  studs.push(BEDROOM_PART_RIGHT_MM);           // Стойка после перегородки спальни
-  let pos = BEDROOM_PART_RIGHT_MM + STUD_STEP_MM;
-  while (pos < COL_W_MM + BATH_HORIZ_LEN_MM - PS_W_MM) {
-    studs.push(pos);
-    pos += STUD_STEP_MM;
+  studs.push(0);                                // Краевая стойка (левая)
+  studs.push(BATH_DOOR_END_MM);                 // Стойка у проёма справа (950)
+  studs.push(BEDROOM_PART_LEFT_MM - PS_W_MM);   // Стойка перед перегородкой спальни (1100)
+  studs.push(BEDROOM_PART_RIGHT_MM);            // Стойка после перегородки спальни (1325)
+  let center = BEDROOM_PART_RIGHT_MM + PS_W_MM / 2 + BATH5_STUD_STEP_MM;
+  while (center < BATH_TOTAL_LEN_MM - PS_W_MM) {
+    studs.push(center - PS_W_MM / 2);
+    center += BATH5_STUD_STEP_MM;
   }
-  studs.push(COL_W_MM + BATH_HORIZ_LEN_MM - PS_W_MM); // Стойка у колонны 1
+  studs.push(BATH_TOTAL_LEN_MM - PS_W_MM);     // Краевая стойка (правая)
   return studs;
 };
 
 // Стойки для стороны ванной (без перегородки спальни)
 const getStudPositionsBath = () => {
   const studs: number[] = [];
-  studs.push(BATH_COL2_STUD_POS_MM);           // Стойка у колонны 2
-  studs.push(BATH_DOOR_STUD_POS_MM);           // Стойка у проёма справа
-  let pos = BATH_DOOR_END_MM + STUD_STEP_MM;
-  while (pos < COL_W_MM + BATH_HORIZ_LEN_MM - PS_W_MM) {
-    studs.push(pos);
-    pos += STUD_STEP_MM;
+  studs.push(0);                                // Краевая стойка (левая)
+  studs.push(BATH_DOOR_END_MM);                 // Стойка у проёма справа (950)
+  let center = BATH_DOOR_END_MM + PS_W_MM / 2 + BATH5_STUD_STEP_MM;
+  while (center < BATH_TOTAL_LEN_MM - PS_W_MM) {
+    studs.push(center - PS_W_MM / 2);
+    center += BATH5_STUD_STEP_MM;
   }
-  studs.push(COL_W_MM + BATH_HORIZ_LEN_MM - PS_W_MM); // Стойка у колонны 1
+  studs.push(BATH_TOTAL_LEN_MM - PS_W_MM);     // Краевая стойка (правая)
   return studs;
 };
 
 export const STUD_POSITIONS_CORRIDOR = getStudPositionsCorridor();
 export const STUD_POSITIONS_BATH = getStudPositionsBath();
 export const STUD_POSITIONS = STUD_POSITIONS_CORRIDOR; // Для совместимости
+export const BATH5_STUD_CENTERS_BATH = STUD_POSITIONS_BATH.map(p => p + PS_W_MM / 2);
 
 // Номера стоек: коридор 1-N, ванная (N+1)-M
 export const getStudNumberCorridor = (pos: number) => STUD_POSITIONS_CORRIDOR.indexOf(pos) + 1;

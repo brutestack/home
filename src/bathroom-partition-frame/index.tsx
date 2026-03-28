@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FrontView } from "./front-view";
+import { FrontViewLayer2 } from "./front-view-layer2";
 import { BackView } from "./back-view";
 import { TopView } from "./top-view";
 import { Legend } from "./legend";
@@ -8,12 +9,15 @@ import { Specification } from "./specification";
 import { Estimate } from "./estimate";
 import { MousePos } from "../svg-primitives";
 import {
-  COL_W_MM, COL_H_MM, PARTITION_T_MM, STUD_STEP_MM
+  BATH_TOTAL_LEN_MM, BATH5_STUD_STEP_MM, PARTITION_T_MM, GKL_THICKNESS_MM
 } from "../constants";
 import { C_BG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT } from "../colors";
 
+const totalThickness = PARTITION_T_MM + GKL_THICKNESS_MM * 3; // 212.5
+
 export default function BathroomPartitionFrame() {
   const [mouseFront, setMouseFront] = useState<MousePos | null>(null);
+  const [mouseLayer2, setMouseLayer2] = useState<MousePos | null>(null);
   const [mouseBack, setMouseBack] = useState<MousePos | null>(null);
   const [mouseTop, setMouseTop] = useState<MousePos | null>(null);
   const [mouseSection, setMouseSection] = useState<MousePos | null>(null);
@@ -24,11 +28,15 @@ export default function BathroomPartitionFrame() {
         Лист 5 — Каркас перегородки ванной
       </h2>
       <p style={{ textAlign: "center", color: C_TEXT_DIM, margin: "0 0 16px", fontSize: 14 }}>
-        Колонны {COL_W_MM}×{COL_H_MM} мм | Двойная перегородка {PARTITION_T_MM} мм | ГКЛ закрывают колонны | Шаг стоек {STUD_STEP_MM} мм
+        Длина {BATH_TOTAL_LEN_MM} мм | Двойная перегородка {PARTITION_T_MM} мм ({totalThickness} мм с ГКЛ) | Шаг стоек {BATH5_STUD_STEP_MM} мм | 2 слоя ГКЛ ванная + 1 слой коридор
       </p>
 
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
         <FrontView onMouseMove={setMouseFront} mouse={mouseFront} />
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+        <FrontViewLayer2 onMouseMove={setMouseLayer2} mouse={mouseLayer2} />
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
