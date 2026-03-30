@@ -332,18 +332,21 @@ export const GKL_DOOR_END_MM = BEDROOM_VERT_FULL_LEN_MM - DOOR_OFFSET_MM;       
 export const GKL_DOOR_STUD_LEFT_MM = GKL_DOOR_START_MM - PS_W_MM;                       // 1770
 export const GKL_DOOR_STUD_LEFT_MID_MM = GKL_DOOR_STUD_LEFT_MM + PS_W_MM / 2;           // 1795
 
-// Узкий лист у стены: 1820 - 1200 = 620
-export const GKL_NARROW_SHEET_W_MM = GKL_DOOR_START_MM - GKL_SHEET_W_MM;                // 620
-export const GKL_SHEET_JOINT_MM = GKL_NARROW_SHEET_W_MM;                                // 620
+// Стык основных листов на стойке с центром 1200 мм
+export const GKL_SHEET_JOINT_MM = GKL_SHEET_W_MM;                                       // 1200
+// Правая часть: 1820 - 1200 = 620
+export const GKL_NARROW_SHEET_W_MM = GKL_DOOR_START_MM - GKL_SHEET_JOINT_MM;            // 620
+
+// Шаг стоек Листа 4 (отдельный от STUD_STEP_MM=600 для Листа 3)
+export const GKL4_STUD_STEP_MM = 400;
 
 // Позиции стоек для ГКЛ варианта
 const getStudPositionsGkl = () => {
   const studs: number[] = [0];
-  studs.push(GKL_SHEET_JOINT_MM - PS_W_MM / 2);
-  let pos = GKL_SHEET_JOINT_MM + STUD_STEP_MM;
-  while (pos < GKL_DOOR_START_MM - PS_W_MM) {
-    studs.push(pos - PS_W_MM / 2);
-    pos += STUD_STEP_MM;
+  let center = GKL4_STUD_STEP_MM;
+  while (center < GKL_DOOR_START_MM - PS_W_MM) {
+    studs.push(center - PS_W_MM / 2);
+    center += GKL4_STUD_STEP_MM;
   }
   studs.push(GKL_DOOR_START_MM - PS_W_MM);
   studs.push(GKL_DOOR_END_MM);

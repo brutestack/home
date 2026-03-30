@@ -7,7 +7,7 @@ import { Specification } from "./specification";
 import { Estimate } from "./estimate";
 import { MousePos } from "../svg-primitives";
 import {
-  PARTITION_T_MM, GKL_SHEET_W_MM, GKL_SHEET_H_MM, GKL_THICKNESS_MM, STUD_STEP_MM
+  PARTITION_T_MM, GKL_SHEET_W_MM, GKL_SHEET_H_MM, GKL_THICKNESS_MM, GKL4_STUD_STEP_MM
 } from "../constants";
 import { C_BG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT } from "../colors";
 
@@ -22,7 +22,7 @@ export default function PartitionFrameGkl() {
         Лист 4 — Каркас перегородки спальни (ГКЛ)
       </h2>
       <p style={{ textAlign: "center", color: C_TEXT_DIM, margin: "0 0 16px", fontSize: 14 }}>
-        Двойная перегородка {PARTITION_T_MM} мм | ГКЛ {GKL_SHEET_W_MM}×{GKL_SHEET_H_MM}×{GKL_THICKNESS_MM} мм | Шаг стоек {STUD_STEP_MM} мм
+        Двойная перегородка {PARTITION_T_MM} мм | ГКЛ {GKL_SHEET_W_MM}×{GKL_SHEET_H_MM}×{GKL_THICKNESS_MM} мм | Шаг стоек {GKL4_STUD_STEP_MM} мм
       </p>
 
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>

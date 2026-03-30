@@ -1,24 +1,32 @@
 import {
   CEILING_H_MM, GKL_SHEET_H_MM, GKL_SHEET_W_MM, GKL_THICKNESS_MM, DOBOR_H_MM, OVER_DOOR_H_MM,
-  DOOR_H_MM, PN_H_MM, BEAM_W_MM, BEAM_H_MM, STUD_STEP_MM,
+  DOOR_H_MM, DOOR_W_MM, DOOR_OFFSET_MM, PN_H_MM, BEAM_W_MM, BEAM_H_MM, GKL4_STUD_STEP_MM,
   BEDROOM_VERT_FULL_LEN_MM,
-  GKL_DOOR_END_MM, GKL_DOOR_STUD_LEFT_MID_MM, GKL_NARROW_SHEET_W_MM, STUD_POSITIONS_GKL
+  GKL_DOOR_END_MM, GKL_DOOR_START_MM, GKL_DOOR_STUD_LEFT_MID_MM, GKL_NARROW_SHEET_W_MM, STUD_POSITIONS_GKL
 } from "../constants";
 import { C_BG_SVG, C_TEXT, C_TEXT_DIM, C_COLUMN_TEXT, C_DIM } from "../colors";
 
 export function Specification() {
+  const studH = CEILING_H_MM - PN_H_MM * 2;
+  const overDoorW = BEDROOM_VERT_FULL_LEN_MM - GKL_DOOR_STUD_LEFT_MID_MM; // 975
+  const bathroomStripW = BEDROOM_VERT_FULL_LEN_MM - GKL_DOOR_END_MM;       // 50
+  // Доборки сверху со смещением стыка относительно основных листов (стык основных на 1200)
+  const dobor1W = 800;   // 0→800 (стык смещён от 1200)
+  const dobor2W = GKL_DOOR_START_MM - dobor1W; // 800→1820 = 1020
+
   const items = [
-    { num: 1, name: `ГКЛ лист (полный, к проёму)`, size: `${GKL_SHEET_W_MM}×${GKL_SHEET_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: "1 лист × 2 стороны, с вырезом в углу" },
-    { num: 2, name: `ГКЛ лист (обрезной, у стены)`, size: `${GKL_NARROW_SHEET_W_MM}×${GKL_SHEET_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: "1 лист × 2 стороны" },
-    { num: 3, name: `ГКЛ (над дверью)`, size: `${BEDROOM_VERT_FULL_LEN_MM - GKL_DOOR_STUD_LEFT_MID_MM}×${OVER_DOOR_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: "от середины стойки до ванной, закрывает механизм" },
-    { num: 4, name: `ГКЛ (сверху)`, size: `${GKL_DOOR_STUD_LEFT_MID_MM}×${DOBOR_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: "от стены до середины стойки" },
-    { num: 5, name: `ГКЛ (у ванной)`, size: `${BEDROOM_VERT_FULL_LEN_MM - GKL_DOOR_END_MM}×${DOOR_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: "узкая полоса, высота до 2000 мм" },
-    { num: 6, name: "Брус (над дверью)", size: `${GKL_DOOR_END_MM}×${BEAM_H_MM}×${BEAM_W_MM}`, qty: "1 шт", note: "между слоями, для механизма откатной двери" },
-    { num: 7, name: "Профиль ПН 50×40 (пол/потолок)", size: `${BEDROOM_VERT_FULL_LEN_MM} мм`, qty: "4 шт", note: "пол + потолок × 2 слоя" },
-    { num: 8, name: "Профиль ПН 75×40 (между слоями)", size: `${BEDROOM_VERT_FULL_LEN_MM} мм`, qty: "2 шт", note: "пол + потолок для зазора 75мм" },
-    { num: 9, name: "Профиль ПН 50×40 (над дверью)", size: `${BEDROOM_VERT_FULL_LEN_MM - GKL_DOOR_STUD_LEFT_MID_MM} мм`, qty: "2 шт", note: `низ на ${DOOR_H_MM} мм × 2 слоя` },
-    { num: 10, name: "Профиль ПН 50×40 (стык ГКЛ)", size: `${GKL_DOOR_STUD_LEFT_MID_MM} мм`, qty: "2 шт", note: `центр на ${GKL_SHEET_H_MM} мм × 2 слоя` },
-    { num: 11, name: "Профиль ПС 50×50", size: `${CEILING_H_MM - PN_H_MM * 2} мм`, qty: `${STUD_POSITIONS_GKL.length * 2} шт`, note: `${STUD_POSITIONS_GKL.length} стоек × 2 слоя` },
+    { num: 1, name: `ГКЛ лист (основной)`, size: `${GKL_SHEET_W_MM}×${GKL_SHEET_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: "0→1200 мм, 1 лист × 2 стороны" },
+    { num: 2, name: `ГКЛ лист (узкий, с вырезом)`, size: `${GKL_NARROW_SHEET_W_MM}×${GKL_SHEET_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: "1200→1820 мм, вырез под дверь × 2 стороны" },
+    { num: 3, name: `ГКЛ доборка верх 1`, size: `${dobor1W}×${DOBOR_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: "0→800 мм, стык вразбежку с основным (1200)" },
+    { num: 4, name: `ГКЛ доборка верх 2`, size: `${dobor2W}×${DOBOR_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: "800→1820 мм, стык вразбежку" },
+    { num: 5, name: `ГКЛ (над дверью)`, size: `${overDoorW}×${OVER_DOOR_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: `${GKL_DOOR_STUD_LEFT_MID_MM}→${BEDROOM_VERT_FULL_LEN_MM}, закрывает механизм` },
+    { num: 6, name: `ГКЛ (у ванной)`, size: `${bathroomStripW}×${DOOR_H_MM}×${GKL_THICKNESS_MM}`, qty: "2 шт", note: `${GKL_DOOR_END_MM}→${BEDROOM_VERT_FULL_LEN_MM}, ширина стойки` },
+    { num: 7, name: "Брус (над дверью)", size: `${GKL_DOOR_END_MM}×${BEAM_H_MM}×${BEAM_W_MM}`, qty: "1 шт", note: "между слоями, для механизма откатной двери" },
+    { num: 8, name: "Профиль ПН 50×40 (пол/потолок)", size: `${BEDROOM_VERT_FULL_LEN_MM} мм`, qty: "4 шт", note: "пол + потолок × 2 слоя" },
+    { num: 9, name: "Профиль ПН 75×40 (между слоями)", size: `${BEDROOM_VERT_FULL_LEN_MM} мм`, qty: "2 шт", note: "пол + потолок для зазора 75мм" },
+    { num: 10, name: "Профиль ПН 50×40 (над дверью)", size: `${overDoorW} мм`, qty: "2 шт", note: `низ на ${DOOR_H_MM} мм × 2 слоя` },
+    { num: 11, name: "Профиль ПН 50×40 (стык ГКЛ)", size: `${GKL_SHEET_W_MM} мм`, qty: "2 шт", note: `на стыке листов, ${GKL_SHEET_H_MM} мм × 2 слоя` },
+    { num: 12, name: "Профиль ПС 50×50", size: `${studH} мм`, qty: `${STUD_POSITIONS_GKL.length * 2} шт`, note: `${STUD_POSITIONS_GKL.length} стоек × 2 слоя, шаг ${GKL4_STUD_STEP_MM} мм` },
   ];
 
   return (
@@ -47,7 +55,7 @@ export function Specification() {
         </tbody>
       </table>
       <p style={{ color: C_TEXT_DIM, fontSize: 10, marginTop: 12 }}>
-        * Лист ГКЛ от пола | Доборка сверху: {DOBOR_H_MM} мм до потолка | Шаг стоек: {STUD_STEP_MM} мм | Высота проёма: {DOOR_H_MM} мм
+        * Лист ГКЛ от пола | Доборка сверху: {DOBOR_H_MM} мм до потолка | Шаг стоек: {GKL4_STUD_STEP_MM} мм | Высота проёма: {DOOR_H_MM} мм
       </p>
       <p style={{ color: C_TEXT_DIM, fontSize: 10, marginTop: 4 }}>
         * ПН 75 между слоями: при обшивке ГКЛ 12.5мм с каждой стороны останется 50мм для откатной двери

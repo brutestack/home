@@ -2,8 +2,8 @@ import { HDim, VDim, StudLabel, SpecLabel, Crosshair, createMouseHandler, MouseP
 import {
   CEILING_H_MM, DOOR_W_MM, DOOR_OFFSET_MM, DOOR_H_MM, GKL_SHEET_H_MM, GKL_SHEET_W_MM, GKL_THICKNESS_MM,
   DOBOR_H_MM, OVER_DOOR_H_MM, PN_H_MM, PS_W_MM, BEAM_W_MM, BEAM_H_MM, BEAM_LEVEL_MM,
-  BEDROOM_VERT_FULL_LEN_MM, STUD_STEP_MM, S_FRONT_LDSP,
-  GKL_DOOR_START_MM, GKL_DOOR_END_MM, GKL_DOOR_STUD_LEFT_MID_MM, GKL_NARROW_SHEET_W_MM,
+  BEDROOM_VERT_FULL_LEN_MM, GKL4_STUD_STEP_MM, S_FRONT_LDSP,
+  GKL_DOOR_START_MM, GKL_DOOR_END_MM, GKL_DOOR_STUD_LEFT_MID_MM, GKL_SHEET_JOINT_MM, GKL_NARROW_SHEET_W_MM,
   STUD_POSITIONS_GKL, getStudNumberGklStairs
 } from "../constants";
 import {
@@ -26,6 +26,9 @@ export function FrontView({ onMouseMove, mouse }: FrontViewProps) {
     padding: p, scale: s, width: BEDROOM_VERT_FULL_LEN_MM, height: CEILING_H_MM, svgWidth: FRONT_W
   };
 
+  // Стык доборки (вразбежку с основным стыком 1200): центр 800 → стойка с центром 775
+  const DOBOR_JOINT_MM = 800;
+
   return (
     <svg viewBox={`0 0 ${FRONT_W} ${FRONT_H}`}
       onMouseMove={onMouseMove ? createMouseHandler(area, onMouseMove) : undefined}
@@ -33,7 +36,7 @@ export function FrontView({ onMouseMove, mouse }: FrontViewProps) {
       style={{ width: FRONT_W, background: C_BG_SVG, borderRadius: 8 }}>
 
       <text x={FRONT_W/2} y={24} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={14} fontWeight="bold">
-        Л4.Сх1 — Внешний слой, со стороны лестницы (шаг стоек {STUD_STEP_MM} мм)
+        Л4.Сх1 — Внешний слой, со стороны лестницы (шаг стоек {GKL4_STUD_STEP_MM} мм)
       </text>
 
       <HDim x1={p} x2={p + BEDROOM_VERT_FULL_LEN_MM * s} y={p - 20} label={BEDROOM_VERT_FULL_LEN_MM} fontSize={10}/>
@@ -106,30 +109,32 @@ export function FrontView({ onMouseMove, mouse }: FrontViewProps) {
       <text x={p + (GKL_DOOR_START_MM + DOOR_W_MM/2) * s} y={p + (CEILING_H_MM - DOOR_H_MM/2) * s + 16}
         textAnchor="middle" fill={C_DOOR_OPENING} fontSize={10}>{DOOR_W_MM}×{DOOR_H_MM}</text>
 
-      {/* ГКЛ полный (№1) */}
+      {/* ГКЛ основной лист (№1): 0→1200 мм × 2500 мм (с вырезом у проёма) */}
+      <rect x={p} y={p + DOBOR_H_MM * s}
+        width={GKL_SHEET_JOINT_MM * s} height={GKL_SHEET_H_MM * s}
+        fill={C_GKL_PANEL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
+      <text x={p + GKL_SHEET_JOINT_MM/2 * s} y={p + (DOBOR_H_MM + GKL_SHEET_H_MM/2) * s}
+        textAnchor="middle" fill={C_GKL_PANEL} fontSize={9}>ГКЛ {GKL_SHEET_JOINT_MM}×{GKL_SHEET_H_MM}</text>
+      <SpecLabel x={p + GKL_SHEET_JOINT_MM/2 * s} y={p + (DOBOR_H_MM + 30)} num={1} color={C_GKL_PANEL}/>
+
+      {/* ГКЛ обрезной (№2): 1200→1820 мм (620 мм) × 2500 мм (с вырезом для проёма) */}
       <polygon
         points={`
-          ${p + GKL_NARROW_SHEET_W_MM * s},${p + DOBOR_H_MM * s}
+          ${p + GKL_SHEET_JOINT_MM * s},${p + DOBOR_H_MM * s}
           ${p + GKL_DOOR_STUD_LEFT_MID_MM * s},${p + DOBOR_H_MM * s}
           ${p + GKL_DOOR_STUD_LEFT_MID_MM * s},${p + OVER_DOOR_H_MM * s}
           ${p + GKL_DOOR_START_MM * s},${p + OVER_DOOR_H_MM * s}
           ${p + GKL_DOOR_START_MM * s},${p + CEILING_H_MM * s}
-          ${p + GKL_NARROW_SHEET_W_MM * s},${p + CEILING_H_MM * s}
+          ${p + GKL_SHEET_JOINT_MM * s},${p + CEILING_H_MM * s}
         `}
         fill={C_GKL_PANEL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
-      <text x={p + (GKL_NARROW_SHEET_W_MM + GKL_SHEET_W_MM/2) * s} y={p + (DOBOR_H_MM + GKL_SHEET_H_MM/2) * s + 50}
-        textAnchor="middle" fill={C_GKL_PANEL} fontSize={9}>ГКЛ {GKL_SHEET_W_MM}×{GKL_SHEET_H_MM}</text>
-      <SpecLabel x={p + (GKL_NARROW_SHEET_W_MM + GKL_SHEET_W_MM/2) * s} y={p + (DOBOR_H_MM + 30)} num={1} color={C_GKL_PANEL}/>
-
-      {/* ГКЛ обрезной (№2) */}
-      <rect x={p} y={p + DOBOR_H_MM * s}
-        width={GKL_NARROW_SHEET_W_MM * s} height={GKL_SHEET_H_MM * s}
-        fill={C_GKL_PANEL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
-      <text x={p + GKL_NARROW_SHEET_W_MM/2 * s} y={p + (DOBOR_H_MM + GKL_SHEET_H_MM/2) * s}
+      <text x={p + (GKL_SHEET_JOINT_MM + GKL_NARROW_SHEET_W_MM/2) * s} y={p + (DOBOR_H_MM + GKL_SHEET_H_MM/2) * s + 50}
         textAnchor="middle" fill={C_GKL_PANEL} fontSize={9}>ГКЛ {GKL_NARROW_SHEET_W_MM}×{GKL_SHEET_H_MM}</text>
-      <SpecLabel x={p + GKL_NARROW_SHEET_W_MM/2 * s} y={p + (DOBOR_H_MM + 30)} num={2} color={C_GKL_PANEL}/>
+      <text x={p + (GKL_SHEET_JOINT_MM + GKL_NARROW_SHEET_W_MM/2) * s} y={p + (DOBOR_H_MM + GKL_SHEET_H_MM/2) * s + 62}
+        textAnchor="middle" fill={C_GKL_PANEL} fontSize={7}>(с вырезом)</text>
+      <SpecLabel x={p + (GKL_SHEET_JOINT_MM + GKL_NARROW_SHEET_W_MM/2) * s} y={p + (DOBOR_H_MM + 30)} num={2} color={C_GKL_PANEL}/>
 
-      {/* ГКЛ над дверью (№3) */}
+      {/* ГКЛ над дверью (№3): от 1795 до 2770 = 975 мм × 800 мм */}
       <rect x={p + GKL_DOOR_STUD_LEFT_MID_MM * s} y={p}
         width={(BEDROOM_VERT_FULL_LEN_MM - GKL_DOOR_STUD_LEFT_MID_MM) * s} height={OVER_DOOR_H_MM * s}
         fill={C_GKL_PANEL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
@@ -137,15 +142,23 @@ export function FrontView({ onMouseMove, mouse }: FrontViewProps) {
         textAnchor="middle" fill={C_GKL_PANEL} fontSize={8}>ГКЛ {BEDROOM_VERT_FULL_LEN_MM - GKL_DOOR_STUD_LEFT_MID_MM}×{OVER_DOOR_H_MM}</text>
       <SpecLabel x={p + (GKL_DOOR_STUD_LEFT_MID_MM + (BEDROOM_VERT_FULL_LEN_MM - GKL_DOOR_STUD_LEFT_MID_MM)/2) * s + 60} y={p + OVER_DOOR_H_MM/2 * s} num={3} color={C_GKL_PANEL}/>
 
-      {/* ГКЛ сверху (№4) */}
+      {/* ГКЛ доборка 1 (№4): 0→800 мм × 300 мм (стык вразбежку с основным) */}
       <rect x={p} y={p}
-        width={GKL_DOOR_STUD_LEFT_MID_MM * s} height={DOBOR_H_MM * s}
+        width={DOBOR_JOINT_MM * s} height={DOBOR_H_MM * s}
         fill={C_GKL_PANEL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
-      <text x={p + GKL_DOOR_STUD_LEFT_MID_MM/2 * s} y={p + DOBOR_H_MM/2 * s + 3}
-        textAnchor="middle" fill={C_GKL_PANEL} fontSize={8}>ГКЛ {GKL_DOOR_STUD_LEFT_MID_MM}×{DOBOR_H_MM}</text>
-      <SpecLabel x={p + GKL_DOOR_STUD_LEFT_MID_MM/2 * s + 60} y={p + DOBOR_H_MM/2 * s} num={4} color={C_GKL_PANEL}/>
+      <text x={p + DOBOR_JOINT_MM/2 * s} y={p + DOBOR_H_MM/2 * s + 3}
+        textAnchor="middle" fill={C_GKL_PANEL} fontSize={8}>ГКЛ {DOBOR_JOINT_MM}×{DOBOR_H_MM}</text>
+      <SpecLabel x={p + DOBOR_JOINT_MM/2 * s + 50} y={p + DOBOR_H_MM/2 * s} num={4} color={C_GKL_PANEL}/>
 
-      {/* ГКЛ после проёма (№5) */}
+      {/* ГКЛ доборка 2 (№4): 800→1795 мм (995 мм) × 300 мм */}
+      <rect x={p + DOBOR_JOINT_MM * s} y={p}
+        width={(GKL_DOOR_STUD_LEFT_MID_MM - DOBOR_JOINT_MM) * s} height={DOBOR_H_MM * s}
+        fill={C_GKL_PANEL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
+      <text x={p + (DOBOR_JOINT_MM + (GKL_DOOR_STUD_LEFT_MID_MM - DOBOR_JOINT_MM)/2) * s} y={p + DOBOR_H_MM/2 * s + 3}
+        textAnchor="middle" fill={C_GKL_PANEL} fontSize={8}>ГКЛ {GKL_DOOR_STUD_LEFT_MID_MM - DOBOR_JOINT_MM}×{DOBOR_H_MM}</text>
+      <SpecLabel x={p + (DOBOR_JOINT_MM + (GKL_DOOR_STUD_LEFT_MID_MM - DOBOR_JOINT_MM)/2) * s - 50} y={p + DOBOR_H_MM/2 * s} num={4} color={C_GKL_PANEL}/>
+
+      {/* ГКЛ после проёма (№5): 2720→2770 = 50 мм */}
       <rect x={p + GKL_DOOR_END_MM * s} y={p + (CEILING_H_MM - DOOR_H_MM) * s}
         width={(BEDROOM_VERT_FULL_LEN_MM - GKL_DOOR_END_MM) * s} height={DOOR_H_MM * s}
         fill={C_GKL_PANEL_FILL} stroke={C_GKL_PANEL} strokeWidth={2}/>
@@ -153,7 +166,7 @@ export function FrontView({ onMouseMove, mouse }: FrontViewProps) {
         textAnchor="middle" fill={C_GKL_PANEL} fontSize={7}>{BEDROOM_VERT_FULL_LEN_MM - GKL_DOOR_END_MM}×{DOOR_H_MM}</text>
       <SpecLabel x={p + (GKL_DOOR_END_MM + (BEDROOM_VERT_FULL_LEN_MM - GKL_DOOR_END_MM)/2) * s} y={p + (CEILING_H_MM - DOOR_H_MM/2) * s + 40} num={5} color={C_GKL_PANEL}/>
 
-      {/* Размерные линии */}
+      {/* Размерные линии — шаги стоек */}
       {STUD_POSITIONS_GKL.slice(0, -2).map((pos, i) => {
         const nextPos = STUD_POSITIONS_GKL[i + 1];
         const step = nextPos - pos;
@@ -168,8 +181,10 @@ export function FrontView({ onMouseMove, mouse }: FrontViewProps) {
       <HDim x1={p + GKL_DOOR_END_MM * s} x2={p + BEDROOM_VERT_FULL_LEN_MM * s} y={p + CEILING_H_MM * s + 20}
         label={DOOR_OFFSET_MM} fontSize={9}/>
 
-      <HDim x1={p} x2={p + GKL_DOOR_START_MM * s} y={p + CEILING_H_MM * s + 40}
-        color={C_GKL} textColor={C_GKL} label={GKL_DOOR_START_MM} fontSize={9}/>
+      <HDim x1={p} x2={p + GKL_SHEET_JOINT_MM * s} y={p + CEILING_H_MM * s + 40}
+        color={C_GKL} textColor={C_GKL} label={GKL_SHEET_JOINT_MM} fontSize={9}/>
+      <HDim x1={p + GKL_SHEET_JOINT_MM * s} x2={p + GKL_DOOR_START_MM * s} y={p + CEILING_H_MM * s + 40}
+        color={C_GKL} textColor={C_GKL} label={GKL_NARROW_SHEET_W_MM} fontSize={9}/>
       <HDim x1={p} x2={p + BEDROOM_VERT_FULL_LEN_MM * s} y={p + CEILING_H_MM * s + 60}
         label={BEDROOM_VERT_FULL_LEN_MM} fontSize={10}/>
 

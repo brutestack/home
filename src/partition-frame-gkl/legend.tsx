@@ -1,4 +1,4 @@
-import { STUD_STEP_MM, GKL_THICKNESS_MM, BEAM_W_MM, BEAM_H_MM } from "../constants";
+import { GKL4_STUD_STEP_MM, GKL_THICKNESS_MM, BEAM_W_MM, BEAM_H_MM } from "../constants";
 import { C_TEXT_DIM, C_FRAME, C_FRAME_FILL, C_BEAM, C_BEAM_FILL, C_GKL_PANEL, C_GKL_PANEL_FILL, C_DOOR_OPENING, C_DOBOR_GKL } from "../colors";
 
 export function Legend() {
@@ -23,7 +23,7 @@ export function Legend() {
           {item.label}
         </span>
       ))}
-      <span style={{ color: C_TEXT_DIM }}>| Шаг стоек: {STUD_STEP_MM} мм | Все размеры в мм</span>
+      <span style={{ color: C_TEXT_DIM }}>| Шаг стоек: {GKL4_STUD_STEP_MM} мм | Все размеры в мм</span>
     </div>
   );
 }
