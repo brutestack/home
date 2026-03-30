@@ -8,7 +8,7 @@ import {
   C_STEP, C_STEP_LIGHT, C_STEP_MID, C_STEP_DIM, C_STEP_FAINT, C_STEP_TEXT, C_STEP_FILL,
   C_EXIT, C_EXIT_FAINT, C_ENTER, C_CRITICAL,
   C_DIM, C_DIM_TRANS,
-  C_WALL, C_WALL_BORDER, C_COLUMN, C_COLUMN_BORDER,
+  C_WALL, C_WALL_BORDER, C_COLUMN_BORDER,
   C_GKL, C_GKL_BORDER, C_GKL_TEXT,
   C_PIPES, C_PIPES_FILL,
   C_BATH, C_BATH_TRANS, C_BEDROOM
@@ -16,8 +16,8 @@ import {
 import {
   S, W, H, CW, CH, PAD, OWALL_PX, WIN_FRAME_PX,
   IWALL_X, IWALL_LEN, IWALL_T,
-  COL_DIST, COL_W, COL_H, COL2_W, COL2_H,
-  GKL_LAYER, GKL_GAP, GKL_T, GKL2_T, GKL3_LAYER, GKL3_GAP, GKL4_W, GKL4_T,
+  COL_DIST, COL_W,
+  GKL_LAYER, GKL_GAP, GKL_T, GKL2_T, GKL3_LAYER, GKL3_GAP,
   DOOR_W, DOOR_OFFSET,
   WIN_X, WIN_W, WIN2_X, WIN2_W, WIN3_START, WIN3_W, WIN4_START, WIN4_W,
   WIN5_START, WIN5_W, WIN6_START, WIN6_W, DOOR3_HINGE, DOOR3_LEN,
@@ -124,23 +124,20 @@ export default function FloorPlan(){
           <Chair p={p} s={s} x={CHAIR_X} y={CHAIR_Y} width={CHAIR_W} depth={CHAIR_D}/>
           {/* Внутренняя стена: от нижней стены вверх */}
           <rect x={p+IWALL_X*s} y={p+(H-IWALL_LEN)*s} width={IWALL_T*s} height={IWALL_LEN*s} fill={C_WALL}/>
-          {/* ГКЛ перегородка горизонтальная двойная: от колонны 2 до колонны 1, с двумя проёмами */}
-          {/* Колонна 2 (левая, у внутренней стены): 200x150мм */}
-          <rect x={p+(IWALL_X+IWALL_T)*s} y={p+(H-IWALL_LEN)*s} width={COL2_W*s} height={COL2_H*s} fill={C_COLUMN} stroke={C_COLUMN_BORDER} strokeWidth={1}/>
-          <text x={p+(IWALL_X+IWALL_T+COL2_W/2)*s} y={p+(H-IWALL_LEN+COL2_H/2)*s+3} textAnchor="middle" fill={C_COLUMN_TEXT} fontSize={6}>{COL2_W*1000}×{COL2_H*1000}</text>
-          {/* ГКЛ под стойкой у колонны 2 (50мм = GKL_LAYER) */}
-          <GklPanel x={p+(IWALL_X+IWALL_T+COL2_W)*s} y={p+(H-IWALL_LEN)*s} width={GKL_LAYER*s} height={GKL_LAYER*s}/>
-          <GklPanel x={p+(IWALL_X+IWALL_T+COL2_W)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP)*s} width={GKL_LAYER*s} height={GKL_LAYER*s}/>
-          {/* Часть от проёма до колонны 1 */}
-          <GklPanel x={p+(IWALL_X+IWALL_T+COL2_W+GKL_LAYER+DOOR_W)*s} y={p+(H-IWALL_LEN)*s} width={(COL_DIST-COL2_W-GKL_LAYER-DOOR_W)*s} height={GKL_LAYER*s}/>
-          <GklPanel x={p+(IWALL_X+IWALL_T+COL2_W+GKL_LAYER+DOOR_W)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP)*s} width={(COL_DIST-COL2_W-GKL_LAYER-DOOR_W)*s} height={GKL_LAYER*s}/>
-          <text x={p+(IWALL_X+IWALL_T+COL2_W+GKL_LAYER+DOOR_W+(COL_DIST-COL2_W-GKL_LAYER-DOOR_W)/2)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP/2)*s+3} textAnchor="middle" fill={C_GKL_TEXT} fontSize={7}>ГКЛ</text>
-          {/* Обозначение проёма (после стойки у колонны 2) */}
-          <DoorwayCross x1={p+(IWALL_X+IWALL_T+COL2_W+GKL_LAYER)*s} y1={p+(H-IWALL_LEN)*s} x2={p+(IWALL_X+IWALL_T+COL2_W+GKL_LAYER+DOOR_W)*s} y2={p+(H-IWALL_LEN+GKL_T)*s} color={C_COLUMN_BORDER}/>
-          <text x={p+(IWALL_X+IWALL_T+COL2_W+GKL_LAYER+DOOR_W/2)*s} y={p+(H-IWALL_LEN+GKL_T/2)*s+3} textAnchor="middle" fill={C_GKL_TEXT} fontSize={7}>{DOOR_W*1000}</text>
-          {/* ГКЛ перегородка вертикальная: от колонны до нижней стены, правый край совпадает с правым краем колонны */}
-          <GklPanel x={p+(IWALL_X+IWALL_T+COL_DIST+COL_W-GKL2_T)*s} y={p+(H-IWALL_LEN+COL_H)*s} width={GKL2_T*s} height={(IWALL_LEN-COL_H)*s}/>
-          <text x={p+(IWALL_X+IWALL_T+COL_DIST+COL_W-GKL2_T/2)*s} y={p+(H-(IWALL_LEN-COL_H)/2)*s} textAnchor="middle" fill={C_GKL_TEXT} fontSize={7} transform={`rotate(-90,${p+(IWALL_X+IWALL_T+COL_DIST+COL_W-GKL2_T/2)*s},${p+(H-(IWALL_LEN-COL_H)/2)*s})`}>ГКЛ</text>
+          {/* ГКЛ перегородка горизонтальная двойная: от стены до стены, проём у края */}
+          {/* Краевая стойка (левая, у двери) — слой 1 и слой 2 */}
+          <GklPanel x={p+(IWALL_X+IWALL_T)*s} y={p+(H-IWALL_LEN)*s} width={DOOR_OFFSET*s} height={GKL_LAYER*s}/>
+          <GklPanel x={p+(IWALL_X+IWALL_T)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP)*s} width={DOOR_OFFSET*s} height={GKL_LAYER*s}/>
+          {/* Часть от проёма до правого края — слой 1 и слой 2 */}
+          <GklPanel x={p+(IWALL_X+IWALL_T+DOOR_OFFSET+DOOR_W)*s} y={p+(H-IWALL_LEN)*s} width={(COL_DIST+COL_W-DOOR_OFFSET-DOOR_W)*s} height={GKL_LAYER*s}/>
+          <GklPanel x={p+(IWALL_X+IWALL_T+DOOR_OFFSET+DOOR_W)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP)*s} width={(COL_DIST+COL_W-DOOR_OFFSET-DOOR_W)*s} height={GKL_LAYER*s}/>
+          <text x={p+(IWALL_X+IWALL_T+DOOR_OFFSET+DOOR_W+(COL_DIST+COL_W-DOOR_OFFSET-DOOR_W)/2)*s} y={p+(H-IWALL_LEN+GKL_LAYER+GKL_GAP/2)*s+3} textAnchor="middle" fill={C_GKL_TEXT} fontSize={7}>ГКЛ</text>
+          {/* Обозначение проёма (у левого края) */}
+          <DoorwayCross x1={p+(IWALL_X+IWALL_T+DOOR_OFFSET)*s} y1={p+(H-IWALL_LEN)*s} x2={p+(IWALL_X+IWALL_T+DOOR_OFFSET+DOOR_W)*s} y2={p+(H-IWALL_LEN+GKL_T)*s} color={C_COLUMN_BORDER}/>
+          <text x={p+(IWALL_X+IWALL_T+DOOR_OFFSET+DOOR_W/2)*s} y={p+(H-IWALL_LEN+GKL_T/2)*s+3} textAnchor="middle" fill={C_GKL_TEXT} fontSize={7}>{DOOR_W*1000}</text>
+          {/* ГКЛ перегородка вертикальная: от верхней границы горизонтальной стены до нижней стены (2630 мм = IWALL_LEN) */}
+          <GklPanel x={p+(IWALL_X+IWALL_T+COL_DIST+COL_W-GKL2_T)*s} y={p+(H-IWALL_LEN)*s} width={GKL2_T*s} height={IWALL_LEN*s}/>
+          <text x={p+(IWALL_X+IWALL_T+COL_DIST+COL_W-GKL2_T/2)*s} y={p+(H-IWALL_LEN/2)*s} textAnchor="middle" fill={C_GKL_TEXT} fontSize={7} transform={`rotate(-90,${p+(IWALL_X+IWALL_T+COL_DIST+COL_W-GKL2_T/2)*s},${p+(H-IWALL_LEN/2)*s})`}>ГКЛ</text>
           {/* ГКЛ перегородка вертикальная двойная: от верхней стены до ванной, правее зоны труб, с проёмом */}
           {/* Верхняя часть (до проёма) */}
           <GklPanel x={p+PIPES_END*s} y={p} width={GKL3_LAYER*s} height={(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)*s}/>
@@ -156,8 +153,6 @@ export default function FloorPlan(){
           <VDim x={p+PIPES_END*s-8} y1={p} y2={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W)*s}
             color={C_GKL} textColor={C_GKL} fontSize={8} labelX={p+PIPES_END*s-12}
             label={((H-IWALL_LEN-DOOR_OFFSET-DOOR_W)*1000).toFixed(0)} rotate/>
-          {/* Горизонтальная одинарная перегородка над проёмом (отгораживает шкаф) */}
-          <GklPanel x={p+(PIPES_END+GKL3_LAYER*2+GKL3_GAP)*s} y={p+(H-IWALL_LEN-DOOR_OFFSET-DOOR_W-GKL4_T)*s} width={GKL4_W*s} height={GKL4_T*s}/>
           {/* Ванна вдоль правой стены ванной комнаты */}
           <Bathtub p={p} s={s} x={WC_RIGHT-BATH_GAP-BATH_W} y={H-BATH_GAP-BATH_L} width={BATH_W} length={BATH_L}/>
           {/* Угловая тумба с раковиной в нижнем левом углу ванной */}
@@ -183,8 +178,6 @@ export default function FloorPlan(){
           <text x={p+((PIPES_END+GKL3_LAYER*2+GKL3_GAP)+W)/2*s} y={p+2.8*s} textAnchor="middle" dominantBaseline="middle" fill={C_BEDROOM} fontSize={14} fontWeight="bold">Спальня</text>
           {/* Длина верхней стены спальни (от двойной перегородки до правой стены) */}
           <HDim x1={p+(PIPES_END+GKL3_LAYER*2+GKL3_GAP)*s} x2={p+W*s} y={p-OWALL_PX-10} label={((W-(PIPES_END+GKL3_LAYER*2+GKL3_GAP))*1000).toFixed(0)}/>
-          {/* Колонна: на уровне торца стены, 2240мм от внутренней стены */}
-          <rect x={p+(IWALL_X+IWALL_T+COL_DIST)*s} y={p+(H-IWALL_LEN)*s} width={COL_W*s} height={COL_H*s} fill={C_WALL} stroke={C_GKL_BORDER} strokeWidth={1}/>
           {/* Размеры внутренней стены (слева) с засечками */}
           <VDim x={p+IWALL_X*s-10} y1={p+(H-IWALL_LEN)*s} y2={p+H*s} labelX={p+IWALL_X*s-14} label={(IWALL_LEN*1000).toFixed(0)}/>
           {/* Расстояние от торца стены до проёма с засечками */}
