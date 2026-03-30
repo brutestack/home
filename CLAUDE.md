@@ -69,7 +69,6 @@
 |------|------|----------|
 | **Лист 1** | `2nd-floor-plan.tsx` | План 2-го этажа |
 | **Лист 2** | `stair-detail.tsx` | Детали лестницы |
-| **Лист 3** | `partition-frame/` | Перегородка спальни (ЛДСП) |
 | **Лист 4** | `partition-frame-gkl/` | Перегородка спальни (ГКЛ) |
 | **Лист 5** | `bathroom-partition-frame/` | Перегородка ванной (горизонтальная) |
 | **Лист 6** | `bath-vert-partition/` | Перегородка ванной (вертикальная) |
@@ -181,7 +180,6 @@ export function PartitionFrame() {
 |------|-----------|-------|
 | Лист 1 | Один файл | `2nd-floor-plan.tsx` |
 | Лист 2 | Один файл | `stair-detail.tsx` |
-| Лист 3 | Директория | `partition-frame/` |
 | Лист 4 | Директория | `partition-frame-gkl/` |
 | Лист 5 | Директория | `bathroom-partition-frame/` |
 | Лист 6 | Директория | `bath-vert-partition/` |

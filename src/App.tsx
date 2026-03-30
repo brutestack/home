@@ -2,12 +2,11 @@ import { useState } from 'react'
 import FloorPlan from './2nd-floor-plan'
 import StairDetail from './stair-detail'
 import Stair3D from './stair-3d'
-import PartitionFrame from './partition-frame'
 import PartitionFrameGkl from './partition-frame-gkl'
 import BathroomPartitionFrame from './bathroom-partition-frame'
 import BathVertPartition from './bath-vert-partition'
 
-type View = 'floor' | 'detail' | '3d' | 'partition' | 'partition-gkl' | 'bathroom-partition' | 'bath-vert-partition'
+type View = 'floor' | 'detail' | '3d' | 'partition-gkl' | 'bathroom-partition' | 'bath-vert-partition'
 
 export default function App() {
   const [view, setView] = useState<View>('floor')
@@ -15,7 +14,6 @@ export default function App() {
   const tabs: { id: View; label: string }[] = [
     { id: 'floor', label: 'Л1 — План 2 этажа' },
     { id: 'detail', label: 'Л2 — Лестница' },
-    { id: 'partition', label: 'Л3 — Спальня (ЛДСП)' },
     { id: 'partition-gkl', label: 'Л4 — Спальня (ГКЛ)' },
     { id: 'bathroom-partition', label: 'Л5 — Ванная (гориз.)' },
     { id: 'bath-vert-partition', label: 'Л6 — Ванная (верт.)' },
@@ -54,7 +52,6 @@ export default function App() {
       </nav>
 
       {view === 'floor' && <FloorPlan />}
-      {view === 'partition' && <PartitionFrame />}
       {view === 'partition-gkl' && <PartitionFrameGkl />}
       {view === 'bathroom-partition' && <BathroomPartitionFrame />}
       {view === 'bath-vert-partition' && <BathVertPartition />}

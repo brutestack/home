@@ -2,7 +2,7 @@ import { HDim, VDim, StudLabel, SpecLabel, Crosshair, createMouseHandler, MouseP
 import {
   CEILING_H_MM, DOOR_W_MM, DOOR_OFFSET_MM, DOOR_H_MM, GKL_SHEET_H_MM, GKL_SHEET_W_MM,
   DOBOR_H_MM, OVER_DOOR_H_MM, PN_H_MM, PS_W_MM, BEAM_W_MM, BEAM_H_MM, BEAM_LEVEL_MM,
-  BEDROOM_VERT_FULL_LEN_MM, GKL4_STUD_STEP_MM, S_FRONT_LDSP,
+  BEDROOM_VERT_FULL_LEN_MM, GKL4_STUD_STEP_MM, S_FRONT_BEDROOM,
   GKL_DOOR_END_MM, GKL_DOOR_STUD_LEFT_MID_MM, GKL_SHEET_JOINT_MM, GKL_NARROW_SHEET_W_MM,
   STUD_POSITIONS_GKL_BEDROOM, getStudNumberGklBedroom
 } from "../constants";
@@ -20,7 +20,7 @@ export function BackView({ onMouseMove, mouse }: BackViewProps) {
   const FRONT_W = 1000;
   const FRONT_H = 900;
   const p = 70;
-  const s = S_FRONT_LDSP;
+  const s = S_FRONT_BEDROOM;
 
   const area: SchemaArea = {
     padding: p, scale: s, width: BEDROOM_VERT_FULL_LEN_MM, height: CEILING_H_MM, svgWidth: FRONT_W

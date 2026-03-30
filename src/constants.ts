@@ -273,54 +273,11 @@ export const getStudNumberCorridor = (pos: number) => STUD_POSITIONS_CORRIDOR.in
 export const getStudNumberBath = (pos: number) => STUD_POSITIONS_BATH.indexOf(pos) + 1 + STUD_POSITIONS_CORRIDOR.length;
 
 // ============================================================
-// === ПЕРЕГОРОДКА СПАЛЬНИ ЛДСП (Лист 3) ===
+// === ПЕРЕГОРОДКА СПАЛЬНИ (Листы 3, 4) ===
 // ============================================================
-
-// ЛДСП панели
-export const PANEL_H_MM = 2700;              // Высота ЛДСП панели
-export const PANEL_W_MM = 900;               // Ширина ЛДСП панели
-export const PANEL_T_MM = 16;                // Толщина ЛДСП панели
-export const LDSP_DOBOR_H_MM = CEILING_H_MM - PANEL_H_MM; // Доборка снизу (100 мм)
-
-// Панель над дверью (ЛДСП)
-export const OVER_DOOR_PANEL_H_MM = OVER_DOOR_H_MM + 100; // С перекрытием для механизма (800 мм)
-
-// Горизонтальная часть перегородки
-export const HORIZ_W_MM = 700;               // Длина горизонтальной части
-export const HORIZ_T_MM = 50;                // Толщина горизонтальной части
 
 // Длина вертикальной перегородки спальни
 export const BEDROOM_VERT_FULL_LEN_MM = 2770; // От верхней стены до ванной
-
-// Позиции стоек перегородки спальни (внешний слой, со стороны лестницы)
-const getStudPositionsFrontLDSP = () => {
-  const GAP_LEFT = BEDROOM_VERT_FULL_LEN_MM - DOOR_OFFSET_MM - DOOR_W_MM - PANEL_W_MM * 2; // 20 мм
-  const stud1 = GAP_LEFT;
-  const stud2 = GAP_LEFT + PANEL_W_MM;
-  const doorStart = GAP_LEFT + PANEL_W_MM * 2;
-  const doorEnd = BEDROOM_VERT_FULL_LEN_MM - DOOR_OFFSET_MM;
-  return [0, stud1, stud2, doorStart - PS_W_MM, doorEnd];
-};
-
-// Позиции стоек перегородки спальни (внутренний слой, со стороны спальни)
-const getStudPositionsBackLDSP = () => {
-  const doorStartMirror = DOOR_OFFSET_MM;
-  const doorEndMirror = DOOR_OFFSET_MM + DOOR_W_MM;
-  const horizPartitionEnd = doorEndMirror + PS_W_MM;
-  const panelAreaStart = horizPartitionEnd;
-  const panel1End = panelAreaStart + PANEL_W_MM;
-  return [0, panelAreaStart, panel1End - PS_W_MM / 2, BEDROOM_VERT_FULL_LEN_MM - PS_W_MM];
-};
-
-export const STUD_POSITIONS_FRONT_LDSP = getStudPositionsFrontLDSP();
-export const STUD_POSITIONS_BACK_LDSP = getStudPositionsBackLDSP();
-export const getStudNumberFrontLDSP = (index: number) => index + 1;
-export const getStudNumberBackLDSP = (index: number) => index + 1 + STUD_POSITIONS_FRONT_LDSP.length;
-
-// Масштабы схем Листа 3
-export const S_FRONT_LDSP = 0.28;
-export const S_TOP_LDSP = 1.5;
-export const S_SECTION_LDSP = 0.8;
 
 // ============================================================
 // === ПЕРЕГОРОДКА СПАЛЬНИ ГКЛ (Лист 4) ===
